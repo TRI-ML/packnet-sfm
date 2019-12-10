@@ -1,7 +1,7 @@
 # packnet-sfm
 Code for "3D Packing for Self-Supervised Monocular Depth Estimation"
 
-https://arxiv.org/abs/1905.02693
+[**[Full paper]**](https://arxiv.org/abs/1905.02693) [**[YouTube]**](https://www.youtube.com/watch?v=b62iDkLgGSI)
 
 ## Citation
 Please use the following citation when referencing our work:
