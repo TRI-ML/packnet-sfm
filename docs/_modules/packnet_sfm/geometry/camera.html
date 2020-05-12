@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.geometry.camera &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.geometry.camera</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.geometry.camera</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="kn">from</span> <span class="nn">packnet_sfm.geometry.pose</span> <span class="kn">import</span> <span class="n">Pose</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.geometry.camera_utils</span> <span class="kn">import</span> <span class="n">scale_intrinsics</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.image</span> <span class="kn">import</span> <span class="n">image_grid</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="Camera"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera.html#packnet_sfm.geometry.camera.Camera">[docs]</a><span class="k">class</span> <span class="nc">Camera</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Differentiable camera class implementing reconstruction and projection</span>
+<span class="sd">    functions for a pinhole model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">Tcw</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Camera class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        K : torch.Tensor [3,3]</span>
+<span class="sd">            Camera intrinsics</span>
+<span class="sd">        Tcw : Pose</span>
+<span class="sd">            Camera -&gt; World pose transformation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">K</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span> <span class="o">=</span> <span class="n">Pose</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">K</span><span class="p">))</span> <span class="k">if</span> <span class="n">Tcw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Tcw</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Batch size of the camera intrinsics&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Camera.to"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera.html#packnet_sfm.geometry.camera.Camera.to">[docs]</a>    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Moves object to a specific device&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Focal length in x&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Focal length in y&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Principal point in x&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Principal point in y&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">Twc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;World -&gt; Camera pose transformation (inverse of Tcw)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">Kinv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inverse intrinsics (for lifting)&quot;&quot;&quot;</span>
+        <span class="n">Kinv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="n">Kinv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fx</span>
+        <span class="n">Kinv</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fy</span>
+        <span class="n">Kinv</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cx</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fx</span>
+        <span class="n">Kinv</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cy</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fy</span>
+        <span class="k">return</span> <span class="n">Kinv</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="Camera.scaled"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera.html#packnet_sfm.geometry.camera.Camera.scaled">[docs]</a>    <span class="k">def</span> <span class="nf">scaled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_scale</span><span class="p">,</span> <span class="n">y_scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a scaled version of the camera (changing intrinsics)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x_scale : float</span>
+<span class="sd">            Resize scale in x</span>
+<span class="sd">        y_scale : float</span>
+<span class="sd">            Resize scale in y. If None, use the same as x_scale</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        camera : Camera</span>
+<span class="sd">            Scaled version of the current cmaera</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If single value is provided, use for both dimensions</span>
+        <span class="k">if</span> <span class="n">y_scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y_scale</span> <span class="o">=</span> <span class="n">x_scale</span>
+        <span class="c1"># If no scaling is necessary, return same camera</span>
+        <span class="k">if</span> <span class="n">x_scale</span> <span class="o">==</span> <span class="mf">1.</span> <span class="ow">and</span> <span class="n">y_scale</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="c1"># Scale intrinsics and return new camera with same Pose</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">scale_intrinsics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">x_scale</span><span class="p">,</span> <span class="n">y_scale</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Camera</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">Tcw</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span><span class="p">)</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="Camera.reconstruct"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera.html#packnet_sfm.geometry.camera.Camera.reconstruct">[docs]</a>    <span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reconstructs pixel-wise 3D points from a depth map.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        depth : torch.Tensor [B,1,H,W]</span>
+<span class="sd">            Depth map for the camera</span>
+<span class="sd">        frame : &#39;w&#39;</span>
+<span class="sd">            Reference frame: &#39;c&#39; for camera and &#39;w&#39; for world</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        points : torch.tensor [B,3,H,W]</span>
+<span class="sd">            Pixel-wise 3D points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">depth</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">C</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="c1"># Create flat index grid</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">image_grid</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">depth</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">depth</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># [B,3,H,W]</span>
+        <span class="n">flat_grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [B,3,HW]</span>
+
+        <span class="c1"># Estimate the outward rays in the camera frame</span>
+        <span class="n">xnorm</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Kinv</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">flat_grid</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+        <span class="c1"># Scale rays to metric depth</span>
+        <span class="n">Xc</span> <span class="o">=</span> <span class="n">xnorm</span> <span class="o">*</span> <span class="n">depth</span>
+
+        <span class="c1"># If in camera frame of reference</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Xc</span>
+        <span class="c1"># If in world frame of reference</span>
+        <span class="k">elif</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Twc</span> <span class="o">@</span> <span class="n">Xc</span>
+        <span class="c1"># If none of the above</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown reference frame </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Camera.project"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera.html#packnet_sfm.geometry.camera.Camera.project">[docs]</a>    <span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Projects 3D points onto the image plane</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : torch.Tensor [B,3,H,W]</span>
+<span class="sd">            3D points to be projected</span>
+<span class="sd">        frame : &#39;w&#39;</span>
+<span class="sd">            Reference frame: &#39;c&#39; for camera and &#39;w&#39; for world</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        points : torch.Tensor [B,H,W,2]</span>
+<span class="sd">            2D projected points that are within the image boundaries</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">C</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="c1"># Project 3D points onto the camera image plane</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+            <span class="n">Xc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
+            <span class="n">Xc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">bmm</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Tcw</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown reference frame </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
+
+        <span class="c1"># Normalize points</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">Xc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Xc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">Xc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+        <span class="n">Xnorm</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">X</span> <span class="o">/</span> <span class="n">Z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">W</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.</span>
+        <span class="n">Ynorm</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span> <span class="o">/</span> <span class="n">Z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.</span>
+
+        <span class="c1"># Clamp out-of-bounds pixels</span>
+        <span class="c1"># Xmask = ((Xnorm &gt; 1) + (Xnorm &lt; -1)).detach()</span>
+        <span class="c1"># Xnorm[Xmask] = 2.</span>
+        <span class="c1"># Ymask = ((Ynorm &gt; 1) + (Ynorm &lt; -1)).detach()</span>
+        <span class="c1"># Ynorm[Ymask] = 2.</span>
+
+        <span class="c1"># Return pixel coordinates</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">Xnorm</span><span class="p">,</span> <span class="n">Ynorm</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

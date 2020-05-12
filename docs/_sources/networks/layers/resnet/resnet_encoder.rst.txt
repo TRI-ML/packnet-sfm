@@ -1,0 +1,7 @@
+resnet_encoder
+==============
+
+.. automodule:: packnet_sfm.networks.layers.resnet.resnet_encoder
+   :members:
+   :undoc-members:
+   :show-inheritance:

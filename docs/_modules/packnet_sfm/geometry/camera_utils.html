@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.geometry.camera_utils &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.geometry.camera_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.geometry.camera_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">funct</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="construct_K"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera_utils.html#packnet_sfm.geometry.camera_utils.construct_K">[docs]</a><span class="k">def</span> <span class="nf">construct_K</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct a [3,3] camera intrinsics from pinhole parameters&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">fx</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="n">cx</span><span class="p">],</span>
+                         <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">cy</span><span class="p">],</span>
+                         <span class="p">[</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="scale_intrinsics"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera_utils.html#packnet_sfm.geometry.camera_utils.scale_intrinsics">[docs]</a><span class="k">def</span> <span class="nf">scale_intrinsics</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">x_scale</span><span class="p">,</span> <span class="n">y_scale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Scale intrinsics given x_scale and y_scale factors&quot;&quot;&quot;</span>
+    <span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="n">x_scale</span>
+    <span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="n">y_scale</span>
+    <span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_scale</span> <span class="o">-</span> <span class="mf">0.5</span>
+    <span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">y_scale</span> <span class="o">-</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">K</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="view_synthesis"><a class="viewcode-back" href="../../../geometry/geometry.camera.camera_utils.html#packnet_sfm.geometry.camera_utils.view_synthesis">[docs]</a><span class="k">def</span> <span class="nf">view_synthesis</span><span class="p">(</span><span class="n">ref_image</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">ref_cam</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span>
+                   <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span> <span class="n">padding_mode</span><span class="o">=</span><span class="s1">&#39;zeros&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Synthesize an image from another plus a depth map.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ref_image : torch.Tensor [B,3,H,W]</span>
+<span class="sd">        Reference image to be warped</span>
+<span class="sd">    depth : torch.Tensor [B,1,H,W]</span>
+<span class="sd">        Depth map from the original image</span>
+<span class="sd">    ref_cam : Camera</span>
+<span class="sd">        Camera class for the reference image</span>
+<span class="sd">    cam : Camera</span>
+<span class="sd">        Camera class for the original image</span>
+<span class="sd">    mode : str</span>
+<span class="sd">        Interpolation mode</span>
+<span class="sd">    padding_mode : str</span>
+<span class="sd">        Padding mode for interpolation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ref_warped : torch.Tensor [B,3,H,W]</span>
+<span class="sd">        Warped reference image in the original frame of reference</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">depth</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="c1"># Reconstruct world points from target_camera</span>
+    <span class="n">world_points</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="c1"># Project world points onto reference camera</span>
+    <span class="n">ref_coords</span> <span class="o">=</span> <span class="n">ref_cam</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">world_points</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="c1"># View-synthesis given the projected reference points</span>
+    <span class="k">return</span> <span class="n">funct</span><span class="o">.</span><span class="n">grid_sample</span><span class="p">(</span><span class="n">ref_image</span><span class="p">,</span> <span class="n">ref_coords</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                             <span class="n">padding_mode</span><span class="o">=</span><span class="n">padding_mode</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

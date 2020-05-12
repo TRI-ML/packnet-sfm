@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.geometry.pose_utils &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.geometry.pose_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.geometry.pose_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="euler2mat"><a class="viewcode-back" href="../../../geometry/geometry.pose.pose_utils.html#packnet_sfm.geometry.pose_utils.euler2mat">[docs]</a><span class="k">def</span> <span class="nf">euler2mat</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert euler angles to rotation matrix&quot;&quot;&quot;</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">angle</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">angle</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">angle</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">angle</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">cosz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">sinz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">zeros</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="mi">0</span>
+    <span class="n">ones</span> <span class="o">=</span> <span class="n">zeros</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">zmat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">cosz</span><span class="p">,</span> <span class="o">-</span><span class="n">sinz</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span>
+                        <span class="n">sinz</span><span class="p">,</span> <span class="n">cosz</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span>
+                        <span class="n">zeros</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">ones</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">cosy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">siny</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">ymat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">cosy</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">siny</span><span class="p">,</span>
+                        <span class="n">zeros</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span>
+                        <span class="o">-</span><span class="n">siny</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">cosy</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">cosx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">sinx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">xmat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ones</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span>
+                        <span class="n">zeros</span><span class="p">,</span> <span class="n">cosx</span><span class="p">,</span> <span class="o">-</span><span class="n">sinx</span><span class="p">,</span>
+                        <span class="n">zeros</span><span class="p">,</span> <span class="n">sinx</span><span class="p">,</span> <span class="n">cosx</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">xmat</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">ymat</span><span class="p">)</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">zmat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rot_mat</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="pose_vec2mat"><a class="viewcode-back" href="../../../geometry/geometry.pose.pose_utils.html#packnet_sfm.geometry.pose_utils.pose_vec2mat">[docs]</a><span class="k">def</span> <span class="nf">pose_vec2mat</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;euler&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert Euler parameters to transformation matrix.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">vec</span>
+    <span class="n">trans</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="n">vec</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">vec</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;euler&#39;</span><span class="p">:</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">euler2mat</span><span class="p">(</span><span class="n">rot</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Rotation mode not supported </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">rot_mat</span><span class="p">,</span> <span class="n">trans</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># [B,3,4]</span>
+    <span class="k">return</span> <span class="n">mat</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="invert_pose"><a class="viewcode-back" href="../../../geometry/geometry.pose.pose_utils.html#packnet_sfm.geometry.pose_utils.invert_pose">[docs]</a><span class="k">def</span> <span class="nf">invert_pose</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Inverts a [B,4,4] torch.tensor pose&quot;&quot;&quot;</span>
+    <span class="n">Tinv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">Tinv</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Tinv</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">Tinv</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Tinv</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="invert_pose_numpy"><a class="viewcode-back" href="../../../geometry/geometry.pose.pose_utils.html#packnet_sfm.geometry.pose_utils.invert_pose_numpy">[docs]</a><span class="k">def</span> <span class="nf">invert_pose_numpy</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Inverts a [4,4] np.array pose&quot;&quot;&quot;</span>
+    <span class="n">Tinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">R</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Tinv</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">Tinv</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="n">Tinv</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">Tinv</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Tinv</span></div>
+
+<span class="c1">########################################################################################################################</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

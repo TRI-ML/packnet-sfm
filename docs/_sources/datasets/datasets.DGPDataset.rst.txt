@@ -1,0 +1,8 @@
+DGPDataset
+==========
+
+.. automodule:: packnet_sfm.datasets.dgp_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

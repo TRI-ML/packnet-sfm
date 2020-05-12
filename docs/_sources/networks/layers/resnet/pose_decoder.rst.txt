@@ -1,0 +1,7 @@
+pose_decoder
+============
+
+.. automodule:: packnet_sfm.networks.layers.resnet.pose_decoder
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,570 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>kitti_dataset_utils &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DGPDataset" href="datasets.DGPDataset.html" />
+    <link rel="prev" title="KITTIDataset" href="datasets.KITTIDataset.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="datasets.html">Datasets</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="datasets.augmentations.html">Augmentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.transforms.html">Transforms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="KITTIDataset.html">KITTIDataset</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="datasets.KITTIDataset.html">KITTIDataset</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">kitti_dataset_utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.DGPDataset.html">DGPDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.ImageDataset.html">ImageDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="datasets.html">Datasets</a> &raquo;</li>
+        
+          <li><a href="KITTIDataset.html">KITTIDataset</a> &raquo;</li>
+        
+      <li>kitti_dataset_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/datasets/datasets.KITTIDataset_utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.datasets.kitti_dataset_utils">
+<span id="kitti-dataset-utils"></span><h1>kitti_dataset_utils</h1>
+<p>Provides helper methods for loading and parsing KITTI data.</p>
+<dl class="py class">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsData">
+<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">OxtsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">packet</span></em>, <em class="sig-param"><span class="n">T_w_imu</span></em><span class="sig-paren">)</span></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsData.T_w_imu">
+<em class="property">property </em><code class="sig-name descname">T_w_imu</code></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsData.packet">
+<em class="property">property </em><code class="sig-name descname">packet</code></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket">
+<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">OxtsPacket</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">lon</span></em>, <em class="sig-param"><span class="n">alt</span></em>, <em class="sig-param"><span class="n">roll</span></em>, <em class="sig-param"><span class="n">pitch</span></em>, <em class="sig-param"><span class="n">yaw</span></em>, <em class="sig-param"><span class="n">vn</span></em>, <em class="sig-param"><span class="n">ve</span></em>, <em class="sig-param"><span class="n">vf</span></em>, <em class="sig-param"><span class="n">vl</span></em>, <em class="sig-param"><span class="n">vu</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">ay</span></em>, <em class="sig-param"><span class="n">az</span></em>, <em class="sig-param"><span class="n">af</span></em>, <em class="sig-param"><span class="n">al</span></em>, <em class="sig-param"><span class="n">au</span></em>, <em class="sig-param"><span class="n">wx</span></em>, <em class="sig-param"><span class="n">wy</span></em>, <em class="sig-param"><span class="n">wz</span></em>, <em class="sig-param"><span class="n">wf</span></em>, <em class="sig-param"><span class="n">wl</span></em>, <em class="sig-param"><span class="n">wu</span></em>, <em class="sig-param"><span class="n">pos_accuracy</span></em>, <em class="sig-param"><span class="n">vel_accuracy</span></em>, <em class="sig-param"><span class="n">navstat</span></em>, <em class="sig-param"><span class="n">numsats</span></em>, <em class="sig-param"><span class="n">posmode</span></em>, <em class="sig-param"><span class="n">velmode</span></em>, <em class="sig-param"><span class="n">orimode</span></em><span class="sig-paren">)</span></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.af">
+<em class="property">property </em><code class="sig-name descname">af</code></dt>
+<dd><p>Alias for field number 14</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.al">
+<em class="property">property </em><code class="sig-name descname">al</code></dt>
+<dd><p>Alias for field number 15</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.alt">
+<em class="property">property </em><code class="sig-name descname">alt</code></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.au">
+<em class="property">property </em><code class="sig-name descname">au</code></dt>
+<dd><p>Alias for field number 16</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.ax">
+<em class="property">property </em><code class="sig-name descname">ax</code></dt>
+<dd><p>Alias for field number 11</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.ay">
+<em class="property">property </em><code class="sig-name descname">ay</code></dt>
+<dd><p>Alias for field number 12</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.az">
+<em class="property">property </em><code class="sig-name descname">az</code></dt>
+<dd><p>Alias for field number 13</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.lat">
+<em class="property">property </em><code class="sig-name descname">lat</code></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.lon">
+<em class="property">property </em><code class="sig-name descname">lon</code></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.navstat">
+<em class="property">property </em><code class="sig-name descname">navstat</code></dt>
+<dd><p>Alias for field number 25</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.numsats">
+<em class="property">property </em><code class="sig-name descname">numsats</code></dt>
+<dd><p>Alias for field number 26</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.orimode">
+<em class="property">property </em><code class="sig-name descname">orimode</code></dt>
+<dd><p>Alias for field number 29</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.pitch">
+<em class="property">property </em><code class="sig-name descname">pitch</code></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.pos_accuracy">
+<em class="property">property </em><code class="sig-name descname">pos_accuracy</code></dt>
+<dd><p>Alias for field number 23</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.posmode">
+<em class="property">property </em><code class="sig-name descname">posmode</code></dt>
+<dd><p>Alias for field number 27</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.roll">
+<em class="property">property </em><code class="sig-name descname">roll</code></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.ve">
+<em class="property">property </em><code class="sig-name descname">ve</code></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.vel_accuracy">
+<em class="property">property </em><code class="sig-name descname">vel_accuracy</code></dt>
+<dd><p>Alias for field number 24</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.velmode">
+<em class="property">property </em><code class="sig-name descname">velmode</code></dt>
+<dd><p>Alias for field number 28</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.vf">
+<em class="property">property </em><code class="sig-name descname">vf</code></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.vl">
+<em class="property">property </em><code class="sig-name descname">vl</code></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.vn">
+<em class="property">property </em><code class="sig-name descname">vn</code></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.vu">
+<em class="property">property </em><code class="sig-name descname">vu</code></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wf">
+<em class="property">property </em><code class="sig-name descname">wf</code></dt>
+<dd><p>Alias for field number 20</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wl">
+<em class="property">property </em><code class="sig-name descname">wl</code></dt>
+<dd><p>Alias for field number 21</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wu">
+<em class="property">property </em><code class="sig-name descname">wu</code></dt>
+<dd><p>Alias for field number 22</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wx">
+<em class="property">property </em><code class="sig-name descname">wx</code></dt>
+<dd><p>Alias for field number 17</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wy">
+<em class="property">property </em><code class="sig-name descname">wy</code></dt>
+<dd><p>Alias for field number 18</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.wz">
+<em class="property">property </em><code class="sig-name descname">wz</code></dt>
+<dd><p>Alias for field number 19</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.yaw">
+<em class="property">property </em><code class="sig-name descname">yaw</code></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.load_oxts_packets_and_poses">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">load_oxts_packets_and_poses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxts_files</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#load_oxts_packets_and_poses"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generator to read OXTS ground truth data.
+Poses are given in an East-North-Up coordinate system
+whose origin is the first GPS position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>oxts_files</strong> (<em>list of str</em>) – List of oxts files to read from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>oxts</strong> – List of oxts ground-truth data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.pose_from_oxts_packet">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">pose_from_oxts_packet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_data</span></em>, <em class="sig-param"><span class="n">scale</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#pose_from_oxts_packet"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Helper method to compute a SE(3) pose matrix from an OXTS packet</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_data</strong> (<em>dict</em>) – Oxts data to read from</p></li>
+<li><p><strong>scale</strong> (<em>float</em>) – Oxts scale</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>R</strong> (<em>np.array [3,3]</em>) – Rotation matrix</p></li>
+<li><p><strong>t</strong> (<em>np.array [3]</em>) – Translation vector</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.read_calib_file">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">read_calib_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#read_calib_file"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read in a calibration file and parse into a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – File path to read from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>calib</strong> – Dictionary with calibration values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.rotx">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">rotx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#rotx"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Rotation about the x-axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – Theta angle</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>matrix</strong> – Rotation matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [3,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.roty">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">roty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#roty"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Rotation about the y-axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – Theta angle</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>matrix</strong> – Rotation matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [3,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.rotz">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">rotz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#rotz"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Rotation about the z-axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – Theta angle</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>matrix</strong> – Rotation matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [3,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.kitti_dataset_utils.transform_from_rot_trans">
+<code class="sig-prename descclassname">packnet_sfm.datasets.kitti_dataset_utils.</code><code class="sig-name descname">transform_from_rot_trans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">R</span></em>, <em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/kitti_dataset_utils.html#transform_from_rot_trans"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Transformation matrix from rotation matrix and translation vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<em>np.array</em><em> [</em><em>3</em><em>,</em><em>3</em><em>]</em>) – Rotation matrix</p></li>
+<li><p><strong>t</strong> (<em>np.array</em><em> [</em><em>3</em><em>]</em>) – translation vector</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>matrix</strong> – Transformation matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [4,4]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="datasets.DGPDataset.html" class="btn btn-neutral float-right" title="DGPDataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.KITTIDataset.html" class="btn btn-neutral float-left" title="KITTIDataset" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

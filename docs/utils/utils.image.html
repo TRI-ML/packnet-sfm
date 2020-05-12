@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Image &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Depth" href="utils.depth.html" />
+    <link rel="prev" title="Loading" href="utils.load.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="utils.html">Utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="utils.config.html">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.horovod.html">Horovod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.reduce.html">Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.save.html">Saving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.load.html">Loading</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.depth.html">Depth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.misc.html">Misc.</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="utils.html">Utils</a> &raquo;</li>
+        
+      <li>Image</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/utils/utils.image.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.utils.image">
+<span id="image"></span><h1>Image</h1>
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.flip_lr">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">flip_lr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#flip_lr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Flip image horizontally</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Image to be flipped</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>image_flipped</strong> – Flipped image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,3,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.flip_model">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">flip_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">flip</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#flip_model"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Flip input image and flip output inverse depth map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>nn.Module</em>) – Module to be used</p></li>
+<li><p><strong>image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Input image</p></li>
+<li><p><strong>flip</strong> (<em>bool</em>) – True if the flip is happening</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>inv_depths</strong> – List of predicted inverse depth maps</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.gradient_x">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">gradient_x</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#gradient_x"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates the gradient of an image in the x dimension
+:param image: Input image
+:type image: torch.Tensor [B,3,H,W]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>gradient_x</strong> – Gradient of image with respect to x</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.Tensor [B,3,H,W-1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.gradient_y">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">gradient_y</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#gradient_y"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates the gradient of an image in the y dimension
+:param image: Input image
+:type image: torch.Tensor [B,3,H,W]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>gradient_y</strong> – Gradient of image with respect to y</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.Tensor [B,3,H-1,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.image_grid">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">image_grid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">B</span></em>, <em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">W</span></em>, <em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#image_grid"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create an image grid with a specific resolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>B</strong> (<em>int</em>) – Batch size</p></li>
+<li><p><strong>H</strong> (<em>int</em>) – Height size</p></li>
+<li><p><strong>W</strong> (<em>int</em>) – Width size</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em>) – Meshgrid type</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – Meshgrid device</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – True if grid is normalized between -1 and 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>grid</strong> – Image grid containing a meshgrid in x, y and 1</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,3,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.interpolate_image">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">interpolate_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">shape</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">align_corners</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#interpolate_image"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Interpolate an image to a different resolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>?</em><em>,</em><em>h</em><em>,</em><em>w</em><em>]</em>) – Image to be interpolated</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> (</em><em>H</em><em>, </em><em>W</em><em>)</em>) – Output shape</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Interpolation mode</p></li>
+<li><p><strong>align_corners</strong> (<em>bool</em>) – True if corners will be aligned after interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>image</strong> – Interpolated image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,?,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.interpolate_scales">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">interpolate_scales</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">images</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">align_corners</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#interpolate_scales"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Interpolate list of images to the same shape</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>images</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>?</em><em>,</em><em>?</em><em>,</em><em>?</em><em>]</em>) – Images to be interpolated, with different resolutions</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> (</em><em>H</em><em>, </em><em>W</em><em>)</em>) – Output shape</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Interpolation mode</p></li>
+<li><p><strong>align_corners</strong> (<em>bool</em>) – True if corners will be aligned after interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>images</strong> – Interpolated images, with the same resolution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of torch.Tensor [B,?,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.load_image">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">load_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#load_image"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read an image using PIL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to the image</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>image</strong> – Loaded image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>PIL.Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.match_scales">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">match_scales</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">targets</span></em>, <em class="sig-param"><span class="n">num_scales</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'bilinear'</span></em>, <em class="sig-param"><span class="n">align_corners</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#match_scales"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Interpolate one image to produce a list of images with the same shape as targets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>?</em><em>,</em><em>h</em><em>,</em><em>w</em><em>]</em>) – Input image</p></li>
+<li><p><strong>targets</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>?</em><em>,</em><em>?</em><em>,</em><em>?</em><em>]</em>) – Tensors with the target resolutions</p></li>
+<li><p><strong>num_scales</strong> (<em>int</em>) – Number of considered scales</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Interpolation mode</p></li>
+<li><p><strong>align_corners</strong> (<em>bool</em>) – True if corners will be aligned after interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>images</strong> – List of images with the same resolutions as targets</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of torch.Tensor [B,?,?,?]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.image.meshgrid">
+<code class="sig-prename descclassname">packnet_sfm.utils.image.</code><code class="sig-name descname">meshgrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">B</span></em>, <em class="sig-param"><span class="n">H</span></em>, <em class="sig-param"><span class="n">W</span></em>, <em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">normalized</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/image.html#meshgrid"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create meshgrid with a specific resolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>B</strong> (<em>int</em>) – Batch size</p></li>
+<li><p><strong>H</strong> (<em>int</em>) – Height size</p></li>
+<li><p><strong>W</strong> (<em>int</em>) – Width size</p></li>
+<li><p><strong>dtype</strong> (<em>torch.dtype</em>) – Meshgrid type</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – Meshgrid device</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – True if grid is normalized between -1 and 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>xs</strong> (<em>torch.Tensor [B,1,W]</em>) – Meshgrid in dimension x</p></li>
+<li><p><strong>ys</strong> (<em>torch.Tensor [B,H,1]</em>) – Meshgrid in dimension y</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.depth.html" class="btn btn-neutral float-right" title="Depth" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.load.html" class="btn btn-neutral float-left" title="Loading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

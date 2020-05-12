@@ -1,0 +1,29 @@
+eval_kitti
+==========
+
+.. code:: yaml
+
+	model:
+	    name: 'SelfSupModel'
+	    depth_net:
+		name: 'PackNet01'
+		version: '1A'
+	    pose_net:
+		name: 'PoseNet'
+		version: ''
+	    params:
+		crop: 'garg'
+		min_depth: 0.0
+		max_depth: 80.0
+	datasets:
+	    augmentation:
+		image_shape: (192, 640)
+	    test:
+		dataset: ['KITTI']
+		path: ['/data/datasets/KITTI_raw']
+		split: ['data_splits/eigen_test_files.txt']
+		depth_type: ['velodyne']
+	save:
+	    folder: '/data/save'
+	    viz: True
+	    npz: True

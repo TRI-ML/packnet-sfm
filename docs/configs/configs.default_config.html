@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>default_config &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="overfit_kitti" href="configs.overfit_kitti.html" />
+    <link rel="prev" title="Configs" href="configs.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="configs.html">Configs</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">default_config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.overfit_kitti.html">overfit_kitti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.overfit_ddad.html">overfit_ddad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.train_kitti.html">train_kitti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.train_ddad.html">train_ddad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.eval_kitti.html">eval_kitti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.eval_ddad.html">eval_ddad</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="configs.html">Configs</a> &raquo;</li>
+        
+      <li>default_config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/configs/configs.default_config.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="default-config">
+<h1>default_config</h1>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>       <span class="c1"># Run name</span>
+<span class="nt">debug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>   <span class="c1"># Debugging flag</span>
+<span class="nt">arch</span><span class="p">:</span>
+    <span class="nt">seed</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>                <span class="c1"># Random seed for Pytorch/Numpy initialization</span>
+    <span class="nt">min_epochs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>           <span class="c1"># Minimum number of epochs</span>
+    <span class="nt">max_epochs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span>          <span class="c1"># Maximum number of epochs</span>
+<span class="nt">checkpoint</span><span class="p">:</span>
+    <span class="nt">filepath</span><span class="p">:</span> <span class="s">&#39;&#39;</span>            <span class="c1"># Checkpoint filepath to save data</span>
+    <span class="nt">save_top_k</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>           <span class="c1"># Number of best models to save</span>
+    <span class="nt">monitor</span><span class="p">:</span> <span class="s">&#39;loss&#39;</span>         <span class="c1"># Metric to monitor for logging</span>
+    <span class="nt">monitor_index</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>        <span class="c1"># Dataset index for the metric to monitor</span>
+    <span class="nt">mode</span><span class="p">:</span> <span class="s">&#39;auto&#39;</span>            <span class="c1"># Automatically determine direction of improvement (increase or decrease)</span>
+    <span class="nt">s3_path</span><span class="p">:</span> <span class="s">&#39;&#39;</span>             <span class="c1"># s3 path for AWS model syncing</span>
+    <span class="nt">s3_frequency</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>         <span class="c1"># How often to s3 sync</span>
+<span class="nt">save</span><span class="p">:</span>
+    <span class="nt">folder</span><span class="p">:</span> <span class="s">&#39;&#39;</span>              <span class="c1"># Folder where data will be saved</span>
+    <span class="nt">viz</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>               <span class="c1"># Flag for saving inverse depth map visualization</span>
+    <span class="nt">npz</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>               <span class="c1"># Flag for saving numpy depth maps</span>
+<span class="nt">wandb</span><span class="p">:</span>
+    <span class="nt">dry_run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>                                 <span class="c1"># Wandb dry-run (not logging)</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>                                      <span class="c1"># Wandb run name</span>
+    <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os.environ.get(&quot;WANDB_PROJECT&quot;, &quot;&quot;)</span>  <span class="c1"># Wandb project</span>
+    <span class="nt">entity</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os.environ.get(&quot;WANDB_ENTITY&quot;, &quot;&quot;)</span>    <span class="c1"># Wandb entity</span>
+    <span class="nt">tags</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                                      <span class="c1"># Wandb tags</span>
+    <span class="nt">dir</span><span class="p">:</span> <span class="s">&#39;&#39;</span>                                       <span class="c1"># Wandb save folder</span>
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>                <span class="c1"># Training model</span>
+    <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="s">&#39;&#39;</span>     <span class="c1"># Checkpoint path for model saving</span>
+    <span class="nt">optimizer</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;Adam&#39;</span>             <span class="c1"># Optimizer name</span>
+        <span class="nt">depth</span><span class="p">:</span>
+            <span class="nt">lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0002</span>           <span class="c1"># Depth learning rate</span>
+            <span class="nt">weight_decay</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>    <span class="c1"># Dept weight decay</span>
+        <span class="nt">pose</span><span class="p">:</span>
+            <span class="nt">lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0002</span>           <span class="c1"># Pose learning rate</span>
+            <span class="nt">weight_decay</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>    <span class="c1"># Pose weight decay</span>
+    <span class="nt">scheduler</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;StepLR&#39;</span>      <span class="c1"># Scheduler name</span>
+        <span class="nt">step_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>       <span class="c1"># Scheduler step size</span>
+        <span class="nt">gamma</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>          <span class="c1"># Scheduler gamma value</span>
+        <span class="nt">T_max</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">20</span>           <span class="c1"># Scheduler maximum number of iterations</span>
+    <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">crop</span><span class="p">:</span> <span class="s">&#39;&#39;</span>            <span class="c1"># Which crop should be used during evaluation</span>
+        <span class="nt">min_depth</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>      <span class="c1"># Minimum depth value to evaluate</span>
+        <span class="nt">max_depth</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">80.0</span>     <span class="c1"># Maximum depth value to evaluate</span>
+    <span class="nt">loss</span><span class="p">:</span>
+        <span class="nt">num_scales</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>                   <span class="c1"># Number of inverse depth scales to use</span>
+        <span class="nt">progressive_scaling</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>        <span class="c1"># Training percentage to decay number of scales</span>
+        <span class="nt">flip_lr_prob</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>               <span class="c1"># Probablity of horizontal flippping</span>
+        <span class="nt">rotation_mode</span><span class="p">:</span> <span class="s">&#39;euler&#39;</span>          <span class="c1"># Rotation mode</span>
+        <span class="nt">upsample_depth_maps</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>       <span class="c1"># Resize depth maps to highest resolution</span>
+        <span class="nt">ssim_loss_weight</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.85</span>          <span class="c1"># SSIM loss weight</span>
+        <span class="nt">occ_reg_weight</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>             <span class="c1"># Occlusion regularizer loss weight</span>
+        <span class="nt">smooth_loss_weight</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.001</span>       <span class="c1"># Smoothness loss weight</span>
+        <span class="nt">C1</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1e-4</span>                        <span class="c1"># SSIM parameter</span>
+        <span class="nt">C2</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">9e-4</span>                        <span class="c1"># SSIM parameter</span>
+        <span class="nt">photometric_reduce_op</span><span class="p">:</span> <span class="s">&#39;min&#39;</span>    <span class="c1"># Method for photometric loss reducing</span>
+        <span class="nt">disp_norm</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>                 <span class="c1"># Inverse depth normalization</span>
+        <span class="nt">clip_loss</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>                  <span class="c1"># Clip loss threshold variance</span>
+        <span class="nt">padding_mode</span><span class="p">:</span> <span class="s">&#39;zeros&#39;</span>           <span class="c1"># Photometric loss padding mode</span>
+        <span class="nt">automask_loss</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>             <span class="c1"># Automasking to remove static pixels</span>
+        <span class="nt">supervised_method</span><span class="p">:</span> <span class="s">&#39;sparse-l1&#39;</span>  <span class="c1"># Method for depth supervision</span>
+        <span class="nt">supervised_num_scales</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>        <span class="c1"># Number of scales for supervised learning</span>
+        <span class="nt">supervised_loss_weight</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.9</span>     <span class="c1"># Supervised loss weight</span>
+    <span class="nt">depth_net</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>               <span class="c1"># Depth network name</span>
+        <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="s">&#39;&#39;</span>    <span class="c1"># Depth checkpoint filepath</span>
+        <span class="nt">version</span><span class="p">:</span> <span class="s">&#39;&#39;</span>            <span class="c1"># Depth network version</span>
+        <span class="nt">dropout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>           <span class="c1"># Depth network dropout</span>
+    <span class="nt">pose_net</span><span class="p">:</span>
+        <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>               <span class="c1"># Pose network name</span>
+        <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="s">&#39;&#39;</span>    <span class="c1"># Pose checkpoint filepath</span>
+        <span class="nt">version</span><span class="p">:</span> <span class="s">&#39;&#39;</span>            <span class="c1"># Pose network version</span>
+        <span class="nt">dropout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>           <span class="c1"># Pose network dropout</span>
+<span class="nt">datasets</span><span class="p">:</span>
+    <span class="nt">augmentation</span><span class="p">:</span>
+        <span class="nt">image_shape</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">(192, 640)</span>              <span class="c1"># Image shape</span>
+        <span class="nt">jittering</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">(0.2, 0.2, 0.2, 0.05)</span>     <span class="c1"># Color jittering values</span>
+    <span class="nt">train</span><span class="p">:</span>
+        <span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>              <span class="c1"># Training batch size</span>
+        <span class="nt">num_workers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">16</span>            <span class="c1"># Training number of workers</span>
+        <span class="nt">back_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>            <span class="c1"># Training backward context</span>
+        <span class="nt">forward_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>         <span class="c1"># Training forward context</span>
+        <span class="nt">dataset</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Training dataset</span>
+        <span class="nt">path</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                   <span class="c1"># Training data path</span>
+        <span class="nt">split</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                  <span class="c1"># Training split</span>
+        <span class="nt">depth_type</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&#39;&#39;</span><span class="p p-Indicator">]</span>           <span class="c1"># Training depth type</span>
+        <span class="nt">cameras</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Training cameras</span>
+        <span class="nt">repeat</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">]</span>                <span class="c1"># Number of times training dataset is repeated per epoch</span>
+        <span class="nt">num_logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>                <span class="c1"># Number of training images to log</span>
+    <span class="nt">validation</span><span class="p">:</span>
+        <span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>              <span class="c1"># Validation batch size</span>
+        <span class="nt">num_workers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>             <span class="c1"># Validation number of workers</span>
+        <span class="nt">back_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>            <span class="c1"># Validation backward context</span>
+        <span class="nt">forward_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>         <span class="c1"># Validation forward contxt</span>
+        <span class="nt">dataset</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Validation dataset</span>
+        <span class="nt">path</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                   <span class="c1"># Validation data path</span>
+        <span class="nt">split</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                  <span class="c1"># Validation split</span>
+        <span class="nt">depth_type</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&#39;&#39;</span><span class="p p-Indicator">]</span>           <span class="c1"># Validation depth type</span>
+        <span class="nt">cameras</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Validation cameras</span>
+        <span class="nt">num_logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>                <span class="c1"># Number of validation images to log</span>
+    <span class="nt">test</span><span class="p">:</span>
+        <span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>              <span class="c1"># Test batch size</span>
+        <span class="nt">num_workers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>             <span class="c1"># Test number of workers</span>
+        <span class="nt">back_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>            <span class="c1"># Test backward context</span>
+        <span class="nt">forward_context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>         <span class="c1"># Test forward context</span>
+        <span class="nt">dataset</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Test dataset</span>
+        <span class="nt">path</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                   <span class="c1"># Test data path</span>
+        <span class="nt">split</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                  <span class="c1"># Test split</span>
+        <span class="nt">depth_type</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&#39;&#39;</span><span class="p p-Indicator">]</span>           <span class="c1"># Test depth type</span>
+        <span class="nt">cameras</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                <span class="c1"># Test cameras</span>
+        <span class="nt">num_logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>                <span class="c1"># Number of test images to log</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configs.overfit_kitti.html" class="btn btn-neutral float-right" title="overfit_kitti" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configs.html" class="btn btn-neutral float-left" title="Configs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

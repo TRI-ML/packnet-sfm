@@ -1,0 +1,8 @@
+SelfSupModel
+============
+
+.. automodule:: packnet_sfm.models.SelfSupModel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

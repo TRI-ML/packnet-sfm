@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.datasets.augmentations &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.datasets.augmentations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.datasets.augmentations</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.misc</span> <span class="kn">import</span> <span class="n">filter_dict</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="resize_image"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_image">[docs]</a><span class="k">def</span> <span class="nf">resize_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resizes input image.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : Image.PIL</span>
+<span class="sd">        Input image</span>
+<span class="sd">    shape : tuple [H,W]</span>
+<span class="sd">        Output shape</span>
+<span class="sd">    interpolation : int</span>
+<span class="sd">        Interpolation mode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    image : Image.PIL</span>
+<span class="sd">        Resized image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">interpolation</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="resize_depth"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_depth">[docs]</a><span class="k">def</span> <span class="nf">resize_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resizes depth map.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    depth : np.array [h,w]</span>
+<span class="sd">        Depth map</span>
+<span class="sd">    shape : tuple (H,W)</span>
+<span class="sd">        Output shape</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    depth : np.array [H,W]</span>
+<span class="sd">        Resized depth map</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">dsize</span><span class="o">=</span><span class="n">shape</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_NEAREST</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="resize_sample_image_and_intrinsics"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_sample_image_and_intrinsics">[docs]</a><span class="k">def</span> <span class="nf">resize_sample_image_and_intrinsics</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span>
+                                       <span class="n">image_interpolation</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resizes the image and intrinsics of a sample</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Dictionary with sample values</span>
+<span class="sd">    shape : tuple (H,W)</span>
+<span class="sd">        Output shape</span>
+<span class="sd">    image_interpolation : int</span>
+<span class="sd">        Interpolation mode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Resized sample</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Resize image and corresponding intrinsics</span>
+    <span class="n">image_transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">image_interpolation</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">orig_w</span><span class="p">,</span> <span class="n">orig_h</span><span class="p">)</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+    <span class="p">(</span><span class="n">out_h</span><span class="p">,</span> <span class="n">out_w</span><span class="p">)</span> <span class="o">=</span> <span class="n">shape</span>
+    <span class="c1"># Scale intrinsics</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;intrinsics&#39;</span>
+    <span class="p">]):</span>
+        <span class="n">intrinsics</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">intrinsics</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="n">out_w</span> <span class="o">/</span> <span class="n">orig_w</span>
+        <span class="n">intrinsics</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="n">out_h</span> <span class="o">/</span> <span class="n">orig_h</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">intrinsics</span>
+    <span class="c1"># Scale images</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb_original&#39;</span><span class="p">,</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_transform</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="c1"># Scale context images</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb_context&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb_context_original&#39;</span><span class="p">,</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_transform</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="c1"># Return resized sample</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+<div class="viewcode-block" id="resize_sample"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_sample">[docs]</a><span class="k">def</span> <span class="nf">resize_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">image_interpolation</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resizes a sample, including image, intrinsics and depth maps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Dictionary with sample values</span>
+<span class="sd">    shape : tuple (H,W)</span>
+<span class="sd">        Output shape</span>
+<span class="sd">    image_interpolation : int</span>
+<span class="sd">        Interpolation mode</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Resized sample</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Resize image and intrinsics</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">resize_sample_image_and_intrinsics</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">image_interpolation</span><span class="p">)</span>
+    <span class="c1"># Resize depth maps</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;depth&#39;</span><span class="p">,</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resize_depth</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
+    <span class="c1"># Resize depth contexts</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;depth_context&#39;</span><span class="p">,</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">resize_depth</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="c1"># Return resized sample</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="to_tensor"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.to_tensor">[docs]</a><span class="k">def</span> <span class="nf">to_tensor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">tensor_type</span><span class="o">=</span><span class="s1">&#39;torch.FloatTensor&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Casts an image to a torch.Tensor&quot;&quot;&quot;</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">tensor_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="to_tensor_sample"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.to_tensor_sample">[docs]</a><span class="k">def</span> <span class="nf">to_tensor_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">tensor_type</span><span class="o">=</span><span class="s1">&#39;torch.FloatTensor&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Casts the keys of sample to tensors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Input sample</span>
+<span class="sd">    tensor_type : str</span>
+<span class="sd">        Type of tensor we are casting to</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Sample with keys cast as tensors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+    <span class="c1"># Convert single items</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb_original&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">tensor_type</span><span class="p">)</span>
+    <span class="c1"># Convert lists</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb_context&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb_context_original&#39;</span><span class="p">,</span> <span class="s1">&#39;depth_context&#39;</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">transform</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">tensor_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="c1"># Return converted sample</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="duplicate_sample"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.duplicate_sample">[docs]</a><span class="k">def</span> <span class="nf">duplicate_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Duplicates sample images and contexts to preserve their unaugmented versions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Input sample</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Sample including [+&quot;_original&quot;] keys with copies of images and contexts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Duplicate single items</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb&#39;</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_original&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># Duplicate lists</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rgb_context&#39;</span>
+    <span class="p">]):</span>
+        <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_original&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="c1"># Return duplicated sample</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+<div class="viewcode-block" id="colorjitter_sample"><a class="viewcode-back" href="../../../datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.colorjitter_sample">[docs]</a><span class="k">def</span> <span class="nf">colorjitter_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Jitters input images as data augmentation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Input sample</span>
+<span class="sd">    parameters : tuple (brightness, contrast, saturation, hue)</span>
+<span class="sd">        Color jittering parameters</span>
+<span class="sd">    prob : float</span>
+<span class="sd">        Jittering probability</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample : dict</span>
+<span class="sd">        Jittered sample</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">:</span>
+        <span class="c1"># Prepare transformation</span>
+        <span class="n">color_augmentation</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ColorJitter</span><span class="p">()</span>
+        <span class="n">brightness</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span> <span class="n">hue</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="n">augment_image</span> <span class="o">=</span> <span class="n">color_augmentation</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span>
+            <span class="n">brightness</span><span class="o">=</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">brightness</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">brightness</span><span class="p">],</span>
+            <span class="n">contrast</span><span class="o">=</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">contrast</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">contrast</span><span class="p">],</span>
+            <span class="n">saturation</span><span class="o">=</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">saturation</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">saturation</span><span class="p">],</span>
+            <span class="n">hue</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">hue</span><span class="p">,</span> <span class="n">hue</span><span class="p">])</span>
+        <span class="c1"># Jitter single items</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;rgb&#39;</span>
+        <span class="p">]):</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">augment_image</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="c1"># Jitter lists</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;rgb_context&#39;</span>
+        <span class="p">]):</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">augment_image</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="c1"># Return jittered (?) sample</span>
+    <span class="k">return</span> <span class="n">sample</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

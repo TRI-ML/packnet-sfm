@@ -1,0 +1,11 @@
+Datasets
+========
+
+.. toctree::
+   datasets.augmentations
+   datasets.transforms
+   KITTIDataset.rst
+   datasets.DGPDataset
+   datasets.ImageDataset
+
+

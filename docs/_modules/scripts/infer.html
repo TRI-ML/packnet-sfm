@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>scripts.infer &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>scripts.infer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for scripts.infer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">cv2</span> <span class="kn">import</span> <span class="n">imwrite</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">packnet_sfm</span> <span class="kn">import</span> <span class="n">ModelWrapper</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.datasets.augmentations</span> <span class="kn">import</span> <span class="n">resize_image</span><span class="p">,</span> <span class="n">to_tensor</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.horovod</span> <span class="kn">import</span> <span class="n">hvd_init</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">print0</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.image</span> <span class="kn">import</span> <span class="n">load_image</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.config</span> <span class="kn">import</span> <span class="n">parse_test_file</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.load</span> <span class="kn">import</span> <span class="n">set_debug</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.depth</span> <span class="kn">import</span> <span class="n">viz_inv_depth</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">pcolor</span>
+
+
+<div class="viewcode-block" id="is_image"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.is_image">[docs]</a><span class="k">def</span> <span class="nf">is_image</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpg&#39;</span><span class="p">,)):</span>
+    <span class="sd">&quot;&quot;&quot;Check if a file is an image with certain extensions&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Parse arguments for training script&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;PackNet-SfM evaluation script&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--checkpoint&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Checkpoint (.ckpt)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input file or folder&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file or foler&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--image_shape&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input and output image shape &#39;</span>
+                             <span class="s1">&#39;(default: checkpoint</span><span class="se">\&#39;</span><span class="s1">s config.datasets.augmentation.image_shape)&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ckpt&#39;</span><span class="p">),</span> \
+        <span class="s1">&#39;You need to provide a .ckpt file as checkpoint&#39;</span>
+    <span class="k">assert</span> <span class="n">args</span><span class="o">.</span><span class="n">image_shape</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">image_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> \
+        <span class="s1">&#39;You need to provide a 2-dimensional tuple as shape (H,W)&#39;</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">is_image</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_image</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">))</span> <span class="ow">or</span> \
+           <span class="p">(</span><span class="ow">not</span> <span class="n">is_image</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_image</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)),</span> \
+        <span class="s1">&#39;Input and output must both be images or folders&#39;</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+<div class="viewcode-block" id="process"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.process">[docs]</a><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a single input file to produce and save visualization</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        Image file</span>
+<span class="sd">    output_file : str</span>
+<span class="sd">        Output file, or folder where the output will be saved</span>
+<span class="sd">    model_wrapper : nn.Module</span>
+<span class="sd">        Model wrapper used for inference</span>
+<span class="sd">    image_shape : Image shape</span>
+<span class="sd">        Input image shape</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load image</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="c1"># Resize and to tensor</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">resize_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">to_tensor</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Send image to GPU if available</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()))</span>
+
+    <span class="c1"># Depth inference</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">depth</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Prepare RGB image</span>
+    <span class="n">rgb_i</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="c1"># Prepare inverse depth</span>
+    <span class="n">pred_inv_depth_i</span> <span class="o">=</span> <span class="n">viz_inv_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="c1"># Concatenate both vertically</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">rgb_i</span><span class="p">,</span> <span class="n">pred_inv_depth_i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_image</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
+        <span class="c1"># If not an image, assume it&#39;s a folder and append the input name</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
+    <span class="c1"># Save visualization</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">pcolor</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]),</span>
+        <span class="n">pcolor</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
+    <span class="n">imwrite</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="infer"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.infer">[docs]</a><span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Monocular depth estimation test script.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ckpt_file : str</span>
+<span class="sd">        Checkpoint path for a pretrained model</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        File or folder with input images</span>
+<span class="sd">    output_file : str</span>
+<span class="sd">        File or folder with output images</span>
+<span class="sd">    image_shape : tuple</span>
+<span class="sd">        Input image shape (H,W)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize horovod</span>
+    <span class="n">hvd_init</span><span class="p">()</span>
+
+    <span class="c1"># Parse arguments</span>
+    <span class="n">config</span><span class="p">,</span> <span class="n">state_dict</span> <span class="o">=</span> <span class="n">parse_test_file</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">)</span>
+
+    <span class="c1"># If no image shape is provided, use the checkpoint one</span>
+    <span class="k">if</span> <span class="n">image_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">image_shape</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">augmentation</span><span class="o">.</span><span class="n">image_shape</span>
+
+    <span class="c1"># Set debug if requested</span>
+    <span class="n">set_debug</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">debug</span><span class="p">)</span>
+
+    <span class="c1"># Initialize model wrapper from checkpoint arguments</span>
+    <span class="n">model_wrapper</span> <span class="o">=</span> <span class="n">ModelWrapper</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">load_datasets</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Restore monodepth_model state</span>
+    <span class="n">model_wrapper</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
+
+    <span class="c1"># Send model to GPU if available</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">model_wrapper</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+        <span class="c1"># If input file is a folder, search for image files</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;jpg&#39;</span><span class="p">]:</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;*.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext</span><span class="p">)))))</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">print0</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">{}</span><span class="s1"> files&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Otherwise, use it as is</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_file</span><span class="p">]</span>
+
+    <span class="c1"># Process each file</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="n">rank</span><span class="p">()::</span><span class="n">world_size</span><span class="p">()]:</span>
+        <span class="n">process</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">infer</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">image_shape</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Wrapper &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SfmModel" href="models.SfmModel.html" />
+    <link rel="prev" title="Checkpoint" href="models.Checkpoint.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="models.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="models.Utilities.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.Checkpoint.html">Checkpoint</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.SfmModel.html">SfmModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.SelfSupModel.html">SelfSupModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.SemiSupModel.html">SemiSupModel</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="models.html">Models</a> &raquo;</li>
+        
+      <li>Wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/models/models.Wrapper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.models.model_wrapper">
+<span id="wrapper"></span><h1>Wrapper</h1>
+<dl class="py class">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper">
+<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">ModelWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">resume</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_datasets</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Top-level torch.nn.Module wrapper around a SfmModel (pose+depth networks).
+Designed to use models with high-level Trainer classes (cf. trainers/).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration (cf. configs/default_config.py)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.configure_optimizers">
+<code class="sig-name descname">configure_optimizers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.configure_optimizers"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Configure depth and pose optimizers and the corresponding scheduler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.depth">
+<code class="sig-name descname">depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Runs the pose network and returns the output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.depth_net">
+<em class="property">property </em><code class="sig-name descname">depth_net</code></dt>
+<dd><p>Returns depth network.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.evaluate_depth">
+<code class="sig-name descname">evaluate_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.evaluate_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate batch to produce depth metrics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.forward"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Runs the model and returns the output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.logs">
+<em class="property">property </em><code class="sig-name descname">logs</code></dt>
+<dd><p>Returns various logs for tracking.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.pose">
+<code class="sig-name descname">pose</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.pose"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Runs the depth network and returns the output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.pose_net">
+<em class="property">property </em><code class="sig-name descname">pose_net</code></dt>
+<dd><p>Returns pose network.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.prepare_datasets">
+<code class="sig-name descname">prepare_datasets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.prepare_datasets"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare datasets for training, validation and test.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.prepare_model">
+<code class="sig-name descname">prepare_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resume</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.prepare_model"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare self.model (incl. loading previous state)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.print_metrics">
+<code class="sig-name descname">print_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.test_dataloader">
+<code class="sig-name descname">test_dataloader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.test_dataloader"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare test dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.test_epoch_end">
+<code class="sig-name descname">test_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_data_batch</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.test_epoch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Finishes a test epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.test_step">
+<code class="sig-name descname">test_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.test_step"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Processes a test batch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.train_dataloader">
+<code class="sig-name descname">train_dataloader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.train_dataloader"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare training dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.training_epoch_end">
+<code class="sig-name descname">training_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_batch</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.training_epoch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Finishes a training epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.training_step">
+<code class="sig-name descname">training_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.training_step"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Processes a training batch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.val_dataloader">
+<code class="sig-name descname">val_dataloader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.val_dataloader"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare validation dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.validation_epoch_end">
+<code class="sig-name descname">validation_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_data_batch</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.validation_epoch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Finishes a validation epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.validation_step">
+<code class="sig-name descname">validation_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.validation_step"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Processes a validation batch.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.get_datasampler">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">get_datasampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#get_datasampler"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Distributed data sampler</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.set_random_seed">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">set_random_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#set_random_seed"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.setup_dataloader">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_dataloader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datasets</span></em>, <em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_dataloader"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a dataloader class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets</strong> (<em>list of Dataset</em>) – List of datasets from which to create dataloaders</p></li>
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration (cf. configs/default_config.py)</p></li>
+<li><p><strong>mode</strong> (<em>str {'train'</em><em>, </em><em>'validation'</em><em>, </em><em>'test'}</em>) – Mode from which we want the dataloader</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>dataloaders</strong> – List of created dataloaders for each input dataset</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of Dataloader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.setup_dataset">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mode</span></em>, <em class="sig-param"><span class="n">requires_gt_depth</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_dataset"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a dataset class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Configuration (cf. configs/default_config.py)</p></li>
+<li><p><strong>mode</strong> (<em>str {'train'</em><em>, </em><em>'validation'</em><em>, </em><em>'test'}</em>) – Mode from which we want the dataset</p></li>
+<li><p><strong>requires_gt_depth</strong> (<em>bool</em>) – True if the model requires ground-truth depth maps at training time</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters for dataset creation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>dataset</strong> – Dataset class for that mode</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.setup_depth_net">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_depth_net</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">prepared</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_depth_net"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a depth network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Network configuration</p></li>
+<li><p><strong>prepared</strong> (<em>bool</em>) – True if the network has been prepared before</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters for the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>depth_net</strong> – Create depth network</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.setup_model">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">prepared</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_model"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration (cf. configs/default_config.py)</p></li>
+<li><p><strong>prepared</strong> (<em>bool</em>) – True if the model has been prepared before</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters for the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model</strong> – Created model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.setup_pose_net">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_pose_net</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">prepared</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_pose_net"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a pose network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Network configuration</p></li>
+<li><p><strong>prepared</strong> (<em>bool</em>) – True if the network has been prepared before</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters for the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pose_net</strong> – Created pose network</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.models.model_wrapper.worker_init_fn">
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">worker_init_fn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worker_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#worker_init_fn"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to initialize workers</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="models.SfmModel.html" class="btn btn-neutral float-right" title="SfmModel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.Checkpoint.html" class="btn btn-neutral float-left" title="Checkpoint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

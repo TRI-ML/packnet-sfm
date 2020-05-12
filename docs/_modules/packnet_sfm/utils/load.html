@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.utils.load &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.utils.load</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.utils.load</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.misc</span> <span class="kn">import</span> <span class="n">make_list</span><span class="p">,</span> <span class="n">same_shape</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">pcolor</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.horovod</span> <span class="kn">import</span> <span class="n">print0</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_str</span>
+
+
+<div class="viewcode-block" id="set_debug"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.set_debug">[docs]</a><span class="k">def</span> <span class="nf">set_debug</span><span class="p">(</span><span class="n">debug</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable or disable debug terminal logging</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    debug : bool</span>
+<span class="sd">        Debugging flag (True to enable)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Disable logging if requested</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;NCCL_DEBUG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;WANDB_SILENT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;false&#39;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="filter_args"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.filter_args">[docs]</a><span class="k">def</span> <span class="nf">filter_args</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters a dictionary so it only contains keys that are arguments of a function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : Function</span>
+<span class="sd">        Function for which we are filtering the dictionary</span>
+<span class="sd">    keys : dict</span>
+<span class="sd">        Dictionary with keys we are filtering</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filtered : dict</span>
+<span class="sd">        Dictionary containing only keys that are arguments of func</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filtered</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">{</span><span class="o">**</span><span class="n">keys</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sign</span><span class="p">:</span>
+            <span class="n">filtered</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">filtered</span></div>
+
+
+<div class="viewcode-block" id="filter_args_create"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.filter_args_create">[docs]</a><span class="k">def</span> <span class="nf">filter_args_create</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters a dictionary so it only contains keys that are arguments of a function</span>
+<span class="sd">    and creates a function with those arguments</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : Function</span>
+<span class="sd">        Function for which we are filtering the dictionary</span>
+<span class="sd">    keys : dict</span>
+<span class="sd">        Dictionary with keys we are filtering</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    func : Function</span>
+<span class="sd">        Function with filtered keys as arguments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">filter_args</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">keys</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="load_class"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.load_class">[docs]</a><span class="k">def</span> <span class="nf">load_class</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">concat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Look for a file in different locations and return its method with the same name</span>
+<span class="sd">    Optionally, you can use concat to search in path.filename instead</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        Name of the file we are searching for</span>
+<span class="sd">    paths : str or list of str</span>
+<span class="sd">        Folders in which the file will be searched</span>
+<span class="sd">    concat : bool</span>
+<span class="sd">        Flag to concatenate filename to each path during the search</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    method : Function</span>
+<span class="sd">        Loaded method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># for each path in paths</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">make_list</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+        <span class="c1"># Create full path</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="k">if</span> <span class="n">concat</span> <span class="k">else</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="c1"># Return method with same name as the file</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">full_path</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown class </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="load_class_args_create"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.load_class_args_create">[docs]</a><span class="k">def</span> <span class="nf">load_class_args_create</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{},</span> <span class="n">concat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loads a class (filename) and returns an instance with filtered arguments (args)&quot;&quot;&quot;</span>
+    <span class="n">class_type</span> <span class="o">=</span> <span class="n">load_class</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">concat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filter_args_create</span><span class="p">(</span><span class="n">class_type</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_network"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.load_network">[docs]</a><span class="k">def</span> <span class="nf">load_network</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a pretrained network</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network : nn.Module</span>
+<span class="sd">        Network that will receive the pretrained weights</span>
+<span class="sd">    path : str</span>
+<span class="sd">        File containing a &#39;state_dict&#39; key with pretrained network weights</span>
+<span class="sd">    prefixes : str or list of str</span>
+<span class="sd">        Layer name prefixes to consider when loading the network</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    network : nn.Module</span>
+<span class="sd">        Updated network with pretrained weights</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefixes</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">prefixes</span><span class="p">)</span>
+    <span class="c1"># If path is a string</span>
+    <span class="k">if</span> <span class="n">is_str</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">saved_state_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)[</span><span class="s1">&#39;state_dict&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.pth.tar&#39;</span><span class="p">):</span>
+            <span class="n">saved_state_dict</span> <span class="o">=</span> <span class="n">backwards_state_dict</span><span class="p">(</span><span class="n">saved_state_dict</span><span class="p">)</span>
+    <span class="c1"># If state dict is already provided</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">saved_state_dict</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="c1"># Get network state dict</span>
+    <span class="n">network_state_dict</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+    <span class="n">updated_state_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">n_total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">network_state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">saved_state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span>
+            <span class="k">if</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">network_state_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> \
+                        <span class="n">same_shape</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">network_state_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+                    <span class="n">updated_state_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">network</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">updated_state_dict</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">base_color</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="s1">&#39;dark&#39;</span><span class="p">]</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">n_total</span> <span class="k">else</span> <span class="s1">&#39;yellow&#39;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;red&#39;</span>
+    <span class="n">print0</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;###### Pretrained </span><span class="si">{}</span><span class="s1"> loaded:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">base_color</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_total</span><span class="p">),</span> <span class="n">color</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;tensors&#39;</span><span class="p">,</span> <span class="n">base_color</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">network</span></div>
+
+
+<div class="viewcode-block" id="backwards_state_dict"><a class="viewcode-back" href="../../../utils/utils.load.html#packnet_sfm.utils.load.backwards_state_dict">[docs]</a><span class="k">def</span> <span class="nf">backwards_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify the state dict of older models for backwards compatibility</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state_dict : dict</span>
+<span class="sd">        Model state dict with pretrained weights</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    state_dict : dict</span>
+<span class="sd">        Updated model state dict with modified layer names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># List of layer names to change</span>
+    <span class="n">changes</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;model.model&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;pose_network&#39;</span><span class="p">,</span> <span class="s1">&#39;pose_net&#39;</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">&#39;disp_network&#39;</span><span class="p">,</span> <span class="s1">&#39;depth_net&#39;</span><span class="p">))</span>
+    <span class="c1"># Iterate over all keys and values</span>
+    <span class="n">updated_state_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Ad hoc changes due to version changes</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;disp_network&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;conv3.0.weight&#39;</span><span class="p">,</span> <span class="s1">&#39;conv3.weight&#39;</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;conv3.0.bias&#39;</span><span class="p">,</span> <span class="s1">&#39;conv3.bias&#39;</span><span class="p">)</span>
+        <span class="c1"># Change layer names</span>
+        <span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                              <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">updated_state_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="c1"># Return updated state dict</span>
+    <span class="k">return</span> <span class="n">updated_state_dict</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

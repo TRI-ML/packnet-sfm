@@ -1,0 +1,19 @@
+model:
+    name: 'SelfSupModel'
+    depth_net:
+        name: 'PackNet01'
+        version: '1A'
+    pose_net:
+        name: 'PoseNet'
+        version: ''
+datasets:
+    augmentation:
+        image_shape: (384, 640)
+    test:
+        dataset: ['Image']
+        path: ['images']
+        split: ['{:010d}']
+save:
+    folder: '/data/save'
+    viz: True
+    npy: True

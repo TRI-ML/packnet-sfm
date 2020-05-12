@@ -1,0 +1,10 @@
+.wy-side-nav-search, .wy-nav-top {
+    background: #ffffff;
+}
+.wy-nav-side {
+    background: #222222;
+}
+.wy-menu > .caption > span.caption-text {
+  color: #bb0000;
+}
+

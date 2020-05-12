@@ -1,0 +1,8 @@
+kitti_dataset_utils
+===================
+
+.. automodule:: packnet_sfm.datasets.kitti_dataset_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

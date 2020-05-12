@@ -1,0 +1,118 @@
+default_config
+==============
+
+.. code:: yaml
+
+    name: ''       # Run name
+    debug: False   # Debugging flag
+    arch:
+        seed: 42                # Random seed for Pytorch/Numpy initialization
+        min_epochs: 1           # Minimum number of epochs
+        max_epochs: 50          # Maximum number of epochs
+    checkpoint:
+        filepath: ''            # Checkpoint filepath to save data
+        save_top_k: 5           # Number of best models to save
+        monitor: 'loss'         # Metric to monitor for logging
+        monitor_index: 0        # Dataset index for the metric to monitor
+        mode: 'auto'            # Automatically determine direction of improvement (increase or decrease)
+        s3_path: ''             # s3 path for AWS model syncing
+        s3_frequency: 1         # How often to s3 sync
+    save:
+        folder: ''              # Folder where data will be saved
+        viz: True               # Flag for saving inverse depth map visualization
+        npz: True               # Flag for saving numpy depth maps
+    wandb:
+        dry_run: True                                 # Wandb dry-run (not logging)
+        name: ''                                      # Wandb run name
+        project: os.environ.get("WANDB_PROJECT", "")  # Wandb project
+        entity: os.environ.get("WANDB_ENTITY", "")    # Wandb entity
+        tags: []                                      # Wandb tags
+        dir: ''                                       # Wandb save folder
+    model:
+        name: ''                # Training model
+        checkpoint_path: ''     # Checkpoint path for model saving
+        optimizer:
+            name: 'Adam'             # Optimizer name
+            depth:
+                lr: 0.0002           # Depth learning rate
+                weight_decay: 0.0    # Dept weight decay
+            pose:
+                lr: 0.0002           # Pose learning rate
+                weight_decay: 0.0    # Pose weight decay
+        scheduler:
+            name: 'StepLR'      # Scheduler name
+            step_size: 10       # Scheduler step size
+            gamma: 0.5          # Scheduler gamma value
+            T_max: 20           # Scheduler maximum number of iterations
+        params:
+            crop: ''            # Which crop should be used during evaluation
+            min_depth: 0.0      # Minimum depth value to evaluate
+            max_depth: 80.0     # Maximum depth value to evaluate
+        loss:
+            num_scales: 4                   # Number of inverse depth scales to use
+            progressive_scaling: 0.0        # Training percentage to decay number of scales
+            flip_lr_prob: 0.5               # Probablity of horizontal flippping
+            rotation_mode: 'euler'          # Rotation mode
+            upsample_depth_maps: True       # Resize depth maps to highest resolution
+            ssim_loss_weight: 0.85          # SSIM loss weight
+            occ_reg_weight: 0.1             # Occlusion regularizer loss weight
+            smooth_loss_weight: 0.001       # Smoothness loss weight
+            C1: 1e-4                        # SSIM parameter
+            C2: 9e-4                        # SSIM parameter
+            photometric_reduce_op: 'min'    # Method for photometric loss reducing
+            disp_norm: True                 # Inverse depth normalization
+            clip_loss: 0.0                  # Clip loss threshold variance
+            padding_mode: 'zeros'           # Photometric loss padding mode
+            automask_loss: True             # Automasking to remove static pixels
+            supervised_method: 'sparse-l1'  # Method for depth supervision
+            supervised_num_scales: 4        # Number of scales for supervised learning
+            supervised_loss_weight: 0.9     # Supervised loss weight
+        depth_net:
+            name: ''               # Depth network name
+            checkpoint_path: ''    # Depth checkpoint filepath
+            version: ''            # Depth network version
+            dropout: 0.0           # Depth network dropout
+        pose_net:
+            name: ''               # Pose network name
+            checkpoint_path: ''    # Pose checkpoint filepath
+            version: ''            # Pose network version
+            dropout: 0.0           # Pose network dropout
+    datasets:
+        augmentation:
+            image_shape: (192, 640)              # Image shape
+            jittering: (0.2, 0.2, 0.2, 0.05)     # Color jittering values
+        train:
+            batch_size: 8              # Training batch size
+            num_workers: 16            # Training number of workers
+            back_context: 1            # Training backward context
+            forward_context: 1         # Training forward context
+            dataset: []                # Training dataset
+            path: []                   # Training data path
+            split: []                  # Training split
+            depth_type: ['']           # Training depth type
+            cameras: []                # Training cameras
+            repeat: [1]                # Number of times training dataset is repeated per epoch
+            num_logs: 5                # Number of training images to log
+        validation:
+            batch_size: 1              # Validation batch size
+            num_workers: 8             # Validation number of workers
+            back_context: 0            # Validation backward context
+            forward_context: 0         # Validation forward contxt
+            dataset: []                # Validation dataset
+            path: []                   # Validation data path
+            split: []                  # Validation split
+            depth_type: ['']           # Validation depth type
+            cameras: []                # Validation cameras
+            num_logs: 5                # Number of validation images to log
+        test:
+            batch_size: 1              # Test batch size
+            num_workers: 8             # Test number of workers
+            back_context: 0            # Test backward context
+            forward_context: 0         # Test forward context
+            dataset: []                # Test dataset
+            path: []                   # Test data path
+            split: []                  # Test split
+            depth_type: ['']           # Test depth type
+            cameras: []                # Test cameras
+            num_logs: 5                # Number of test images to log
+

@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Augmentations &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transforms" href="datasets.transforms.html" />
+    <link rel="prev" title="Datasets" href="datasets.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="datasets.html">Datasets</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Augmentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="KITTIDataset.html">KITTIDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.DGPDataset.html">DGPDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.ImageDataset.html">ImageDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="datasets.html">Datasets</a> &raquo;</li>
+        
+      <li>Augmentations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/datasets/datasets.augmentations.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.datasets.augmentations">
+<span id="augmentations"></span><h1>Augmentations</h1>
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.colorjitter_sample">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">colorjitter_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">prob</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#colorjitter_sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Jitters input images as data augmentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>dict</em>) – Input sample</p></li>
+<li><p><strong>parameters</strong> (<em>tuple</em><em> (</em><em>brightness</em><em>, </em><em>contrast</em><em>, </em><em>saturation</em><em>, </em><em>hue</em><em>)</em>) – Color jittering parameters</p></li>
+<li><p><strong>prob</strong> (<em>float</em>) – Jittering probability</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sample</strong> – Jittered sample</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.duplicate_sample">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">duplicate_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#duplicate_sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Duplicates sample images and contexts to preserve their unaugmented versions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sample</strong> (<em>dict</em>) – Input sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sample</strong> – Sample including [+”_original”] keys with copies of images and contexts.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.resize_depth">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">resize_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth</span></em>, <em class="sig-param"><span class="n">shape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#resize_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Resizes depth map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>depth</strong> (<em>np.array</em><em> [</em><em>h</em><em>,</em><em>w</em><em>]</em>) – Depth map</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> (</em><em>H</em><em>,</em><em>W</em><em>)</em>) – Output shape</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>depth</strong> – Resized depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.resize_image">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">resize_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">shape</span></em>, <em class="sig-param"><span class="n">interpolation</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#resize_image"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Resizes input image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>Image.PIL</em>) – Input image</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> [</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Output shape</p></li>
+<li><p><strong>interpolation</strong> (<em>int</em>) – Interpolation mode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>image</strong> – Resized image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Image.PIL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.resize_sample">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">resize_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">shape</span></em>, <em class="sig-param"><span class="n">image_interpolation</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#resize_sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Resizes a sample, including image, intrinsics and depth maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>dict</em>) – Dictionary with sample values</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> (</em><em>H</em><em>,</em><em>W</em><em>)</em>) – Output shape</p></li>
+<li><p><strong>image_interpolation</strong> (<em>int</em>) – Interpolation mode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sample</strong> – Resized sample</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.resize_sample_image_and_intrinsics">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">resize_sample_image_and_intrinsics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">shape</span></em>, <em class="sig-param"><span class="n">image_interpolation</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#resize_sample_image_and_intrinsics"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Resizes the image and intrinsics of a sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>dict</em>) – Dictionary with sample values</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> (</em><em>H</em><em>,</em><em>W</em><em>)</em>) – Output shape</p></li>
+<li><p><strong>image_interpolation</strong> (<em>int</em>) – Interpolation mode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sample</strong> – Resized sample</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.to_tensor">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">to_tensor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">tensor_type</span><span class="o">=</span><span class="default_value">'torch.FloatTensor'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#to_tensor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Casts an image to a torch.Tensor</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.datasets.augmentations.to_tensor_sample">
+<code class="sig-prename descclassname">packnet_sfm.datasets.augmentations.</code><code class="sig-name descname">to_tensor_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample</span></em>, <em class="sig-param"><span class="n">tensor_type</span><span class="o">=</span><span class="default_value">'torch.FloatTensor'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/augmentations.html#to_tensor_sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Casts the keys of sample to tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>dict</em>) – Input sample</p></li>
+<li><p><strong>tensor_type</strong> (<em>str</em>) – Type of tensor we are casting to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sample</strong> – Sample with keys cast as tensors</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="datasets.transforms.html" class="btn btn-neutral float-right" title="Transforms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.html" class="btn btn-neutral float-left" title="Datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

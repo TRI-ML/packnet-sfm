@@ -1,0 +1,7 @@
+Losses
+======
+
+.. toctree::
+   losses.loss_base
+   losses.multiview_photometric_loss
+   losses.supervised_loss

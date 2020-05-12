@@ -1,0 +1,7 @@
+Inference
+=========
+
+.. automodule:: scripts.infer
+   :members:
+   :undoc-members:
+   :show-inheritance:

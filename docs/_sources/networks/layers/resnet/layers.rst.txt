@@ -1,0 +1,7 @@
+layers
+======
+
+.. automodule:: packnet_sfm.networks.layers.resnet.layers
+   :members:
+   :undoc-members:
+   :show-inheritance:
