@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Depth &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Types" href="utils.types.html" />
+    <link rel="prev" title="Image" href="utils.image.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="utils.html">Utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="utils.config.html">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.horovod.html">Horovod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.reduce.html">Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.save.html">Saving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.load.html">Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.image.html">Image</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Depth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.misc.html">Misc.</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="utils.html">Utils</a> &raquo;</li>
+        
+      <li>Depth</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/utils/utils.depth.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.utils.depth">
+<span id="depth"></span><h1>Depth</h1>
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.calc_smoothness">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">calc_smoothness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depths</span></em>, <em class="sig-param"><span class="n">images</span></em>, <em class="sig-param"><span class="n">num_scales</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#calc_smoothness"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculate smoothness values for inverse depths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depths</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth maps</p></li>
+<li><p><strong>images</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth maps</p></li>
+<li><p><strong>num_scales</strong> (<em>int</em>) – Number of scales considered</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>smoothness_x</strong> (<em>list of torch.Tensor [B,1,H,W]</em>) – Smoothness values in direction x</p></li>
+<li><p><strong>smoothness_y</strong> (<em>list of torch.Tensor [B,1,H,W]</em>) – Smoothness values in direction y</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.compute_depth_metrics">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">compute_depth_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">gt</span></em>, <em class="sig-param"><span class="n">pred</span></em>, <em class="sig-param"><span class="n">use_gt_scale</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#compute_depth_metrics"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Compute depth metrics from predicted and ground-truth depth maps</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Metrics parameters</p></li>
+<li><p><strong>gt</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Ground-truth depth map</p></li>
+<li><p><strong>pred</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Predicted depth map</p></li>
+<li><p><strong>use_gt_scale</strong> (<em>bool</em>) – True if ground-truth median-scaling is to be used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>metrics</strong> – Depth metrics (abs_rel, sq_rel, rmse, rmse_log, a1, a2, a3)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [7]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.depth2inv">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">depth2inv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#depth2inv"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Invert a depth map to produce an inverse depth map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>depth</strong> (<em>torch.Tensor</em><em> or </em><em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Depth map</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>inv_depth</strong> – Inverse depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor or list of torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.fuse_inv_depth">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">fuse_inv_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depth</span></em>, <em class="sig-param"><span class="n">inv_depth_hat</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'mean'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#fuse_inv_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Fuse inverse depth and flipped inverse depth maps</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depth</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map</p></li>
+<li><p><strong>inv_depth_hat</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Flipped inverse depth map produced from a flipped image</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method that will be used to fuse the inverse depth maps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fused_inv_depth</strong> – Fused inverse depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.inv2depth">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">inv2depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depth</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#inv2depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Invert an inverse depth map to produce a depth map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inv_depth</strong> (<em>torch.Tensor</em><em> or </em><em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>depth</strong> – Depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor or list of torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.inv_depths_normalize">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">inv_depths_normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depths</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#inv_depths_normalize"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Inverse depth normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inv_depths</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth maps</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>norm_inv_depths</strong> – Normalized inverse depth maps</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.post_process_inv_depth">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">post_process_inv_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depth</span></em>, <em class="sig-param"><span class="n">inv_depth_flipped</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'mean'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#post_process_inv_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Post-process an inverse and flipped inverse depth map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depth</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map</p></li>
+<li><p><strong>inv_depth_flipped</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map produced from a flipped image</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method that will be used to fuse the inverse depth maps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>inv_depth_pp</strong> – Post-processed inverse depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,1,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.depth.viz_inv_depth">
+<code class="sig-prename descclassname">packnet_sfm.utils.depth.</code><code class="sig-name descname">viz_inv_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depth</span></em>, <em class="sig-param"><span class="n">normalizer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">percentile</span><span class="o">=</span><span class="default_value">95</span></em>, <em class="sig-param"><span class="n">colormap</span><span class="o">=</span><span class="default_value">'plasma'</span></em>, <em class="sig-param"><span class="n">filter_zeros</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/depth.html#viz_inv_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Converts an inverse depth map to a colormap for visualization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depth</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map to be converted</p></li>
+<li><p><strong>normalizer</strong> (<em>float</em>) – Value for inverse depth map normalization</p></li>
+<li><p><strong>percentile</strong> (<em>float</em>) – Percentile value for automatic normalization</p></li>
+<li><p><strong>colormap</strong> (<em>str</em>) – Colormap to be used</p></li>
+<li><p><strong>filter_zeros</strong> (<em>bool</em>) – If True, do not consider zero values during normalization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>colormap</strong> – Colormap generated from the inverse depth map</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [H,W,3]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.types.html" class="btn btn-neutral float-right" title="Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.image.html" class="btn btn-neutral float-left" title="Image" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+SemiSupModel
+============
+
+.. automodule:: packnet_sfm.models.SemiSupModel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

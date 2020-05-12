@@ -1,0 +1,8 @@
+Scripts
+=======
+
+.. toctree::
+   scripts.train
+   scripts.eval
+   scripts.infer
+

@@ -1,0 +1,7 @@
+Loggers
+=======
+
+.. toctree::
+   loggers.WandbLogger
+
+

@@ -1,0 +1,664 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PackNet-SfM: 3D Packing for Self-Supervised Monocular Depth Estimation &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>PackNet-SfM: 3D Packing for Self-Supervised Monocular Depth Estimation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/README.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="packnet-sfm-3d-packing-for-self-supervised-monocular-depth-estimation">
+<h1>PackNet-SfM: 3D Packing for Self-Supervised Monocular Depth Estimation</h1>
+<p><a class="reference external" href="#install">Install</a> // <a class="reference external" href="#datasets">Datasets</a> //
+<a class="reference external" href="#training">Training</a> // <a class="reference external" href="#evaluation">Evaluation</a> //
+<a class="reference external" href="#models">Models</a> // <a class="reference external" href="#license">License</a> //
+<a class="reference external" href="#references">References</a></p>
+<p>Official <a class="reference external" href="https://pytorch.org/">PyTorch</a> implementation of
+<em>self-supervised</em> monocular depth estimation methods invented by the ML
+Team at <a class="reference external" href="https://www.tri.global/">Toyota Research Institute (TRI)</a>,
+in particular for <em>PackNet</em>: <a class="reference external" href="https://arxiv.org/abs/1905.02693">3D Packing for Self-Supervised Monocular
+Depth Estimation (CVPR 2020
+oral)</a>, <em>Vitor Guizilini, Rares
+Ambrus, Sudeep Pillai, Allan Raventos and Adrien Gaidon</em>. Although
+self-supervised (i.e. trained only on monocular videos), PackNet
+outperforms other self, semi, and fully supervised methods. Furthermore,
+it gets better with input resolution and number of parameters,
+generalizes better, and can run in real-time (with TensorRT). See
+<a class="reference external" href="#references">References</a> for more info on our models.</p>
+</div>
+<div class="section" id="install">
+<h1>Install</h1>
+<p>You need a machine with recent Nvidia drivers and a GPU with at least
+6GB of memory (more for the bigger models at higher resolution). We
+recommend using docker (see
+<a class="reference external" href="https://github.com/NVIDIA/nvidia-docker">nvidia-docker2</a>
+instructions) to have a reproducible environment. To setup your
+environment, type in a terminal (only tested in Ubuntu 18.04):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/TRI-ML/packnet-sfm.git
+<span class="nb">cd</span> packnet-sfm
+<span class="c1"># if you want to use docker (recommended)</span>
+make docker-build
+</pre></div>
+</div>
+<p>We will list below all commands as if run directly inside our container.
+To run any of the commands in a container, you can either start the
+container in interactive mode with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docker-start-interactive</span></code> to
+land in a shell where you can type those commands, or you can do it in
+one step:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># single GPU</span>
+make docker-run <span class="nv">COMMAND</span><span class="o">=</span><span class="s2">&quot;some-command&quot;</span>
+<span class="c1"># multi-GPU</span>
+make docker-run-mpi <span class="nv">COMMAND</span><span class="o">=</span><span class="s2">&quot;some-command&quot;</span>
+</pre></div>
+</div>
+<p>For instance, to verify that the environment is setup correctly, you can
+run a simple overfitting test:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># download a tiny subset of KITTI</span>
+curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar <span class="p">|</span> tar xv -C /data/datasets/
+<span class="c1"># in docker</span>
+make docker-run <span class="nv">COMMAND</span><span class="o">=</span><span class="s2">&quot;python3 scripts/train.py configs/overfit_kitti.yaml&quot;</span>
+</pre></div>
+</div>
+<p>If you want to use features related to <a class="reference external" href="https://aws.amazon.com/">AWS</a>
+(for dataset access) and <a class="reference external" href="https://www.wandb.com/">Weights &amp; Biases
+(WANDB)</a> (for experiment
+management/visualization), then you should create associated accounts
+and configure your shell with the following environment variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">&quot;something&quot;</span>
+<span class="nb">export</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">&quot;something&quot;</span>
+<span class="nb">export</span> <span class="nv">AWS_DEFAULT_REGION</span><span class="o">=</span><span class="s2">&quot;something&quot;</span>
+<span class="nb">export</span> <span class="nv">WANDB_ENTITY</span><span class="o">=</span><span class="s2">&quot;something&quot;</span>
+<span class="nb">export</span> <span class="nv">WANDB_API_KEY</span><span class="o">=</span><span class="s2">&quot;something&quot;</span>
+</pre></div>
+</div>
+<p>To enable WANDB logging and AWS checkpoint syncing, you can then set the
+corresponding configuration parameters in <code class="docutils literal notranslate"><span class="pre">configs/&lt;your</span> <span class="pre">config&gt;.yaml</span></code>
+(cf. <a class="reference external" href="https://github.com/TRI-ML/packnet-sfm_internal/blob/master/configs/default_config.py">configs/default_config.py</a> for
+defaults and docs):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">wandb</span><span class="p">:</span>
+    <span class="nt">dry_run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>                                 <span class="c1"># Wandb dry-run (not logging)</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="s">&#39;&#39;</span>                                      <span class="c1"># Wandb run name</span>
+    <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os.environ.get(&quot;WANDB_PROJECT&quot;, &quot;&quot;)</span>  <span class="c1"># Wandb project</span>
+    <span class="nt">entity</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">os.environ.get(&quot;WANDB_ENTITY&quot;, &quot;&quot;)</span>    <span class="c1"># Wandb entity</span>
+    <span class="nt">tags</span><span class="p">:</span> <span class="p p-Indicator">[]</span>                                      <span class="c1"># Wandb tags</span>
+    <span class="nt">dir</span><span class="p">:</span> <span class="s">&#39;&#39;</span>                                       <span class="c1"># Wandb save folder</span>
+<span class="nt">checkpoint</span><span class="p">:</span>
+    <span class="nt">s3_path</span><span class="p">:</span> <span class="s">&#39;&#39;</span>       <span class="c1"># s3 path for AWS model syncing</span>
+    <span class="nt">s3_frequency</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>   <span class="c1"># How often to s3 sync</span>
+</pre></div>
+</div>
+<p>If you encounter out of memory issues, try a lower <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>
+parameter in the config file.</p>
+<p>NB: if you would rather not use docker, you could create a
+<a class="reference external" href="https://docs.conda.io/en/latest/">conda</a> environment via following
+the steps in the Dockerfile and mixing <code class="docutils literal notranslate"><span class="pre">conda</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code> at your own
+risks…</p>
+</div>
+<div class="section" id="datasets">
+<h1>Datasets</h1>
+<p>Datasets are assumed to be downloaded in
+<code class="docutils literal notranslate"><span class="pre">/data/datasets/&lt;dataset-name&gt;</span></code> (can be a symbolic link).</p>
+<div class="section" id="dense-depth-for-autonomous-driving-ddad">
+<h2>Dense Depth for Autonomous Driving (DDAD)</h2>
+<p>Together with PackNet, we introduce <strong>Dense Depth for Automated
+Driving</strong> (<a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD</a>): a new dataset
+that leverages diverse logs from TRI’s fleet of well-calibrated
+self-driving cars equipped with cameras and high-accuracy long-range
+LiDARs. Compared to existing benchmarks, DDAD enables much more accurate
+360 degree depth evaluation at range, see the official <a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD
+repository</a> for more info and
+instructions. You can also download DDAD directly via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl -s https://tri-ml-public.s3.amazonaws.com/github/DDAD/datasets/DDAD.tar <span class="p">|</span> tar -xv -C /data/datasets/
+</pre></div>
+</div>
+</div>
+<div class="section" id="kitti">
+<h2>KITTI</h2>
+<p>The KITTI (raw) dataset used in our experiments can be downloaded from
+the <a class="reference external" href="http://www.cvlibs.net/datasets/kitti/raw_data.php">KITTI
+website</a>. For
+convenience, we provide the standard splits used for training and
+evaluation:
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_zhou_files.txt">eigen_zhou</a>,
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_train_files.txt">eigen_train</a>,
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_val_files.txt">eigen_val</a>
+and
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_test_files.txt">eigen_test</a>,
+as well as pre-computed ground-truth depth maps:
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw_velodyne.tar.gz">original</a>
+and
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw_groundtruth.tar.gz">improved</a>.
+The full KITTI_raw dataset, as used in our experiments, can be directly
+downloaded
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_raw.tar.gz">here</a>
+or with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># KITTI_raw</span>
+curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_raw.tar <span class="p">|</span> tar -xv -C /data/datasets/
+</pre></div>
+</div>
+</div>
+<div class="section" id="tiny-ddad-kitti">
+<h2>Tiny DDAD/KITTI</h2>
+<p>For simple tests, we also provide a “tiny” version of
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/DDAD_tiny.tar">DDAD</a>
+and
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar">KITTI</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># DDAD_tiny</span>
+curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/DDAD_tiny.tar <span class="p">|</span> tar -xv -C /data/datasets/
+<span class="c1"># KITTI_tiny</span>
+curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar <span class="p">|</span> tar -xv -C /data/datasets/
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="training">
+<h1>Training</h1>
+<p>PackNet can be trained from scratch in a fully self-supervised way (from
+video only, cf. <a class="reference external" href="#cvpr-packnet">CVPR’20</a>), in a semi-supervised way
+(with sparse lidar using our reprojected 3D loss, cf.
+<a class="reference external" href="#corl-ssl">CoRL’19</a>), and it can also use a fixed pre-trained
+semantic segmentation network to guide the representation learning
+further (cf. <a class="reference external" href="#iclr-semguided">ICLR’20</a>).</p>
+<p>Any training, including fine-tuning, can be done by passing either a
+<code class="docutils literal notranslate"><span class="pre">.yaml</span></code> config file or a <code class="docutils literal notranslate"><span class="pre">.ckpt</span></code> model checkpoint to
+<a class="reference external" href="https://github.com/TRI-ML/packnet-sfm_internal/blob/master/scripts/train.py">scripts/train.py</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 scripts/train.py &lt;config.yaml or checkpoint.ckpt&gt;
+</pre></div>
+</div>
+<p>If you pass a config file, training will start from scratch using the
+parameters in that config file. Example config files are in
+<a class="reference external" href="https://github.com/TRI-ML/packnet-sfm_internal/blob/master/configs">configs</a>. If you pass instead a <code class="docutils literal notranslate"><span class="pre">.ckpt</span></code> file, training
+will continue from the current checkpoint state.</p>
+<p>Note that it is also possible to define checkpoints within the config
+file itself. These can be done either individually for the depth and/or
+pose networks or by defining a checkpoint to the model itself, which
+includes all sub-networks (setting the model checkpoint will overwrite
+depth and pose checkpoints). In this case, a new training session will
+start and the networks will be initialized with the model state in the
+<code class="docutils literal notranslate"><span class="pre">.ckpt</span></code> file(s). Below we provide the locations in the config file
+where these checkpoints are defined:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">checkpoint</span><span class="p">:</span>
+    <span class="c1"># Folder where .ckpt files will be saved during training</span>
+    <span class="nt">filepath</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/where/checkpoints/will/be/saved</span>
+<span class="nt">model</span><span class="p">:</span>
+    <span class="c1"># Checkpoint for the model (depth + pose)</span>
+    <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/model.ckpt</span>
+    <span class="nt">depth_net</span><span class="p">:</span>
+        <span class="c1"># Checkpoint for the depth network</span>
+        <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/depth_net.ckpt</span>
+    <span class="nt">pose_net</span><span class="p">:</span>
+        <span class="c1"># Checkpoint for the pose network</span>
+        <span class="nt">checkpoint_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/pose_net.ckpt</span>
+</pre></div>
+</div>
+<p>Every aspect of the training configuration can be controlled by
+modifying the yaml config file. This include the model configuration
+(self-supervised, semi-supervised, loss parameters, etc), depth and pose
+networks configuration (choice of architecture and different
+parameters), optimizers and schedulers (learning rates, weight decay,
+etc), datasets (name, splits, depth types, etc) and much more. For a
+comprehensive list please refer to
+<a class="reference external" href="https://github.com/TRI-ML/packnet-sfm_internal/blob/master/configs/default_config.py">configs/default_config.py</a>.</p>
+</div>
+<div class="section" id="evaluation">
+<h1>Evaluation</h1>
+<p>Similar to the training case, to evaluate a trained model (cf. above or
+our <a class="reference external" href="#models">pre-trained models</a>) you need to provide a <code class="docutils literal notranslate"><span class="pre">.ckpt</span></code>
+checkpoint, followed optionally by a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> config file that
+overrides the configuration stored in the checkpoint.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 scripts/eval.py --checkpoint &lt;checkpoint.ckpt&gt; <span class="o">[</span>--config &lt;config.yaml&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p>You can also directly run inference on a single image or folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 scripts/infer.py --checkpoint &lt;checkpoint.ckpt&gt; --input &lt;image or folder&gt; --output &lt;image or folder&gt; <span class="o">[</span>--image_shape &lt;input shape <span class="o">(</span>h,w<span class="o">)</span>&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="models">
+<h1>Models</h1>
+<div class="section" id="ddad">
+<h2>DDAD</h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 74%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Abs.Rel.</p></th>
+<th class="head"><p>Sqr.Rel</p></th>
+<th class="head"><p>RMSE</p></th>
+<th class="head"><p>RMSElog</p></th>
+<th class="head"><p>d &lt; 1.25</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>ResNet18, Self-Supervised, 384x640, ImageNet → DDAD (D)</em></p></td>
+<td><p><em>0.213</em></p></td>
+<td><p><em>4.975</em></p></td>
+<td><p><em>18.051</em></p></td>
+<td><p><em>0.340</em></p></td>
+<td><p><em>0.761</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>PackNet, Self-Supervised, 384x640, DDAD (D)</em></p></td>
+<td><p><em>0.162</em></p></td>
+<td><p><em>3.917</em></p></td>
+<td><p><em>13.452</em></p></td>
+<td><p><em>0.269</em></p></td>
+<td><p><em>0.823</em></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/ResNet18_MR_selfsup_D.ckpt">ResNet18, Self-Supervised, 384x640, ImageNet → DDAD (D)</a>*</p></td>
+<td><p>0.227</p></td>
+<td><p>11.293</p></td>
+<td><p>17.368</p></td>
+<td><p>0.303</p></td>
+<td><p>0.758</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_D.ckpt">PackNet, Self-Supervised, 384x640, DDAD (D)</a>*</p></td>
+<td><p>0.173</p></td>
+<td><p>7.164</p></td>
+<td><p>14.363</p></td>
+<td><p>0.249</p></td>
+<td><p>0.835</p></td>
+</tr>
+</tbody>
+</table>
+<p>*: Note that this repository’s results differ slightly from the ones
+reported in our <a class="reference external" href="https://arxiv.org/abs/1905.02693">CVPR’20 paper</a>
+(first two rows), although conclusions are the same. Since CVPR’20, we
+have officially released an updated <a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD
+dataset</a> to account for privacy
+constraints and improve scene distribution. Please use the latest
+numbers when comparing to the official DDAD release.</p>
+</div>
+<div class="section" id="id1">
+<h2>KITTI</h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 6%" />
+<col style="width: 5%" />
+<col style="width: 4%" />
+<col style="width: 5%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Abs.Rel.</p></th>
+<th class="head"><p>Sqr.Rel</p></th>
+<th class="head"><p>RMSE</p></th>
+<th class="head"><p>RMSElog</p></th>
+<th class="head"><p>d &lt; 1.25</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/ResNet18_MR_selfsup_K.ckpt">ResNet18, Self-Supervised, 192x640, ImageNet → KITTI (K)</a></p></td>
+<td><p>0.116</p></td>
+<td><p>0.811</p></td>
+<td><p>4.902</p></td>
+<td><p>0.198</p></td>
+<td><p>0.865</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_K.ckpt">PackNet, Self-Supervised, 192x640, KITTI (K)</a></p></td>
+<td><p>0.111</p></td>
+<td><p>0.800</p></td>
+<td><p>4.576</p></td>
+<td><p>0.189</p></td>
+<td><p>0.880</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_velsup_CStoK.ckpt">PackNet, Self-Supervised Scale-Aware, 192x640, CS → K</a></p></td>
+<td><p>0.108</p></td>
+<td><p>0.758</p></td>
+<td><p>4.506</p></td>
+<td><p>0.185</p></td>
+<td><p>0.887</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_HR_velsup_CStoK.ckpt">PackNet, Self-Supervised Scale-Aware, 384x1280, CS → K</a></p></td>
+<td><p>0.106</p></td>
+<td><p>0.838</p></td>
+<td><p>4.545</p></td>
+<td><p>0.186</p></td>
+<td><p>0.895</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_semisup_CStoK.ckpt">PackNet, Semi-Supervised (densified GT), 192x640, CS → K</a></p></td>
+<td><p>0.072</p></td>
+<td><p>0.335</p></td>
+<td><p>3.220</p></td>
+<td><p>0.115</p></td>
+<td><p>0.934</p></td>
+</tr>
+</tbody>
+</table>
+<p>All experiments followed the <a class="reference external" href="https://arxiv.org/abs/1406.2283">Eigen et
+al.</a> protocol for
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_zhou_files.txt">training</a>
+and
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_test_files.txt">evaluation</a>,
+with <a class="reference external" href="https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/">Zhou et
+al</a>’s
+preprocessing to remove static training frames. The PackNet model
+pre-trained on Cityscapes used for fine-tuning on KITTI can be found
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_CS.ckpt">here</a>.</p>
+</div>
+<div class="section" id="precomputed-depth-maps">
+<h2>Precomputed Depth Maps</h2>
+<p>For convenience, we also provide pre-computed depth maps for supervised
+training and evaluation:</p>
+<ul class="simple">
+<li><p>PackNet, Self-Supervised Scale-Aware, 192x640, CS → K |
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_train_files/KITTI_raw-eigen_train_files-PackNet01_MR_velsup_CStoK.tar.gz">eigen_train_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_zhou_files/KITTI_raw-eigen_zhou_files-PackNet01_MR_velsup_CStoK.tar.gz">eigen_zhou_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_val_files/KITTI_raw-eigen_val_files-PackNet01_MR_velsup_CStoK.tar.gz">eigen_val_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_test_files/KITTI_raw-eigen_test_files-PackNet01_MR_velsup_CStoK.tar.gz">eigen_test_files</a>
+|</p></li>
+<li><p>PackNet, Semi-Supervised (densified GT), 192x640, CS → K |
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_train_files/KITTI_raw-eigen_train_files-PackNet01_MR_semisup_CStoK.tar.gz">eigen_train_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_zhou_files/KITTI_raw-eigen_zhou_files-PackNet01_MR_semisup_CStoK.tar.gz">eigen_zhou_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_val_files/KITTI_raw-eigen_val_files-PackNet01_MR_semisup_CStoK.tar.gz">eigen_val_files</a>
+|
+<a class="reference external" href="https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/depth_maps/KITTI_raw/eigen_test_files/KITTI_raw-eigen_test_files-PackNet01_MR_semisup_CStoK.tar.gz">eigen_test_files</a>
+|</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="license">
+<h1>License</h1>
+<p>The source code is released under the <a class="reference external" href="LICENSE.md">MIT license</a>.</p>
+</div>
+<div class="section" id="references">
+<h1>References</h1>
+<p><a class="reference external" href="#cvpr-packnet">PackNet</a> relies on symmetric packing and
+unpacking blocks to jointly learn to compress and decompress
+detail-preserving representations using 3D convolutions. It also uses
+depth superresolution, which we introduce in <a class="reference external" href="#icra-superdepth">SuperDepth (ICRA
+2019)</a>. Our network can also output metrically
+scaled depth thanks to our weak velocity supervision (<a class="reference external" href="#cvpr-packnet">CVPR
+2020</a>).</p>
+<p>We also experimented with sparse supervision from as few as 4-beam LiDAR
+sensors, using a novel reprojection loss that minimizes distance errors
+in the image plane (<a class="reference external" href="#corl-ssl">CoRL 2019</a>). By enforcing a
+sparsity-inducing data augmentation policy for ego-motion learning, we
+were also able to effectively regularize the pose network and enable
+stronger generalization performance (<a class="reference external" href="#corl-pose">CoRL 2019</a>). In a
+follow-up work, we propose the injection of semantic information
+directly into the decoder layers of the depth networks, using
+pixel-adaptive convolutions to create semantic-aware features and
+further improve performance (<a class="reference external" href="#iclr-semguided">ICLR 2020</a>).</p>
+<p>Depending on the application, please use the following citations when
+referencing our work:</p>
+<p><strong>3D Packing for Self-Supervised Monocular Depth Estimation (CVPR
+2020 oral)</strong>,
+<em>Vitor Guizilini, Rares Ambrus, Sudeep Pillai, Allan Raventos and
+Adrien Gaidon</em>, <a class="reference external" href="https://arxiv.org/abs/1905.02693">[paper]</a>,
+<a class="reference external" href="https://www.youtube.com/watch?v=b62iDkLgGSI">[video]</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">packnet</span><span class="p">,</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Vitor</span> <span class="n">Guizilini</span> <span class="ow">and</span> <span class="n">Rares</span> <span class="n">Ambrus</span> <span class="ow">and</span> <span class="n">Sudeep</span> <span class="n">Pillai</span> <span class="ow">and</span> <span class="n">Allan</span> <span class="n">Raventos</span> <span class="ow">and</span> <span class="n">Adrien</span> <span class="n">Gaidon</span><span class="p">},</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="n">D</span> <span class="n">Packing</span> <span class="k">for</span> <span class="n">Self</span><span class="o">-</span><span class="n">Supervised</span> <span class="n">Monocular</span> <span class="n">Depth</span> <span class="n">Estimation</span><span class="p">},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">IEEE</span> <span class="n">Conference</span> <span class="n">on</span> <span class="n">Computer</span> <span class="n">Vision</span> <span class="ow">and</span> <span class="n">Pattern</span> <span class="n">Recognition</span> <span class="p">(</span><span class="n">CVPR</span><span class="p">)},</span>
+  <span class="n">primaryClass</span> <span class="o">=</span> <span class="p">{</span><span class="n">cs</span><span class="o">.</span><span class="n">CV</span><span class="p">}</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2020</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Semantically-Guided Representation Learning for Self-Supervised
+Monocular Depth (ICLR 2020)</strong>,
+<em>Vitor Guizilini, Rui Hou, Jie Li, Rares Ambrus and Adrien Gaidon</em>,
+<a class="reference external" href="https://arxiv.org/abs/2002.12319">[paper]</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">packnet</span><span class="o">-</span><span class="n">semguided</span><span class="p">,</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Vitor</span> <span class="n">Guizilini</span> <span class="ow">and</span> <span class="n">Rui</span> <span class="n">Hou</span> <span class="ow">and</span> <span class="n">Jie</span> <span class="n">Li</span> <span class="ow">and</span> <span class="n">Rares</span> <span class="n">Ambrus</span> <span class="ow">and</span> <span class="n">Adrien</span> <span class="n">Gaidon</span><span class="p">},</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">Semantically</span><span class="o">-</span><span class="n">Guided</span> <span class="n">Representation</span> <span class="n">Learning</span> <span class="k">for</span> <span class="n">Self</span><span class="o">-</span><span class="n">Supervised</span> <span class="n">Monocular</span> <span class="n">Depth</span><span class="p">},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">International</span> <span class="n">Conference</span> <span class="n">on</span> <span class="n">Learning</span> <span class="n">Representations</span> <span class="p">(</span><span class="n">ICLR</span><span class="p">)}</span>
+  <span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="n">April</span><span class="p">},</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2020</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Robust Semi-Supervised Monocular Depth Estimation with Reprojected
+Distances (CoRL 2019 spotlight)</strong>, <em>Vitor Guizilini, Jie Li, Rares Ambrus, Sudeep Pillai and Adrien Gaidon</em>,
+<a class="reference external" href="https://arxiv.org/abs/1910.01765">[paper]</a>,<a class="reference external" href="https://www.youtube.com/watch?v=cSwuF-XA4sg">[video]</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">packnet</span><span class="o">-</span><span class="n">semisup</span><span class="p">,</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Vitor</span> <span class="n">Guizilini</span> <span class="ow">and</span> <span class="n">Jie</span> <span class="n">Li</span> <span class="ow">and</span> <span class="n">Rares</span> <span class="n">Ambrus</span> <span class="ow">and</span> <span class="n">Sudeep</span> <span class="n">Pillai</span> <span class="ow">and</span> <span class="n">Adrien</span> <span class="n">Gaidon</span><span class="p">},</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">Robust</span> <span class="n">Semi</span><span class="o">-</span><span class="n">Supervised</span> <span class="n">Monocular</span> <span class="n">Depth</span> <span class="n">Estimation</span> <span class="k">with</span> <span class="n">Reprojected</span> <span class="n">Distances</span><span class="p">},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">Conference</span> <span class="n">on</span> <span class="n">Robot</span> <span class="n">Learning</span> <span class="p">(</span><span class="n">CoRL</span><span class="p">)}</span>
+  <span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="n">October</span><span class="p">},</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2019</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Two Stream Networks for Self-Supervised Ego-Motion Estimation (CoRL
+2019 spotlight)</strong>,
+<em>Rares Ambrus, Vitor Guizilini, Jie Li, Sudeep Pillai and Adrien
+Gaidon</em>,
+<a class="reference external" href="https://arxiv.org/abs/1910.01764">[paper]</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">packnet</span><span class="o">-</span><span class="n">twostream</span><span class="p">,</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Rares</span> <span class="n">Ambrus</span> <span class="ow">and</span> <span class="n">Vitor</span> <span class="n">Guizilini</span> <span class="ow">and</span> <span class="n">Jie</span> <span class="n">Li</span> <span class="ow">and</span> <span class="n">Sudeep</span> <span class="n">Pillai</span> <span class="ow">and</span> <span class="n">Adrien</span> <span class="n">Gaidon</span><span class="p">},</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{{</span><span class="n">Two</span> <span class="n">Stream</span> <span class="n">Networks</span> <span class="k">for</span> <span class="n">Self</span><span class="o">-</span><span class="n">Supervised</span> <span class="n">Ego</span><span class="o">-</span><span class="n">Motion</span> <span class="n">Estimation</span><span class="p">}},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">Conference</span> <span class="n">on</span> <span class="n">Robot</span> <span class="n">Learning</span> <span class="p">(</span><span class="n">CoRL</span><span class="p">)}</span>
+  <span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="n">October</span><span class="p">},</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2019</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>SuperDepth: Self-Supervised, Super-Resolved Monocular Depth
+Estimation (ICRA 2019)</strong>,
+<em>Sudeep Pillai, Rares Ambrus and Adrien Gaidon</em>,
+<a class="reference external" href="https://arxiv.org/abs/1810.01849">[paper]</a>,
+<a class="reference external" href="https://www.youtube.com/watch?v=jKNgBeBMx0I&amp;t=33s">[video]</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">superdepth</span><span class="p">,</span>
+  <span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Sudeep</span> <span class="n">Pillai</span> <span class="ow">and</span> <span class="n">Rares</span> <span class="n">Ambrus</span> <span class="ow">and</span> <span class="n">Adrien</span> <span class="n">Gaidon</span><span class="p">},</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="n">SuperDepth</span><span class="p">:</span> <span class="n">Self</span><span class="o">-</span><span class="n">Supervised</span><span class="p">,</span> <span class="n">Super</span><span class="o">-</span><span class="n">Resolved</span> <span class="n">Monocular</span> <span class="n">Depth</span> <span class="n">Estimation</span><span class="p">},</span>
+  <span class="n">booktitle</span> <span class="o">=</span> <span class="p">{</span><span class="n">IEEE</span> <span class="n">International</span> <span class="n">Conference</span> <span class="n">on</span> <span class="n">Robotics</span> <span class="ow">and</span> <span class="n">Automation</span> <span class="p">(</span><span class="n">ICRA</span><span class="p">)}</span>
+  <span class="n">month</span> <span class="o">=</span> <span class="p">{</span><span class="n">May</span><span class="p">},</span>
+  <span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2019</span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

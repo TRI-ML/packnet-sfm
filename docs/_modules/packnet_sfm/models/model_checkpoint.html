@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.models.model_checkpoint &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.models.model_checkpoint</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.models.model_checkpoint</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
+
+<span class="c1"># Adapted from Pytorch-Lightning</span>
+<span class="c1"># https://github.com/PyTorchLightning/pytorch-lightning/blob/master/pytorch_lightning/callbacks/model_checkpoint.py</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">pcolor</span>
+
+
+<div class="viewcode-block" id="sync_s3_data"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.sync_s3_data">[docs]</a><span class="k">def</span> <span class="nf">sync_s3_data</span><span class="p">(</span><span class="n">local</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sync saved models with the s3 bucket&quot;&quot;&quot;</span>
+    <span class="n">remote</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">s3_path</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;aws s3 sync </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> --acl bucket-owner-full-control --quiet --delete&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">local</span><span class="p">,</span> <span class="n">remote</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_code"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.save_code">[docs]</a><span class="k">def</span> <span class="nf">save_code</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save code in the models folder&quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;tar cfz </span><span class="si">{}</span><span class="s1">/code.tar.gz *&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ModelCheckpoint"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.ModelCheckpoint">[docs]</a><span class="k">class</span> <span class="nc">ModelCheckpoint</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="s1">&#39;val_loss&#39;</span><span class="p">,</span>
+                 <span class="n">save_top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">s3_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">s3_frequency</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># If save_top_k is zero, save all models</span>
+        <span class="k">if</span> <span class="n">save_top_k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">save_top_k</span> <span class="o">=</span> <span class="mf">1e6</span>
+        <span class="c1"># Create checkpoint folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirpath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Store arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">monitor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span> <span class="o">=</span> <span class="n">save_top_k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">period</span> <span class="o">=</span> <span class="n">period</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_last_check</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Monitoring modes</span>
+        <span class="n">torch_inf</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span><span class="p">)</span>
+        <span class="n">mode_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">torch_inf</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">torch_inf</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;auto&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">torch_inf</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span> <span class="k">if</span> \
+                <span class="s1">&#39;acc&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="ow">or</span> \
+                <span class="s1">&#39;a1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="ow">or</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;fmeasure&#39;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="p">(</span><span class="n">torch_inf</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kth_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode_dict</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3_path</span> <span class="o">=</span> <span class="n">s3_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3_frequency</span> <span class="o">=</span> <span class="n">s3_frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3_enabled</span> <span class="o">=</span> <span class="n">s3_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">s3_frequency</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_del_model</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_save_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># Create folder, save model and sync to s3</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">({</span>
+            <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">current_epoch</span><span class="p">,</span>
+            <span class="s1">&#39;state_dict&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;scheduler&#39;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+        <span class="p">},</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_s3</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_sync_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># If it&#39;s not time to sync, do nothing</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_enabled</span> <span class="ow">and</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_frequency</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="c1"># Print message and links</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;###### Syncing: </span><span class="si">{}</span><span class="s1"> -&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">s3_path</span><span class="p">),</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;###### URL: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">s3_url</span><span class="p">),</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]))</span>
+            <span class="c1"># If it&#39;s time to save code</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">save_code</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="c1"># Sync model to s3</span>
+            <span class="n">sync_s3_data</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ModelCheckpoint.check_monitor_top_k"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.ModelCheckpoint.check_monitor_top_k">[docs]</a>    <span class="k">def</span> <span class="nf">check_monitor_top_k</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="p">):</span>
+        <span class="c1"># If we don&#39;t have enough models</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="c1"># Convert to torch if necessary</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+        <span class="c1"># Get monitoring operation</span>
+        <span class="n">monitor_op</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">lt</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">gt</span><span class="p">,</span>
+        <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">]</span>
+        <span class="c1"># Compare and return</span>
+        <span class="k">return</span> <span class="n">monitor_op</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ModelCheckpoint.format_checkpoint_name"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.ModelCheckpoint.format_checkpoint_name">[docs]</a>    <span class="k">def</span> <span class="nf">format_checkpoint_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">epoch</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\{.*?)[:\}]&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;={&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+                <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirpath</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.ckpt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ModelCheckpoint.check_and_save"><a class="viewcode-back" href="../../../models/models.Checkpoint.html#packnet_sfm.models.model_checkpoint.ModelCheckpoint.check_and_save">[docs]</a>    <span class="k">def</span> <span class="nf">check_and_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
+        <span class="c1"># Check saving interval</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">current_epoch</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_last_check</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
+                <span class="p">(</span><span class="n">epoch</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_last_check</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_last_check</span> <span class="o">=</span> <span class="n">epoch</span>
+        <span class="c1"># Prepare filepath</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_checkpoint_name</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_checkpoint_name</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="c1"># Check if saving or not</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">current</span><span class="p">,</span> <span class="s1">&#39;Checkpoint metric is not available&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_monitor_top_k</span><span class="p">(</span><span class="n">current</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_do_check_save</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_model</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_do_check_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">current</span><span class="p">):</span>
+        <span class="c1"># List of models to delete</span>
+        <span class="n">del_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">delpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span><span class="p">)</span>
+            <span class="n">del_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delpath</span><span class="p">)</span>
+        <span class="c1"># Monitor current models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">[</span><span class="n">filepath</span><span class="p">]</span> <span class="o">=</span> <span class="n">current</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_top_k</span><span class="p">:</span>
+            <span class="c1"># Monitor dict has reached k elements</span>
+            <span class="n">_op</span> <span class="o">=</span> <span class="nb">max</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;min&#39;</span> <span class="k">else</span> <span class="nb">min</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span> <span class="o">=</span> <span class="n">_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">,</span>
+                                      <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kth_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kth_best_model</span><span class="p">]</span>
+        <span class="c1"># Determine best model</span>
+        <span class="n">_op</span> <span class="o">=</span> <span class="nb">min</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;min&#39;</span> <span class="k">else</span> <span class="nb">max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="n">_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_k_models</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="c1"># Delete old models</span>
+        <span class="k">for</span> <span class="n">cur_path</span> <span class="ow">in</span> <span class="n">del_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cur_path</span> <span class="o">!=</span> <span class="n">filepath</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_del_model</span><span class="p">(</span><span class="n">cur_path</span><span class="p">)</span>
+        <span class="c1"># Save model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

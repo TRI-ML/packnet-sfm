@@ -1,0 +1,50 @@
+overfit_kitti
+=============
+
+.. code:: yaml
+
+	arch:
+	    max_epochs: 1
+	model:
+	    name: 'SelfSupModel'
+	    optimizer:
+		name: 'Adam'
+		depth:
+		    lr: 0.0002
+		pose:
+		    lr: 0.0002
+	    scheduler:
+		name: 'StepLR'
+		step_size: 30
+		gamma: 0.5
+	    depth_net:
+		name: 'DepthResNet'
+		version: '18pt'
+	    pose_net:
+		name: 'PoseResNet'
+		version: '18pt'
+	    params:
+		crop: 'garg'
+		min_depth: 0.0
+		max_depth: 80.0
+	datasets:
+	    augmentation:
+		image_shape: (192, 640)
+	    train:
+		batch_size: 6
+		dataset: ['KITTI']
+		path: ['/data/datasets/KITTI_tiny']
+		split: ['kitti_tiny.txt']
+		depth_type: ['velodyne']
+		repeat: [1000]
+	    validation:
+		dataset: ['KITTI']
+		path: ['/data/datasets/KITTI_tiny']
+		split: ['kitti_tiny.txt']
+		depth_type: ['velodyne']
+	    test:
+		dataset: ['KITTI']
+		path: ['/data/datasets/KITTI_tiny']
+		split: ['kitti_tiny.txt']
+		depth_type: ['velodyne']
+

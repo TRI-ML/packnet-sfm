@@ -1,0 +1,8 @@
+SfmModel
+========
+
+.. automodule:: packnet_sfm.models.SfmModel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Config &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Horovod" href="utils.horovod.html" />
+    <link rel="prev" title="Utils" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="utils.html">Utils</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.horovod.html">Horovod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.reduce.html">Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.save.html">Saving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.load.html">Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.image.html">Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.depth.html">Depth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.types.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.misc.html">Misc.</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="utils.html">Utils</a> &raquo;</li>
+        
+      <li>Config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/utils/utils.config.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.utils.config">
+<span id="config"></span><h1>Config</h1>
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.backwards_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">backwards_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#backwards_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Add or update configuration for backwards compatibility
+(no need for it right now, pretrained models are up-to-date with configuration files).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Updated model configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.get_default_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">get_default_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cfg_default</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#get_default_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Get default configuration from file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.merge_cfg_file">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">merge_cfg_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">cfg_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#merge_cfg_file"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Merge configuration file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.merge_cfgs">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">merge_cfgs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">original</span></em>, <em class="sig-param"><span class="n">override</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#merge_cfgs"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Updates CfgNode with information from another one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original</strong> (<em>CfgNode</em>) – Original configuration node</p></li>
+<li><p><strong>override</strong> (<em>CfgNode</em>) – Another configuration node used for overriding</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>updated</strong> – Updated configuration node</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.parse_test_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">parse_test_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ckpt_file</span></em>, <em class="sig-param"><span class="n">cfg_default</span></em>, <em class="sig-param"><span class="n">cfg_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#parse_test_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Parse model configuration for testing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ckpt_file</strong> (<em>str</em>) – Checkpoint file, with pretrained model</p></li>
+<li><p><strong>cfg_default</strong> (<em>str</em>) – Default configuration file, with default values</p></li>
+<li><p><strong>cfg_file</strong> (<em>str</em>) – Configuration file with updated information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Parsed model configuration</p></li>
+<li><p><strong>state_dict</strong> (<em>dict</em>) – Model state dict with pretrained weights</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.parse_test_file">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">parse_test_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ckpt_file</span></em>, <em class="sig-param"><span class="n">cfg_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#parse_test_file"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Parse model configuration for testing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ckpt_file</strong> (<em>str</em>) – Checkpoint file, with pretrained model</p></li>
+<li><p><strong>cfg_file</strong> – Configuration file, to update pretrained model configuration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Parsed model configuration</p></li>
+<li><p><strong>state_dict</strong> (<em>dict</em>) – Model state dict with pretrained weights</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.parse_train_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">parse_train_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cfg_default</span></em>, <em class="sig-param"><span class="n">cfg_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#parse_train_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Parse model configuration for training</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg_default</strong> (<em>str</em>) – Default <strong>.py</strong> configuration file</p></li>
+<li><p><strong>cfg_file</strong> (<em>str</em>) – Configuration <strong>.yaml</strong> file to override the default parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Parsed model configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.parse_train_file">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">parse_train_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#parse_train_file"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Parse file for training</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – File, can be either a
+<strong>.yaml</strong> for a yacs configuration file or a
+<strong>.ckpt</strong> for a pre-trained checkpoint file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>config</strong> (<em>CfgNode</em>) – Parsed model configuration</p></li>
+<li><p><strong>ckpt</strong> (<em>str</em>) – Parsed checkpoint file</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.prep_dataset">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">prep_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#prep_dataset"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Expand dataset configuration to match split length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Dataset configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Updated dataset configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.prepare_test_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">prepare_test_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#prepare_test_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare model configuration for testing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Prepared model configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.prepare_train_config">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">prepare_train_config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#prepare_train_config"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Prepare model configuration for training</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Prepared model configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.set_checkpoint">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">set_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#set_checkpoint"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set checkpoint information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>config</strong> – Updated model configuration</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>CfgNode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.utils.config.set_name">
+<code class="sig-prename descclassname">packnet_sfm.utils.config.</code><code class="sig-name descname">set_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/utils/config.html#set_name"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set run name based on available information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>CfgNode</em>) – Model configuration</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>name</strong> – Updated run name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.horovod.html" class="btn btn-neutral float-right" title="Horovod" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="utils.html" class="btn btn-neutral float-left" title="Utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

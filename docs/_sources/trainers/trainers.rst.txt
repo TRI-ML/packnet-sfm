@@ -1,0 +1,8 @@
+Trainers
+========
+
+.. toctree::
+   trainers.BaseTrainer.rst
+   trainers.HorovodTrainer.rst
+
+

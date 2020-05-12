@@ -1,0 +1,8 @@
+PoseResNet
+==========
+
+.. automodule:: packnet_sfm.networks.pose.PoseResNet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

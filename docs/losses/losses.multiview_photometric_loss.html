@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MultiViewPhotometricLoss &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SupervisedLoss" href="losses.supervised_loss.html" />
+    <link rel="prev" title="LossBase" href="losses.loss_base.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks/networks.html">Networks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="losses.html">Losses</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="losses.loss_base.html">LossBase</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MultiViewPhotometricLoss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="losses.supervised_loss.html">SupervisedLoss</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="losses.html">Losses</a> &raquo;</li>
+        
+      <li>MultiViewPhotometricLoss</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/losses/losses.multiview_photometric_loss.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-packnet_sfm.losses.multiview_photometric_loss">
+<span id="multiviewphotometricloss"></span><h1>MultiViewPhotometricLoss</h1>
+<dl class="py class">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss">
+<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.losses.multiview_photometric_loss.</code><code class="sig-name descname">MultiViewPhotometricLoss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_scales</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">ssim_loss_weight</span><span class="o">=</span><span class="default_value">0.85</span></em>, <em class="sig-param"><span class="n">occ_reg_weight</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">smooth_loss_weight</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">C1</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">C2</span><span class="o">=</span><span class="default_value">0.0009</span></em>, <em class="sig-param"><span class="n">photometric_reduce_op</span><span class="o">=</span><span class="default_value">'mean'</span></em>, <em class="sig-param"><span class="n">disp_norm</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">clip_loss</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">progressive_scaling</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">padding_mode</span><span class="o">=</span><span class="default_value">'zeros'</span></em>, <em class="sig-param"><span class="n">automask_loss</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="losses.loss_base.html#packnet_sfm.losses.loss_base.LossBase" title="packnet_sfm.losses.loss_base.LossBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">packnet_sfm.losses.loss_base.LossBase</span></code></a></p>
+<p>Self-Supervised multiview photometric loss.
+It takes two images, a depth map and a pose transformation to produce a
+reconstruction of one image from the perspective of the other, and calculates
+the difference between them</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_scales</strong> (<em>int</em>) – Number of inverse depth map scalesto consider</p></li>
+<li><p><strong>ssim_loss_weight</strong> (<em>float</em>) – Weight for the SSIM loss</p></li>
+<li><p><strong>occ_reg_weight</strong> (<em>float</em>) – Weight for the occlusion regularization loss</p></li>
+<li><p><strong>smooth_loss_weight</strong> (<em>float</em>) – Weight for the smoothness loss</p></li>
+<li><p><strong>C1</strong><strong>,</strong><strong>C2</strong> (<em>float</em>) – SSIM parameters</p></li>
+<li><p><strong>photometric_reduce_op</strong> (<em>str</em>) – Method to reduce the photometric loss</p></li>
+<li><p><strong>disp_norm</strong> (<em>bool</em>) – True if inverse depth is normalized for</p></li>
+<li><p><strong>clip_loss</strong> (<em>float</em>) – Threshold for photometric loss clipping</p></li>
+<li><p><strong>progressive_scaling</strong> (<em>float</em>) – Training percentage for progressive scaling (0.0 to disable)</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – Padding mode for view synthesis</p></li>
+<li><p><strong>automask_loss</strong> (<em>bool</em>) – True if automasking is enabled for the photometric loss</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.SSIM">
+<code class="sig-name descname">SSIM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">kernel_size</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.SSIM"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates the SSIM (Structural SIMilarity) loss</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong><strong>,</strong><strong>y</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Input images</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em>) – Convolutional parameter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ssim</strong> – SSIM loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.calc_photometric_loss">
+<code class="sig-name descname">calc_photometric_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t_est</span></em>, <em class="sig-param"><span class="n">images</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.calc_photometric_loss"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates the photometric loss (L1 + SSIM)
+:param t_est: List of warped reference images in multiple scales
+:type t_est: list of torch.Tensor [B,3,H,W]
+:param images: List of original images in multiple scales
+:type images: list of torch.Tensor [B,3,H,W]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>photometric_loss</strong> – Photometric loss</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>torch.Tensor [1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.calc_smoothness_loss">
+<code class="sig-name descname">calc_smoothness_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depths</span></em>, <em class="sig-param"><span class="n">images</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.calc_smoothness_loss"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates the smoothness loss for inverse depth maps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depths</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Predicted inverse depth maps for all scales</p></li>
+<li><p><strong>images</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Original images for all scales</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>smoothness_loss</strong> – Smoothness loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span></em>, <em class="sig-param"><span class="n">context</span></em>, <em class="sig-param"><span class="n">inv_depths</span></em>, <em class="sig-param"><span class="n">K</span></em>, <em class="sig-param"><span class="n">ref_K</span></em>, <em class="sig-param"><span class="n">poses</span></em>, <em class="sig-param"><span class="n">return_logs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">progress</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.forward"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculates training photometric loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Original image</p></li>
+<li><p><strong>context</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Context containing a list of reference images</p></li>
+<li><p><strong>inv_depths</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Predicted depth maps for the original image, in all scales</p></li>
+<li><p><strong>K</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>3</em><em>]</em>) – Original camera intrinsics</p></li>
+<li><p><strong>ref_K</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>3</em><em>]</em>) – Reference camera intrinsics</p></li>
+<li><p><strong>poses</strong> (<em>list of Pose</em>) – Camera transformation between original and context</p></li>
+<li><p><strong>return_logs</strong> (<em>bool</em>) – True if logs are saved for visualization</p></li>
+<li><p><strong>progress</strong> (<em>float</em>) – Training percentage</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>losses_and_metrics</strong> – Output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.logs">
+<em class="property">property </em><code class="sig-name descname">logs</code></dt>
+<dd><p>Returns class logs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.reduce_photometric_loss">
+<code class="sig-name descname">reduce_photometric_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">photometric_losses</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.reduce_photometric_loss"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Combine the photometric loss from all context images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>photometric_losses</strong> (<em>list of torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Pixel-wise photometric losses from the entire context</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>photometric_loss</strong> – Reduced photometric loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.warp_ref_image">
+<code class="sig-name descname">warp_ref_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inv_depths</span></em>, <em class="sig-param"><span class="n">ref_image</span></em>, <em class="sig-param"><span class="n">K</span></em>, <em class="sig-param"><span class="n">ref_K</span></em>, <em class="sig-param"><span class="n">pose</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#MultiViewPhotometricLoss.warp_ref_image"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Warps a reference image to produce a reconstruction of the original one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inv_depths</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>1</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Inverse depth map of the original image</p></li>
+<li><p><strong>ref_image</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Reference RGB image</p></li>
+<li><p><strong>K</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>3</em><em>]</em>) – Original camera intrinsics</p></li>
+<li><p><strong>ref_K</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>3</em><em>]</em>) – Reference camera intrinsics</p></li>
+<li><p><strong>pose</strong> (<a class="reference internal" href="../geometry/geometry.pose.pose.html#packnet_sfm.geometry.pose.Pose" title="packnet_sfm.geometry.pose.Pose"><em>Pose</em></a>) – Original -&gt; Reference camera transformation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ref_warped</strong> – Warped reference image (reconstructing the original one)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [B,3,H,W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="packnet_sfm.losses.multiview_photometric_loss.SSIM">
+<code class="sig-prename descclassname">packnet_sfm.losses.multiview_photometric_loss.</code><code class="sig-name descname">SSIM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">C1</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">C2</span><span class="o">=</span><span class="default_value">0.0009</span></em>, <em class="sig-param"><span class="n">kernel_size</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">stride</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/losses/multiview_photometric_loss.html#SSIM"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Structural SIMlilarity (SSIM) distance between two images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong><strong>,</strong><strong>y</strong> (<em>torch.Tensor</em><em> [</em><em>B</em><em>,</em><em>3</em><em>,</em><em>H</em><em>,</em><em>W</em><em>]</em>) – Input images</p></li>
+<li><p><strong>C1</strong><strong>,</strong><strong>C2</strong> (<em>float</em>) – SSIM parameters</p></li>
+<li><p><strong>kernel_size</strong><strong>,</strong><strong>stride</strong> (<em>int</em>) – Convolutional parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ssim</strong> – SSIM distance</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor [1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="losses.supervised_loss.html" class="btn btn-neutral float-right" title="SupervisedLoss" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="losses.loss_base.html" class="btn btn-neutral float-left" title="LossBase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

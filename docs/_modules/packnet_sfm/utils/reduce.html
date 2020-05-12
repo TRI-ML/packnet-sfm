@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>packnet_sfm.utils.reduce &mdash; PackNet-SfM 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs/configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainers/trainers.html">Trainers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../networks/networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses/losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../loggers/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../geometry/geometry.html">Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">Utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://tri.global">Toyota Research Institute</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/packnet-sfm">PackNet-SfM GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/TRI-ML/DDAD">DDAD GitHub</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PackNet-SfM</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>packnet_sfm.utils.reduce</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for packnet_sfm.utils.reduce</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">horovod.torch</span> <span class="k">as</span> <span class="nn">hvd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">prepare_dataset_prefix</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="reduce_value"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.reduce_value">[docs]</a><span class="k">def</span> <span class="nf">reduce_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reduce the mean value of a tensor from all GPUs&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">hvd</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="reduce_dict"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.reduce_dict">[docs]</a><span class="k">def</span> <span class="nf">reduce_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">to_item</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reduce the mean values of a dictionary from all GPUs&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduce_value</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">to_item</span><span class="p">:</span>
+            <span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">dict</span></div>
+
+<div class="viewcode-block" id="all_reduce_metrics"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.all_reduce_metrics">[docs]</a><span class="k">def</span> <span class="nf">all_reduce_metrics</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;depth&#39;</span><span class="p">):</span>
+    <span class="c1"># If there is only one dataset, wrap in a list</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">output_data_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_data_batch</span><span class="p">]</span>
+    <span class="c1"># Get metrics keys and dimensions</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_data_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+    <span class="c1"># List storing metrics for all datasets</span>
+    <span class="n">all_metrics_dict</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop over all datasets and all batches</span>
+    <span class="k">for</span> <span class="n">output_batch</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+        <span class="n">metrics_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="c1"># Count how many times each sample was seen</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">output_batch</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">]):</span>
+                <span class="n">seen</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="n">hvd</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">seen</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;idx&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">seen</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> \
+            <span class="s1">&#39;Not all samples were seen during evaluation&#39;</span>
+        <span class="c1"># Reduce all relevant metrics</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">dims</span><span class="p">):</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">output_batch</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;idx&#39;</span><span class="p">]):</span>
+                    <span class="n">metrics</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="n">hvd</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;depth_pp_gt&#39;</span><span class="p">)</span>
+            <span class="n">metrics_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">metrics</span> <span class="o">/</span> <span class="n">seen</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Append metrics dictionary to the list</span>
+        <span class="n">all_metrics_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics_dict</span><span class="p">)</span>
+    <span class="c1"># Return list of metrics dictionary</span>
+    <span class="k">return</span> <span class="n">all_metrics_dict</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="collate_metrics"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.collate_metrics">[docs]</a><span class="k">def</span> <span class="nf">collate_metrics</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;depth&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Collate epoch output to produce average metrics.&quot;&quot;&quot;</span>
+
+    <span class="c1"># If there is only one dataset, wrap in a list</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">output_data_batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_data_batch</span><span class="p">]</span>
+    <span class="c1"># Calculate the mean of all metrics</span>
+    <span class="n">metrics_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># For all datasets</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">output_batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_data_batch</span><span class="p">):</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="c1"># For all keys (assume they are the same for all batches)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">output_batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="n">metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">output_batch</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">metrics_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+    <span class="c1"># Return metrics data</span>
+    <span class="k">return</span> <span class="n">metrics_data</span></div>
+
+<div class="viewcode-block" id="create_dict"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.create_dict">[docs]</a><span class="k">def</span> <span class="nf">create_dict</span><span class="p">(</span><span class="n">metrics_data</span><span class="p">,</span> <span class="n">metrics_keys</span><span class="p">,</span> <span class="n">metrics_modes</span><span class="p">,</span>
+                <span class="n">dataset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;depth&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a dictionary from collated metrics.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create metrics dictionary</span>
+    <span class="n">metrics_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># For all datasets</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics_data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">metrics</span><span class="p">:</span> <span class="c1"># If there are calculated metrics</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prepare_dataset_prefix</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="c1"># For all keys</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics_keys</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">metrics_modes</span><span class="p">:</span>
+                    <span class="n">metrics_dict</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">mode</span><span class="p">)]</span> <span class="o">=</span>\
+                        <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="c1"># Return metrics dictionary</span>
+    <span class="k">return</span> <span class="n">metrics_dict</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="average_key"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.average_key">[docs]</a><span class="k">def</span> <span class="nf">average_key</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average key in a list of batches</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch_list : list of dict</span>
+<span class="sd">        List containing dictionaries with the same keys</span>
+<span class="sd">    key : str</span>
+<span class="sd">        Key to be averaged</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    average : float</span>
+<span class="sd">        Average of the value contained in key for all batches</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="average_sub_key"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.average_sub_key">[docs]</a><span class="k">def</span> <span class="nf">average_sub_key</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average subkey in a dictionary in a list of batches</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch_list : list of dict</span>
+<span class="sd">        List containing dictionaries with the same keys</span>
+<span class="sd">    key : str</span>
+<span class="sd">        Key to be averaged</span>
+<span class="sd">    sub_key :</span>
+<span class="sd">        Sub key to be averaged (belonging to key)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    average : float</span>
+<span class="sd">        Average of the value contained in the sub_key of key for all batches</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">sub_key</span><span class="p">]</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="average_loss_and_metrics"><a class="viewcode-back" href="../../../utils/utils.reduce.html#packnet_sfm.utils.reduce.average_loss_and_metrics">[docs]</a><span class="k">def</span> <span class="nf">average_loss_and_metrics</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average loss and metrics values in a list of batches</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch_list : list of dict</span>
+<span class="sd">        List containing dictionaries with the same keys</span>
+<span class="sd">    prefix : str</span>
+<span class="sd">        Prefix string for metrics logging</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    values : dict</span>
+<span class="sd">        Dictionary containing a &#39;loss&#39; float entry and a &#39;metrics&#39; dict entry</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;loss&#39;</span>
+    <span class="n">values</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> \
+        <span class="n">average_key</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;metrics&#39;</span>
+    <span class="k">for</span> <span class="n">sub_key</span> <span class="ow">in</span> <span class="n">batch_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">values</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">)]</span> <span class="o">=</span> \
+            <span class="n">average_sub_key</span><span class="p">(</span><span class="n">batch_list</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">values</span></div>
+
+<span class="c1">########################################################################################################################</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Toyota Research Institute (TRI)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
