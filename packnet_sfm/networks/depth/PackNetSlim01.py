@@ -5,9 +5,10 @@ import torch.nn as nn
 from packnet_sfm.networks.layers.packnet.layers01 import \
     PackLayerConv3d, UnpackLayerConv3d, Conv2D, ResidualBlock, InvDepth
 
-class PackNet01(nn.Module):
+class PackNetSlim01(nn.Module):
     """
     PackNet network with 3d convolutions (version 01, from the CVPR paper).
+    Slimmer version, with fewer feature channels
 
     https://arxiv.org/abs/1905.02693
 
@@ -29,12 +30,13 @@ class PackNet01(nn.Module):
         in_channels = 3
         out_channels = 1
         # Hyper-parameters
-        ni, no = 64, out_channels
-        n1, n2, n3, n4, n5 = 64, 64, 128, 256, 512
+        ni, no = 32, out_channels
+        n1, n2, n3, n4, n5 = 32, 64, 128, 256, 512
         num_blocks = [2, 2, 3, 3]
         pack_kernel = [5, 3, 3, 3, 3]
         unpack_kernel = [3, 3, 3, 3, 3]
         iconv_kernel = [3, 3, 3, 3, 3]
+        num_3d_feat = 4
         # Initial convolutional layer
         self.pre_calc = Conv2D(in_channels, ni, 5, 1)
         # Support for different versions
@@ -55,11 +57,11 @@ class PackNet01(nn.Module):
 
         # Encoder
 
-        self.pack1 = PackLayerConv3d(n1, pack_kernel[0])
-        self.pack2 = PackLayerConv3d(n2, pack_kernel[1])
-        self.pack3 = PackLayerConv3d(n3, pack_kernel[2])
-        self.pack4 = PackLayerConv3d(n4, pack_kernel[3])
-        self.pack5 = PackLayerConv3d(n5, pack_kernel[4])
+        self.pack1 = PackLayerConv3d(n1, pack_kernel[0], d=num_3d_feat)
+        self.pack2 = PackLayerConv3d(n2, pack_kernel[1], d=num_3d_feat)
+        self.pack3 = PackLayerConv3d(n3, pack_kernel[2], d=num_3d_feat)
+        self.pack4 = PackLayerConv3d(n4, pack_kernel[3], d=num_3d_feat)
+        self.pack5 = PackLayerConv3d(n5, pack_kernel[4], d=num_3d_feat)
 
         self.conv1 = Conv2D(ni, n1, 7, 1)
         self.conv2 = ResidualBlock(n1, n2, num_blocks[0], 1, dropout=dropout)
@@ -69,11 +71,11 @@ class PackNet01(nn.Module):
 
         # Decoder
 
-        self.unpack5 = UnpackLayerConv3d(n5, n5o, unpack_kernel[0])
-        self.unpack4 = UnpackLayerConv3d(n5, n4o, unpack_kernel[1])
-        self.unpack3 = UnpackLayerConv3d(n4, n3o, unpack_kernel[2])
-        self.unpack2 = UnpackLayerConv3d(n3, n2o, unpack_kernel[3])
-        self.unpack1 = UnpackLayerConv3d(n2, n1o, unpack_kernel[4])
+        self.unpack5 = UnpackLayerConv3d(n5, n5o, unpack_kernel[0], d=num_3d_feat)
+        self.unpack4 = UnpackLayerConv3d(n5, n4o, unpack_kernel[1], d=num_3d_feat)
+        self.unpack3 = UnpackLayerConv3d(n4, n3o, unpack_kernel[2], d=num_3d_feat)
+        self.unpack2 = UnpackLayerConv3d(n3, n2o, unpack_kernel[3], d=num_3d_feat)
+        self.unpack1 = UnpackLayerConv3d(n2, n1o, unpack_kernel[4], d=num_3d_feat)
 
         self.iconv5 = Conv2D(n5i, n5, iconv_kernel[0], 1)
         self.iconv4 = Conv2D(n4i, n4, iconv_kernel[1], 1)

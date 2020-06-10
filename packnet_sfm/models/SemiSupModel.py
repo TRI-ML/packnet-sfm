@@ -21,12 +21,18 @@ class SemiSupModel(SelfSupModel):
         Extra parameters
     """
     def __init__(self, supervised_loss_weight=0.9, **kwargs):
+        # Initializes SelfSupModel
         super().__init__(**kwargs)
         # If supervision weight is 0.0, use SelfSupModel directly
         assert 0. < supervised_loss_weight <= 1., "Model requires (0, 1] supervision"
         # Store weight and initializes supervised loss
         self.supervised_loss_weight = supervised_loss_weight
         self._supervised_loss = SupervisedLoss(**kwargs)
+
+        # Pose network is only required if there is self-supervision
+        self._network_requirements['pose_net'] = self.supervised_loss_weight < 1
+        # GT depth is only required if there is supervision
+        self._train_requirements['gt_depth'] = self.supervised_loss_weight > 0
 
     @property
     def logs(self):
@@ -35,22 +41,6 @@ class SemiSupModel(SelfSupModel):
             **super().logs,
             **self._supervised_loss.logs
         }
-
-    @property
-    def requires_depth_net(self):
-        return True
-
-    @property
-    def requires_pose_net(self):
-        return self.supervised_loss_weight < 1.
-
-    @property
-    def requires_gt_depth(self):
-        return self.supervised_loss_weight > 0.
-
-    @property
-    def requires_gt_pose(self):
-        return False
 
     def supervised_loss(self, inv_depths, gt_inv_depths,
                         return_logs=False, progress=0.0):

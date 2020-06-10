@@ -170,8 +170,6 @@
 <span class="kn">from</span> <span class="nn">packnet_sfm.networks.layers.packnet.layers01</span> <span class="kn">import</span> \
     <span class="n">PackLayerConv3d</span><span class="p">,</span> <span class="n">UnpackLayerConv3d</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">ResidualBlock</span><span class="p">,</span> <span class="n">InvDepth</span>
 
-<span class="c1">########################################################################################################################</span>
-
 <div class="viewcode-block" id="PackNet01"><a class="viewcode-back" href="../../../../networks/depth/networks.depth.PackNet01.html#packnet_sfm.networks.depth.PackNet01.PackNet01">[docs]</a><span class="k">class</span> <span class="nc">PackNet01</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PackNet network with 3d convolutions (version 01, from the CVPR paper).</span>
@@ -205,13 +203,13 @@
         <span class="c1"># Initial convolutional layer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pre_calc</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">ni</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Support for different versions</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">:</span>  <span class="c1"># Channel concatenation</span>
             <span class="n">n1o</span><span class="p">,</span> <span class="n">n1i</span> <span class="o">=</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">+</span> <span class="n">ni</span> <span class="o">+</span> <span class="n">no</span>
             <span class="n">n2o</span><span class="p">,</span> <span class="n">n2i</span> <span class="o">=</span> <span class="n">n2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">+</span> <span class="n">n1</span> <span class="o">+</span> <span class="n">no</span>
             <span class="n">n3o</span><span class="p">,</span> <span class="n">n3i</span> <span class="o">=</span> <span class="n">n3</span><span class="p">,</span> <span class="n">n3</span> <span class="o">+</span> <span class="n">n2</span> <span class="o">+</span> <span class="n">no</span>
             <span class="n">n4o</span><span class="p">,</span> <span class="n">n4i</span> <span class="o">=</span> <span class="n">n4</span><span class="p">,</span> <span class="n">n4</span> <span class="o">+</span> <span class="n">n3</span>
             <span class="n">n5o</span><span class="p">,</span> <span class="n">n5i</span> <span class="o">=</span> <span class="n">n5</span><span class="p">,</span> <span class="n">n5</span> <span class="o">+</span> <span class="n">n4</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>  <span class="c1"># Channel addition</span>
             <span class="n">n1o</span><span class="p">,</span> <span class="n">n1i</span> <span class="o">=</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n1</span> <span class="o">+</span> <span class="n">no</span>
             <span class="n">n2o</span><span class="p">,</span> <span class="n">n2i</span> <span class="o">=</span> <span class="n">n2</span><span class="p">,</span> <span class="n">n2</span> <span class="o">+</span> <span class="n">no</span>
             <span class="n">n3o</span><span class="p">,</span> <span class="n">n3i</span> <span class="o">=</span> <span class="n">n3</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">n3</span><span class="o">//</span><span class="mi">2</span> <span class="o">+</span> <span class="n">no</span>
@@ -346,8 +344,6 @@
             <span class="k">return</span> <span class="p">[</span><span class="n">disp1</span><span class="p">,</span> <span class="n">disp2</span><span class="p">,</span> <span class="n">disp3</span><span class="p">,</span> <span class="n">disp4</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">disp1</span></div></div>
-
-<span class="c1">########################################################################################################################</span>
 </pre></div>
 
            </div>

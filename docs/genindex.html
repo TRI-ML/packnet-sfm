@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -422,6 +421,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.generate_depth_map">generate_depth_map() (packnet_sfm.datasets.dgp_dataset.DGPDataset method)</a>
+</li>
       <li><a href="utils/utils.logging.html#packnet_sfm.utils.logging.AvgMeter.get">get() (packnet_sfm.utils.logging.AvgMeter method)</a>
 </li>
       <li><a href="utils/utils.logging.html#packnet_sfm.utils.logging.AvgMeter.get_and_reset">get_and_reset() (packnet_sfm.utils.logging.AvgMeter method)</a>
@@ -437,6 +438,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils/utils.config.html#packnet_sfm.utils.config.get_default_config">get_default_config() (in module packnet_sfm.utils.config)</a>
+</li>
+      <li><a href="datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.get_filename">get_filename() (packnet_sfm.datasets.dgp_dataset.DGPDataset method)</a>
 </li>
       <li><a href="datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.get_forward">get_forward() (packnet_sfm.datasets.dgp_dataset.DGPDataset method)</a>
 </li>
@@ -472,7 +475,7 @@
 </li>
       <li><a href="scripts/scripts.infer.html#scripts.infer.imwrite">imwrite() (in module scripts.infer)</a>
 </li>
-      <li><a href="scripts/scripts.infer.html#scripts.infer.infer">infer() (in module scripts.infer)</a>
+      <li><a href="scripts/scripts.infer.html#scripts.infer.infer_and_save_depth">infer_and_save_depth() (in module scripts.infer)</a>
 </li>
       <li><a href="networks/depth/networks.depth.PackNet01.html#packnet_sfm.networks.depth.PackNet01.PackNet01.init_weights">init_weights() (packnet_sfm.networks.depth.PackNet01.PackNet01 method)</a>
 
@@ -584,6 +587,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="scripts/scripts.infer.html#scripts.infer.main">main() (in module scripts.infer)</a>
+</li>
       <li><a href="utils/utils.misc.html#packnet_sfm.utils.misc.make_list">make_list() (in module packnet_sfm.utils.misc)</a>
 </li>
       <li><a href="utils/utils.image.html#packnet_sfm.utils.image.match_scales">match_scales() (in module packnet_sfm.utils.image)</a>
@@ -707,9 +712,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="loggers/loggers.WandbLogger.html#packnet_sfm.loggers.WandbLogger.name">name (in module packnet_sfm.loggers.WandbLogger)</a>
 </li>
+      <li><a href="datasets/datasets.KITTIDataset_utils.html#packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.navstat">navstat() (packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket property)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="datasets/datasets.KITTIDataset_utils.html#packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.navstat">navstat() (packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket property)</a>
+      <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.network_requirements">network_requirements() (packnet_sfm.models.SfmModel.SfmModel property)</a>
 </li>
       <li><a href="datasets/datasets.KITTIDataset_utils.html#packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket.numsats">numsats() (packnet_sfm.datasets.kitti_dataset_utils.OxtsPacket property)</a>
 </li>
@@ -1096,7 +1103,7 @@
 </li>
       <li><a href="trainers/trainers.BaseTrainer.html#packnet_sfm.trainers.base_trainer.BaseTrainer.proc_rank">proc_rank() (packnet_sfm.trainers.base_trainer.BaseTrainer property)</a>
 </li>
-      <li><a href="scripts/scripts.infer.html#scripts.infer.process">process() (in module scripts.infer)</a>
+      <li><a href="models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.progress">progress() (packnet_sfm.models.model_wrapper.ModelWrapper property)</a>
 </li>
       <li><a href="losses/losses.loss_base.html#packnet_sfm.losses.loss_base.ProgressiveScaling">ProgressiveScaling (class in packnet_sfm.losses.loss_base)</a>
 </li>
@@ -1128,46 +1135,14 @@
 </li>
       <li><a href="geometry/geometry.pose.pose.html#packnet_sfm.geometry.pose.Pose.repeat">repeat() (packnet_sfm.geometry.pose.Pose method)</a>
 </li>
-      <li><a href="models/models.SelfSupModel.html#packnet_sfm.models.SelfSupModel.SelfSupModel.requires_depth_net">requires_depth_net() (packnet_sfm.models.SelfSupModel.SelfSupModel property)</a>
-
-      <ul>
-        <li><a href="models/models.SemiSupModel.html#packnet_sfm.models.SemiSupModel.SemiSupModel.requires_depth_net">(packnet_sfm.models.SemiSupModel.SemiSupModel property)</a>
-</li>
-        <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.requires_depth_net">(packnet_sfm.models.SfmModel.SfmModel property)</a>
-</li>
-      </ul></li>
-      <li><a href="models/models.SelfSupModel.html#packnet_sfm.models.SelfSupModel.SelfSupModel.requires_gt_depth">requires_gt_depth() (packnet_sfm.models.SelfSupModel.SelfSupModel property)</a>
-
-      <ul>
-        <li><a href="models/models.SemiSupModel.html#packnet_sfm.models.SemiSupModel.SemiSupModel.requires_gt_depth">(packnet_sfm.models.SemiSupModel.SemiSupModel property)</a>
-</li>
-        <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.requires_gt_depth">(packnet_sfm.models.SfmModel.SfmModel property)</a>
-</li>
-      </ul></li>
-      <li><a href="models/models.SelfSupModel.html#packnet_sfm.models.SelfSupModel.SelfSupModel.requires_gt_pose">requires_gt_pose() (packnet_sfm.models.SelfSupModel.SelfSupModel property)</a>
-
-      <ul>
-        <li><a href="models/models.SemiSupModel.html#packnet_sfm.models.SemiSupModel.SemiSupModel.requires_gt_pose">(packnet_sfm.models.SemiSupModel.SemiSupModel property)</a>
-</li>
-        <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.requires_gt_pose">(packnet_sfm.models.SfmModel.SfmModel property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models/models.SelfSupModel.html#packnet_sfm.models.SelfSupModel.SelfSupModel.requires_pose_net">requires_pose_net() (packnet_sfm.models.SelfSupModel.SelfSupModel property)</a>
-
-      <ul>
-        <li><a href="models/models.SemiSupModel.html#packnet_sfm.models.SemiSupModel.SemiSupModel.requires_pose_net">(packnet_sfm.models.SemiSupModel.SemiSupModel property)</a>
-</li>
-        <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.requires_pose_net">(packnet_sfm.models.SfmModel.SfmModel property)</a>
-</li>
-      </ul></li>
       <li><a href="utils/utils.logging.html#packnet_sfm.utils.logging.AvgMeter.reset">reset() (packnet_sfm.utils.logging.AvgMeter method)</a>
 </li>
       <li><a href="networks/layers/packnet/layers01.html#packnet_sfm.networks.layers.packnet.layers01.ResidualBlock">ResidualBlock() (in module packnet_sfm.networks.layers.packnet.layers01)</a>
 </li>
       <li><a href="networks/layers/packnet/layers01.html#packnet_sfm.networks.layers.packnet.layers01.ResidualConv">ResidualConv (class in packnet_sfm.networks.layers.packnet.layers01)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_depth">resize_depth() (in module packnet_sfm.datasets.augmentations)</a>
 </li>
       <li><a href="datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.resize_image">resize_image() (in module packnet_sfm.datasets.augmentations)</a>
@@ -1273,6 +1248,8 @@
         <li><a href="losses/losses.multiview_photometric_loss.html#packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss.SSIM">(packnet_sfm.losses.multiview_photometric_loss.MultiViewPhotometricLoss method)</a>
 </li>
       </ul></li>
+      <li><a href="models/models.Utilities.html#packnet_sfm.models.model_utils.stack_batch">stack_batch() (in module packnet_sfm.models.model_utils)</a>
+</li>
       <li><a href="datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.stack_sample">stack_sample() (in module packnet_sfm.datasets.dgp_dataset)</a>
 </li>
       <li><a href="models/models.SemiSupModel.html#packnet_sfm.models.SemiSupModel.SemiSupModel.supervised_loss">supervised_loss() (packnet_sfm.models.SemiSupModel.SemiSupModel method)</a>
@@ -1309,15 +1286,17 @@
       </ul></li>
       <li><a href="datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.to_tensor">to_tensor() (in module packnet_sfm.datasets.augmentations)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="datasets/datasets.augmentations.html#packnet_sfm.datasets.augmentations.to_tensor_sample">to_tensor_sample() (in module packnet_sfm.datasets.augmentations)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="scripts/scripts.train.html#scripts.train.train">train() (in module scripts.train)</a>
 </li>
       <li><a href="models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.train_dataloader">train_dataloader() (packnet_sfm.models.model_wrapper.ModelWrapper method)</a>
 </li>
       <li><a href="trainers/trainers.BaseTrainer.html#packnet_sfm.trainers.base_trainer.BaseTrainer.train_progress_bar">train_progress_bar() (packnet_sfm.trainers.base_trainer.BaseTrainer method)</a>
+</li>
+      <li><a href="models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.train_requirements">train_requirements() (packnet_sfm.models.SfmModel.SfmModel property)</a>
 </li>
       <li><a href="datasets/datasets.transforms.html#packnet_sfm.datasets.transforms.train_transforms">train_transforms() (in module packnet_sfm.datasets.transforms)</a>
 </li>

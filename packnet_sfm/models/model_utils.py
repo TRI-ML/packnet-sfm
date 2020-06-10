@@ -1,5 +1,6 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
+from packnet_sfm.utils.types import is_tensor, is_list, is_numpy
 
 def merge_outputs(*outputs):
     """
@@ -34,3 +35,32 @@ def merge_outputs(*outputs):
                     'Adding duplicated key {}'.format(key)
                 merge[key] = val
     return merge
+
+
+def stack_batch(batch):
+    """
+    Stack multi-camera batches (B,N,C,H,W becomes BN,C,H,W)
+
+    Parameters
+    ----------
+    batch : dict
+        Batch
+
+    Returns
+    -------
+    batch : dict
+        Stacked batch
+    """
+    # If there is multi-camera information
+    if len(batch['rgb'].shape) == 5:
+        assert batch['rgb'].shape[0] == 1, 'Only batch size 1 is supported for multi-cameras'
+        # Loop over all keys
+        for key in batch.keys():
+            # If list, stack every item
+            if is_list(batch[key]):
+                if is_tensor(batch[key][0]) or is_numpy(batch[key][0]):
+                    batch[key] = [sample[0] for sample in batch[key]]
+            # Else, stack single item
+            else:
+                batch[key] = batch[key][0]
+    return batch

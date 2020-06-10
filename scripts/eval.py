@@ -1,6 +1,7 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
 import argparse
+import torch
 
 from packnet_sfm import ModelWrapper, HorovodTrainer
 from packnet_sfm.utils.config import parse_test_file
@@ -13,6 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='PackNet-SfM evaluation script')
     parser.add_argument('--checkpoint', type=str, help='Checkpoint (.ckpt)')
     parser.add_argument('--config', type=str, default=None, help='Configuration (.yaml)')
+    parser.add_argument('--half', action="store_true", help='Use half precision (fp16)')
     args = parser.parse_args()
     assert args.checkpoint.endswith('.ckpt'), \
         'You need to provide a .ckpt file as checkpoint'
@@ -21,7 +23,7 @@ def parse_args():
     return args
 
 
-def test(ckpt_file, cfg_file):
+def test(ckpt_file, cfg_file, half):
     """
     Monocular depth estimation test script.
 
@@ -46,6 +48,9 @@ def test(ckpt_file, cfg_file):
     # Restore model state
     model_wrapper.load_state_dict(state_dict)
 
+    # change to half precision for evaluation if requested
+    config.arch["dtype"] = torch.float16 if half else None
+
     # Create trainer with args.arch parameters
     trainer = HorovodTrainer(**config.arch)
 
@@ -55,4 +60,4 @@ def test(ckpt_file, cfg_file):
 
 if __name__ == '__main__':
     args = parse_args()
-    test(args.checkpoint, args.config)
+    test(args.checkpoint, args.config, args.half)

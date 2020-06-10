@@ -18,7 +18,7 @@ datasets:
         path: ['/data/datasets/DDAD/ddad.json']
         split: ['val']
         depth_type: ['lidar']
-        cameras: ['camera_01']
+        cameras: [['camera_01']]
 save:
     folder: '/data/save'
     viz: True

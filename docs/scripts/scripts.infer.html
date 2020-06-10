@@ -206,16 +206,18 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scripts.infer.infer">
-<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">infer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ckpt_file</span></em>, <em class="sig-param"><span class="n">input_file</span></em>, <em class="sig-param"><span class="n">output_file</span></em>, <em class="sig-param"><span class="n">image_shape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#infer"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Monocular depth estimation test script.</p>
+<dt id="scripts.infer.infer_and_save_depth">
+<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">infer_and_save_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#infer_and_save_depth"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Process a single input file to produce and save visualization</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ckpt_file</strong> (<em>str</em>) – Checkpoint path for a pretrained model</p></li>
-<li><p><strong>input_file</strong> (<em>str</em>) – File or folder with input images</p></li>
-<li><p><strong>output_file</strong> (<em>str</em>) – File or folder with output images</p></li>
-<li><p><strong>image_shape</strong> (<em>tuple</em>) – Input image shape (H,W)</p></li>
+<li><p><strong>input_file</strong> (<em>str</em>) – Image file</p></li>
+<li><p><strong>output_file</strong> (<em>str</em>) – Output file, or folder where the output will be saved</p></li>
+<li><p><strong>model_wrapper</strong> (<em>nn.Module</em>) – Model wrapper used for inference</p></li>
+<li><p><strong>image_shape</strong> (<em>Image shape</em>) – Input image shape</p></li>
+<li><p><strong>half</strong> (<em>bool</em>) – use half precision (fp16)</p></li>
+<li><p><strong>save_npz</strong> (<em>bool</em>) – save .npz output depth maps if True, else save as png</p></li>
 </ul>
 </dd>
 </dl>
@@ -228,26 +230,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scripts.infer.parse_args">
-<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">parse_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#parse_args"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Parse arguments for training script</p>
-</dd></dl>
+<dt id="scripts.infer.main">
+<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#main"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
-<dt id="scripts.infer.process">
-<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_file</span></em>, <em class="sig-param"><span class="n">output_file</span></em>, <em class="sig-param"><span class="n">model_wrapper</span></em>, <em class="sig-param"><span class="n">image_shape</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#process"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Process a single input file to produce and save visualization</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_file</strong> (<em>str</em>) – Image file</p></li>
-<li><p><strong>output_file</strong> (<em>str</em>) – Output file, or folder where the output will be saved</p></li>
-<li><p><strong>model_wrapper</strong> (<em>nn.Module</em>) – Model wrapper used for inference</p></li>
-<li><p><strong>image_shape</strong> (<em>Image shape</em>) – Input image shape</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
+<dt id="scripts.infer.parse_args">
+<code class="sig-prename descclassname">scripts.infer.</code><code class="sig-name descname">parse_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scripts/infer.html#parse_args"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
 
 </div>
 

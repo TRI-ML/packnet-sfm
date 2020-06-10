@@ -30,7 +30,7 @@ datasets:
         path: ['/data/datasets/DDAD/ddad.json']
         split: ['train']
         depth_type: ['lidar']
-        cameras: ['camera_01']
+        cameras: [['camera_01']]
         repeat: [5]
     validation:
         num_workers: 8
@@ -38,11 +38,11 @@ datasets:
         path: ['/data/datasets/DDAD/ddad.json']
         split: ['val']
         depth_type: ['lidar']
-        cameras: ['camera_01']
+        cameras: [['camera_01']]
     test:
         num_workers: 8
         dataset: ['DGP']
         path: ['/data/datasets/DDAD/ddad.json']
         split: ['val']
         depth_type: ['lidar']
-        cameras: ['camera_01']
+        cameras: [['camera_01']]

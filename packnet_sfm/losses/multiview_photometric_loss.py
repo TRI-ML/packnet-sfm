@@ -13,7 +13,7 @@ from packnet_sfm.losses.loss_base import LossBase, ProgressiveScaling
 
 def SSIM(x, y, C1=1e-4, C2=9e-4, kernel_size=3, stride=1):
     """
-    Structural SIMlilarity (SSIM) distance between two images.
+    Structural SIMilarity (SSIM) distance between two images.
 
     Parameters
     ----------

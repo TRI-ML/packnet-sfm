@@ -172,7 +172,6 @@
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">prepare_dataset_prefix</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.depth</span> <span class="kn">import</span> <span class="n">inv2depth</span><span class="p">,</span> <span class="n">viz_inv_depth</span>
 
-<span class="c1">########################################################################################################################</span>
 
 <div class="viewcode-block" id="save_depth"><a class="viewcode-back" href="../../../utils/utils.save.html#packnet_sfm.utils.save.save_depth">[docs]</a><span class="k">def</span> <span class="nf">save_depth</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">save</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -229,8 +228,6 @@
                 <span class="c1"># Write to disk</span>
                 <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">save_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
-
-<span class="c1">########################################################################################################################</span>
 </pre></div>
 
            </div>

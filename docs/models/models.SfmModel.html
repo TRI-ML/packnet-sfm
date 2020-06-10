@@ -190,7 +190,7 @@
 <li><p><strong>pose_net</strong> (<em>nn.Module</em>) – Pose network to be used</p></li>
 <li><p><strong>rotation_mode</strong> (<em>str</em>) – Rotation mode for the pose network</p></li>
 <li><p><strong>flip_lr_prob</strong> (<em>float</em>) – Probability of flipping when using the depth network</p></li>
-<li><p><strong>upsample_depth_maps</strong> (<em>bool</em>) – True if detph map scales are upsampled to highest resolution</p></li>
+<li><p><strong>upsample_depth_maps</strong> (<em>bool</em>) – True if depth map scales are upsampled to highest resolution</p></li>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters</p></li>
 </ul>
 </dd>
@@ -198,7 +198,8 @@
 <dl class="py method">
 <dt id="packnet_sfm.models.SfmModel.SfmModel.add_depth_net">
 <code class="sig-name descname">add_depth_net</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth_net</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/SfmModel.html#SfmModel.add_depth_net"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
+<dd><p>Add a depth network to the model</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="packnet_sfm.models.SfmModel.SfmModel.add_loss">
@@ -209,7 +210,8 @@
 <dl class="py method">
 <dt id="packnet_sfm.models.SfmModel.SfmModel.add_pose_net">
 <code class="sig-name descname">add_pose_net</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pose_net</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/SfmModel.html#SfmModel.add_pose_net"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
+<dd><p>Add a pose network to the model</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="packnet_sfm.models.SfmModel.SfmModel.compute_inv_depths">
@@ -256,24 +258,46 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="packnet_sfm.models.SfmModel.SfmModel.requires_depth_net">
-<em class="property">property </em><code class="sig-name descname">requires_depth_net</code></dt>
-<dd></dd></dl>
+<dt id="packnet_sfm.models.SfmModel.SfmModel.network_requirements">
+<em class="property">property </em><code class="sig-name descname">network_requirements</code></dt>
+<dd><p>Networks required to run the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><strong>requirements</strong> –</p>
+<dl class="simple">
+<dt>depth_net<span class="classifier">bool</span></dt><dd><p>Whether a depth network is required by the model</p>
+</dd>
+<dt>pose_net<span class="classifier">bool</span></dt><dd><p>Whether a depth network is required by the model</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
-<dt id="packnet_sfm.models.SfmModel.SfmModel.requires_gt_depth">
-<em class="property">property </em><code class="sig-name descname">requires_gt_depth</code></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SfmModel.SfmModel.requires_gt_pose">
-<em class="property">property </em><code class="sig-name descname">requires_gt_pose</code></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SfmModel.SfmModel.requires_pose_net">
-<em class="property">property </em><code class="sig-name descname">requires_pose_net</code></dt>
-<dd></dd></dl>
+<dt id="packnet_sfm.models.SfmModel.SfmModel.train_requirements">
+<em class="property">property </em><code class="sig-name descname">train_requirements</code></dt>
+<dd><p>Information required by the model at training stage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><strong>requirements</strong> –</p>
+<dl class="simple">
+<dt>gt_depth<span class="classifier">bool</span></dt><dd><p>Whether ground truth depth is required by the model at training time</p>
+</dd>
+<dt>gt_pose<span class="classifier">bool</span></dt><dd><p>Whether ground truth pose is required by the model at training time</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

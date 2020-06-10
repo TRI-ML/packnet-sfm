@@ -7,7 +7,6 @@ import os
 from packnet_sfm.utils.logging import prepare_dataset_prefix
 from packnet_sfm.utils.depth import inv2depth, viz_inv_depth
 
-########################################################################################################################
 
 def save_depth(batch, output, args, dataset, save):
     """
@@ -64,5 +63,3 @@ def save_depth(batch, output, args, dataset, save):
                 # Write to disk
                 cv2.imwrite('{}/{}.png'.format(
                     save_path, filename[i]), image[:, :, ::-1])
-
-########################################################################################################################

@@ -180,17 +180,13 @@
 <span id="selfsupmodel"></span><h1>SelfSupModel</h1>
 <dl class="py class">
 <dt id="packnet_sfm.models.SelfSupModel.SelfSupModel">
-<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.models.SelfSupModel.</code><code class="sig-name descname">SelfSupModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth_net</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pose_net</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/SelfSupModel.html#SelfSupModel"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">packnet_sfm.models.SelfSupModel.</code><code class="sig-name descname">SelfSupModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/SelfSupModel.html#SelfSupModel"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel" title="packnet_sfm.models.SfmModel.SfmModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">packnet_sfm.models.SfmModel.SfmModel</span></code></a></p>
 <p>Model that inherits a depth and pose network from SfmModel and
 includes the photometric loss for self-supervised training.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>depth_net</strong> (<em>nn.Module</em>) – Depth network to be used</p></li>
-<li><p><strong>pose_net</strong> (<em>nn.Module</em>) – Pose network to be used</p></li>
-<li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters</p></li>
-</ul>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -220,26 +216,6 @@ for logging and downstream usage.</p>
 <em class="property">property </em><code class="sig-name descname">logs</code></dt>
 <dd><p>Return logs.</p>
 </dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SelfSupModel.SelfSupModel.requires_depth_net">
-<em class="property">property </em><code class="sig-name descname">requires_depth_net</code></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SelfSupModel.SelfSupModel.requires_gt_depth">
-<em class="property">property </em><code class="sig-name descname">requires_gt_depth</code></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SelfSupModel.SelfSupModel.requires_gt_pose">
-<em class="property">property </em><code class="sig-name descname">requires_gt_pose</code></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="packnet_sfm.models.SelfSupModel.SelfSupModel.requires_pose_net">
-<em class="property">property </em><code class="sig-name descname">requires_pose_net</code></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt id="packnet_sfm.models.SelfSupModel.SelfSupModel.self_supervised_loss">

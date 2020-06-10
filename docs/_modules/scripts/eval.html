@@ -166,6 +166,7 @@
 <span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">packnet_sfm</span> <span class="kn">import</span> <span class="n">ModelWrapper</span><span class="p">,</span> <span class="n">HorovodTrainer</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.config</span> <span class="kn">import</span> <span class="n">parse_test_file</span>
@@ -178,6 +179,7 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;PackNet-SfM evaluation script&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--checkpoint&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Checkpoint (.ckpt)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Configuration (.yaml)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--half&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use half precision (fp16)&#39;</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ckpt&#39;</span><span class="p">),</span> \
         <span class="s1">&#39;You need to provide a .ckpt file as checkpoint&#39;</span>
@@ -186,7 +188,7 @@
     <span class="k">return</span> <span class="n">args</span></div>
 
 
-<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../scripts/scripts.eval.html#scripts.eval.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">,</span> <span class="n">cfg_file</span><span class="p">):</span>
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../scripts/scripts.eval.html#scripts.eval.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">,</span> <span class="n">cfg_file</span><span class="p">,</span> <span class="n">half</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Monocular depth estimation test script.</span>
 
@@ -211,6 +213,9 @@
     <span class="c1"># Restore model state</span>
     <span class="n">model_wrapper</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
 
+    <span class="c1"># change to half precision for evaluation if requested</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">arch</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span> <span class="k">if</span> <span class="n">half</span> <span class="k">else</span> <span class="kc">None</span>
+
     <span class="c1"># Create trainer with args.arch parameters</span>
     <span class="n">trainer</span> <span class="o">=</span> <span class="n">HorovodTrainer</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">arch</span><span class="p">)</span>
 
@@ -220,7 +225,7 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
-    <span class="n">test</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">test</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">half</span><span class="p">)</span>
 </pre></div>
 
            </div>

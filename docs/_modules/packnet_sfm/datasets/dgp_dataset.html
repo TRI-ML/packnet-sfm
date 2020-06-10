@@ -165,10 +165,16 @@
   <h1>Source code for packnet_sfm.datasets.dgp_dataset</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">packnet_sfm.utils.misc</span> <span class="kn">import</span> <span class="n">make_list</span>
-<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_tensor</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">dgp.datasets.synchronized_dataset</span> <span class="kn">import</span> <span class="n">SynchronizedSceneDataset</span>
+<span class="kn">from</span> <span class="nn">dgp.utils.camera</span> <span class="kn">import</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">generate_depth_map</span>
+<span class="kn">from</span> <span class="nn">dgp.utils.geometry</span> <span class="kn">import</span> <span class="n">Pose</span>
+
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.misc</span> <span class="kn">import</span> <span class="n">make_list</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_tensor</span><span class="p">,</span> <span class="n">is_numpy</span><span class="p">,</span> <span class="n">is_list</span>
 
 <span class="c1">########################################################################################################################</span>
 <span class="c1">#### FUNCTIONS</span>
@@ -189,7 +195,24 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Stack torch tensors</span>
             <span class="k">if</span> <span class="n">is_tensor</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]):</span>
-                <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Stack numpy arrays</span>
+            <span class="k">elif</span> <span class="n">is_numpy</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]):</span>
+                <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Stack list</span>
+            <span class="k">elif</span> <span class="n">is_list</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">]):</span>
+                <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Stack list of torch tensors</span>
+                <span class="k">if</span> <span class="n">is_tensor</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">])):</span>
+                        <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="c1"># Stack list of numpy arrays</span>
+                <span class="k">if</span> <span class="n">is_numpy</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">])):</span>
+                        <span class="n">stacked_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">],</span> <span class="mi">0</span><span class="p">))</span>
+
     <span class="c1"># Return stacked sample</span>
     <span class="k">return</span> <span class="n">stacked_sample</span></div>
 
@@ -231,6 +254,7 @@
                  <span class="n">forward_context</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">data_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">split</span> <span class="o">=</span> <span class="n">split</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset_idx</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -241,6 +265,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_cameras</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cameras</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_transform</span> <span class="o">=</span> <span class="n">data_transform</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth_type</span> <span class="o">=</span> <span class="n">depth_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">with_depth</span> <span class="o">=</span> <span class="n">depth_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">with_pose</span> <span class="o">=</span> <span class="n">with_pose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">with_semantic</span> <span class="o">=</span> <span class="n">with_semantic</span>
@@ -250,10 +275,56 @@
             <span class="n">datum_names</span><span class="o">=</span><span class="n">cameras</span><span class="p">,</span>
             <span class="n">backward_context</span><span class="o">=</span><span class="n">back_context</span><span class="p">,</span>
             <span class="n">forward_context</span><span class="o">=</span><span class="n">forward_context</span><span class="p">,</span>
-            <span class="n">generate_depth_from_datum</span><span class="o">=</span><span class="n">depth_type</span><span class="p">,</span>
             <span class="n">requested_annotations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">only_annotated_datums</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="DGPDataset.generate_depth_map"><a class="viewcode-back" href="../../../datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.generate_depth_map">[docs]</a>    <span class="k">def</span> <span class="nf">generate_depth_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_idx</span><span class="p">,</span> <span class="n">datum_idx</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the depth map for a camera by projecting LiDAR information.</span>
+<span class="sd">        It also caches the depth map following DGP folder structure, so it&#39;s not recalculated</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample_idx : int</span>
+<span class="sd">            sample index</span>
+<span class="sd">        datum_idx : int</span>
+<span class="sd">            Datum index</span>
+<span class="sd">        filename :</span>
+<span class="sd">            Filename used for loading / saving</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        depth : np.array [H, W]</span>
+<span class="sd">            Depth map for that datum in that sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Generate depth filename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">),</span> <span class="n">filename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;depth/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth_type</span><span class="p">)))</span>
+        <span class="c1"># Load and return if exists</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="s1">&#39;depth&#39;</span><span class="p">]</span>
+        <span class="c1"># Otherwise, create, save and return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Get pointcloud</span>
+            <span class="n">scene_idx</span><span class="p">,</span> <span class="n">sample_idx_in_scene</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_item_index</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span>
+            <span class="n">pc_datum_idx_in_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_datum_index_for_datum_name</span><span class="p">(</span>
+                <span class="n">scene_idx</span><span class="p">,</span> <span class="n">sample_idx_in_scene</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth_type</span><span class="p">)</span>
+            <span class="n">pc_datum_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_point_cloud_from_datum</span><span class="p">(</span>
+                <span class="n">scene_idx</span><span class="p">,</span> <span class="n">sample_idx_in_scene</span><span class="p">,</span> <span class="n">pc_datum_idx_in_sample</span><span class="p">)</span>
+            <span class="c1"># Create camera</span>
+            <span class="n">camera_rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="n">datum_idx</span><span class="p">)</span>
+            <span class="n">camera_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="n">datum_idx</span><span class="p">)</span>
+            <span class="n">camera_intrinsics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;intrinsics&#39;</span><span class="p">,</span> <span class="n">datum_idx</span><span class="p">)</span>
+            <span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="n">camera_intrinsics</span><span class="p">,</span> <span class="n">p_cw</span><span class="o">=</span><span class="n">camera_pose</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span>
+            <span class="c1"># Generate depth map</span>
+            <span class="n">world_points</span> <span class="o">=</span> <span class="n">pc_datum_data</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">pc_datum_data</span><span class="p">[</span><span class="s1">&#39;point_cloud&#39;</span><span class="p">]</span>
+            <span class="n">depth</span> <span class="o">=</span> <span class="n">generate_depth_map</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span> <span class="n">world_points</span><span class="p">,</span> <span class="n">camera_rgb</span><span class="o">.</span><span class="n">size</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Save depth map</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+            <span class="c1"># Return depth map</span>
+            <span class="k">return</span> <span class="n">depth</span></div>
 
 <div class="viewcode-block" id="DGPDataset.get_current"><a class="viewcode-back" href="../../../datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.get_current">[docs]</a>    <span class="k">def</span> <span class="nf">get_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sensor_idx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return current timestep of a key from a sensor&quot;&quot;&quot;</span>
@@ -275,6 +346,29 @@
         <span class="sd">&quot;&quot;&quot;Get both backward and forward contexts&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_backward</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sensor_idx</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_forward</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">sensor_idx</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="DGPDataset.get_filename"><a class="viewcode-back" href="../../../datasets/datasets.DGPDataset.html#packnet_sfm.datasets.dgp_dataset.DGPDataset.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_idx</span><span class="p">,</span> <span class="n">datum_idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the filename for an index, following DGP structure</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample_idx : int</span>
+<span class="sd">            Sample index</span>
+<span class="sd">        datum_idx : int</span>
+<span class="sd">            Datum index</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Filename for the datum in that sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scene_idx</span><span class="p">,</span> <span class="n">sample_idx_in_scene</span><span class="p">,</span> <span class="n">datum_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_item_index</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span>
+        <span class="n">scene_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_scene_directory</span><span class="p">(</span><span class="n">scene_idx</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_datum</span><span class="p">(</span>
+            <span class="n">scene_idx</span><span class="p">,</span> <span class="n">sample_idx_in_scene</span><span class="p">,</span> <span class="n">datum_indices</span><span class="p">[</span><span class="n">datum_idx</span><span class="p">])</span><span class="o">.</span><span class="n">datum</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">scene_dir</span><span class="p">),</span>
+                                             <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span></div>
+
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Length of dataset&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
@@ -292,27 +386,45 @@
                 <span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
                 <span class="s1">&#39;dataset_idx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_idx</span><span class="p">,</span>
                 <span class="s1">&#39;sensor_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;datum_name&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
-                <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%010d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">,</span> <span class="n">idx</span><span class="p">),</span>
+                <span class="c1">#</span>
+                <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+                <span class="s1">&#39;splitname&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%010d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">,</span> <span class="n">idx</span><span class="p">),</span>
                 <span class="c1">#</span>
                 <span class="s1">&#39;rgb&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
                 <span class="s1">&#39;intrinsics&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;intrinsics&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
             <span class="p">}</span>
 
+            <span class="c1"># If depth is returned</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_depth</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                    <span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+                    <span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_depth_map</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span>
                 <span class="p">})</span>
 
+            <span class="c1"># If pose is returned</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_pose</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                    <span class="s1">&#39;extrinsics&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">pose</span><span class="o">.</span><span class="n">matrix</span> <span class="k">for</span> <span class="n">pose</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;extrinsics&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)],</span>
-                    <span class="s1">&#39;pose&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">pose</span><span class="o">.</span><span class="n">matrix</span> <span class="k">for</span> <span class="n">pose</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)],</span>
+                    <span class="s1">&#39;extrinsics&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;extrinsics&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span>
+                    <span class="s1">&#39;pose&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current</span><span class="p">(</span><span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span>
                 <span class="p">})</span>
 
+            <span class="c1"># If context is returned</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_context</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
                     <span class="s1">&#39;rgb_context&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
                 <span class="p">})</span>
+                <span class="c1"># If context pose is returned</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_pose</span><span class="p">:</span>
+                    <span class="c1"># Get original values to calculate relative motion</span>
+                    <span class="n">orig_extrinsics</span> <span class="o">=</span> <span class="n">Pose</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;extrinsics&#39;</span><span class="p">])</span>
+                    <span class="n">orig_pose</span> <span class="o">=</span> <span class="n">Pose</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;pose&#39;</span><span class="p">])</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                        <span class="s1">&#39;extrinsics_context&#39;</span><span class="p">:</span>
+                            <span class="p">[(</span><span class="n">orig_extrinsics</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span> <span class="o">*</span> <span class="n">extrinsics</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span>
+                             <span class="k">for</span> <span class="n">extrinsics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="s1">&#39;extrinsics&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)],</span>
+                        <span class="s1">&#39;pose_context&#39;</span><span class="p">:</span>
+                            <span class="p">[(</span><span class="n">orig_pose</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span> <span class="o">*</span> <span class="n">pose</span><span class="p">)</span><span class="o">.</span><span class="n">matrix</span>
+                             <span class="k">for</span> <span class="n">pose</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)],</span>
+                    <span class="p">})</span>
 
             <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 

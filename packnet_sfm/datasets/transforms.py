@@ -24,7 +24,8 @@ def train_transforms(sample, image_shape, jittering):
     sample : dict
         Augmented sample
     """
-    sample = resize_sample(sample, image_shape)
+    if len(image_shape) > 0:
+        sample = resize_sample(sample, image_shape)
     sample = duplicate_sample(sample)
     if len(jittering) > 0:
         sample = colorjitter_sample(sample, jittering)
@@ -47,7 +48,8 @@ def validation_transforms(sample, image_shape):
     sample : dict
         Augmented sample
     """
-    sample['rgb'] = resize_image(sample['rgb'], image_shape)
+    if len(image_shape) > 0:
+        sample['rgb'] = resize_image(sample['rgb'], image_shape)
     sample = to_tensor_sample(sample)
     return sample
 
@@ -67,7 +69,8 @@ def test_transforms(sample, image_shape):
     sample : dict
         Augmented sample
     """
-    sample['rgb'] = resize_image(sample['rgb'], image_shape)
+    if len(image_shape) > 0:
+        sample['rgb'] = resize_image(sample['rgb'], image_shape)
     sample = to_tensor_sample(sample)
     return sample
 

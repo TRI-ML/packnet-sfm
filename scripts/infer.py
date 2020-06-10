@@ -13,7 +13,7 @@ from packnet_sfm.utils.horovod import hvd_init, rank, world_size, print0
 from packnet_sfm.utils.image import load_image
 from packnet_sfm.utils.config import parse_test_file
 from packnet_sfm.utils.load import set_debug
-from packnet_sfm.utils.depth import viz_inv_depth
+from packnet_sfm.utils.depth import inv2depth, viz_inv_depth
 from packnet_sfm.utils.logging import pcolor
 
 
@@ -23,14 +23,15 @@ def is_image(file, ext=('.png', '.jpg',)):
 
 
 def parse_args():
-    """Parse arguments for training script"""
-    parser = argparse.ArgumentParser(description='PackNet-SfM evaluation script')
+    parser = argparse.ArgumentParser(description='PackNet-SfM inference of depth maps from images')
     parser.add_argument('--checkpoint', type=str, help='Checkpoint (.ckpt)')
     parser.add_argument('--input', type=str, help='Input file or folder')
-    parser.add_argument('--output', type=str, help='Output file or foler')
+    parser.add_argument('--output', type=str, help='Output file or folder')
     parser.add_argument('--image_shape', type=tuple, default=None,
                         help='Input and output image shape '
                              '(default: checkpoint\'s config.datasets.augmentation.image_shape)')
+    parser.add_argument('--half', action="store_true", help='Use half precision (fp16)')
+    parser.add_argument('--save_npz', action='store_true', help='save in .npz format')
     args = parser.parse_args()
     assert args.checkpoint.endswith('.ckpt'), \
         'You need to provide a .ckpt file as checkpoint'
@@ -42,7 +43,8 @@ def parse_args():
     return args
 
 
-def process(input_file, output_file, model_wrapper, image_shape):
+@torch.no_grad()
+def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, half, save_npz):
     """
     Process a single input file to produce and save visualization
 
@@ -56,11 +58,20 @@ def process(input_file, output_file, model_wrapper, image_shape):
         Model wrapper used for inference
     image_shape : Image shape
         Input image shape
-
-    Returns
-    -------
+    half: bool
+        use half precision (fp16)
+    save_npz: bool
+        save .npz output depth maps if True, else save as png
 
     """
+    if not is_image(output_file):
+        # If not an image, assume it's a folder and append the input name
+        os.makedirs(output_file, exist_ok=True)
+        output_file = os.path.join(output_file, os.path.basename(input_file))
+
+    # change to half precision for evaluation if requested
+    dtype = torch.float16 if half else None
+
     # Load image
     image = load_image(input_file)
     # Resize and to tensor
@@ -69,50 +80,43 @@ def process(input_file, output_file, model_wrapper, image_shape):
 
     # Send image to GPU if available
     if torch.cuda.is_available():
-        image = image.to('cuda:{}'.format(rank()))
+        image = image.to('cuda:{}'.format(rank()), dtype=dtype)
 
-    # Depth inference
-    depth = model_wrapper.depth(image)[0]
+    # Depth inference (returns predicted inverse depth)
+    pred_inv_depth = model_wrapper.depth(image)[0]
 
-    # Prepare RGB image
-    rgb_i = image[0].permute(1, 2, 0).detach().cpu().numpy() * 255
-    # Prepare inverse depth
-    pred_inv_depth_i = viz_inv_depth(depth[0]) * 255
-    # Concatenate both vertically
-    image = np.concatenate([rgb_i, pred_inv_depth_i], 0)
-    if not is_image(output_file):
-        # If not an image, assume it's a folder and append the input name
-        os.makedirs(output_file, exist_ok=True)
-        output_file = os.path.join(output_file, os.path.basename(input_file))
-    # Save visualization
-    print('Saving {} to {}'.format(
-        pcolor(input_file, 'cyan', attrs=['bold']),
-        pcolor(output_file, 'magenta', attrs=['bold'])))
-    imwrite(output_file, image[:, :, ::-1])
+    if save_npz:
+        # Get depth from predicted depth map and save to .npz
+        depth = inv2depth(pred_inv_depth).squeeze().detach().cpu().numpy()
+        output_file = os.path.splitext(output_file)[0] + ".npz"
+        print('Saving {} to {}'.format(
+            pcolor(input_file, 'cyan', attrs=['bold']),
+            pcolor(output_file, 'magenta', attrs=['bold'])))
+        np.savez_compressed(output_file, depth=depth)
+    else:
+        # Prepare RGB image
+        rgb = image[0].permute(1, 2, 0).detach().cpu().numpy() * 255
+        # Prepare inverse depth
+        viz_pred_inv_depth = viz_inv_depth(pred_inv_depth[0]) * 255
+        # Concatenate both vertically
+        image = np.concatenate([rgb, viz_pred_inv_depth], 0)
+        # Save visualization
+        print('Saving {} to {}'.format(
+            pcolor(input_file, 'cyan', attrs=['bold']),
+            pcolor(output_file, 'magenta', attrs=['bold'])))
+        imwrite(output_file, image[:, :, ::-1])
 
 
-def infer(ckpt_file, input_file, output_file, image_shape):
-    """
-    Monocular depth estimation test script.
+def main(args):
 
-    Parameters
-    ----------
-    ckpt_file : str
-        Checkpoint path for a pretrained model
-    input_file : str
-        File or folder with input images
-    output_file : str
-        File or folder with output images
-    image_shape : tuple
-        Input image shape (H,W)
-    """
     # Initialize horovod
     hvd_init()
 
     # Parse arguments
-    config, state_dict = parse_test_file(ckpt_file)
+    config, state_dict = parse_test_file(args.checkpoint)
 
     # If no image shape is provided, use the checkpoint one
+    image_shape = args.image_shape
     if image_shape is None:
         image_shape = config.datasets.augmentation.image_shape
 
@@ -124,26 +128,33 @@ def infer(ckpt_file, input_file, output_file, image_shape):
     # Restore monodepth_model state
     model_wrapper.load_state_dict(state_dict)
 
+    # change to half precision for evaluation if requested
+    dtype = torch.float16 if args.half else None
+
     # Send model to GPU if available
     if torch.cuda.is_available():
-        model_wrapper = model_wrapper.to('cuda:{}'.format(rank()))
+        model_wrapper = model_wrapper.to('cuda:{}'.format(rank()), dtype=dtype)
 
-    if os.path.isdir(input_file):
+    # Set to eval mode
+    model_wrapper.eval()
+
+    if os.path.isdir(args.input):
         # If input file is a folder, search for image files
         files = []
         for ext in ['png', 'jpg']:
-            files.extend(glob((os.path.join(input_file, '*.{}'.format(ext)))))
+            files.extend(glob((os.path.join(args.input, '*.{}'.format(ext)))))
         files.sort()
         print0('Found {} files'.format(len(files)))
     else:
         # Otherwise, use it as is
-        files = [input_file]
+        files = [args.input]
 
     # Process each file
-    for file in files[rank()::world_size()]:
-        process(file, output_file, model_wrapper, image_shape)
+    for fn in files[rank()::world_size()]:
+        infer_and_save_depth(
+            fn, args.output, model_wrapper, image_shape, args.half, args.save_npz)
 
 
 if __name__ == '__main__':
     args = parse_args()
-    infer(args.checkpoint, args.input, args.output, args.image_shape)
+    main(args)

@@ -22,7 +22,7 @@ class SfmModel(nn.Module):
     flip_lr_prob : float
         Probability of flipping when using the depth network
     upsample_depth_maps : bool
-        True if detph map scales are upsampled to highest resolution
+        True if depth map scales are upsampled to highest resolution
     kwargs : dict
         Extra parameters
     """
@@ -37,6 +37,15 @@ class SfmModel(nn.Module):
         self.upsample_depth_maps = upsample_depth_maps
         self._logs = {}
         self._losses = {}
+
+        self._network_requirements = {
+                'depth_net': True,  # Depth network required
+                'pose_net': True,   # Pose network required
+            }
+        self._train_requirements = {
+                'gt_depth': False,  # No ground-truth depth required
+                'gt_pose': False,   # No ground-truth pose required
+            }
 
     @property
     def logs(self):
@@ -53,25 +62,41 @@ class SfmModel(nn.Module):
         self._losses[key] = val.detach()
 
     @property
-    def requires_depth_net(self):
-        return True
+    def network_requirements(self):
+        """
+        Networks required to run the model
+
+        Returns
+        -------
+        requirements : dict
+            depth_net : bool
+                Whether a depth network is required by the model
+            pose_net : bool
+                Whether a depth network is required by the model
+        """
+        return self._network_requirements
 
     @property
-    def requires_pose_net(self):
-        return True
+    def train_requirements(self):
+        """
+        Information required by the model at training stage
 
-    @property
-    def requires_gt_depth(self):
-        return False
-
-    @property
-    def requires_gt_pose(self):
-        return False
+        Returns
+        -------
+        requirements : dict
+            gt_depth : bool
+                Whether ground truth depth is required by the model at training time
+            gt_pose : bool
+                Whether ground truth pose is required by the model at training time
+        """
+        return self._train_requirements
 
     def add_depth_net(self, depth_net):
+        """Add a depth network to the model"""
         self.depth_net = depth_net
 
     def add_pose_net(self, pose_net):
+        """Add a pose network to the model"""
         self.pose_net = pose_net
 
     def compute_inv_depths(self, image):

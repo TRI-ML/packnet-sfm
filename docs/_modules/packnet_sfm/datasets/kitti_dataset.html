@@ -223,8 +223,6 @@
 <span class="sd">        Split file, with paths to the images to be used</span>
 <span class="sd">    train : bool</span>
 <span class="sd">        True if the dataset will be used for training</span>
-<span class="sd">    mode : str</span>
-<span class="sd">        Dataset mode (stereo or mono)</span>
 <span class="sd">    data_transform : Function</span>
 <span class="sd">        Transformations applied to the sample</span>
 <span class="sd">    depth_type : str</span>
@@ -238,7 +236,7 @@
 <span class="sd">    strides : tuple</span>
 <span class="sd">        List of context strides</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">file_list</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;mono&#39;</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">file_list</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">data_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depth_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_pose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">back_context</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">forward_context</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)):</span>
         <span class="c1"># Assertions</span>
@@ -459,9 +457,12 @@
     <span class="k">def</span> <span class="nf">_get_oxts_file</span><span class="p">(</span><span class="n">image_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the oxts file from an image file.&quot;&quot;&quot;</span>
         <span class="c1"># find oxts pose file</span>
-        <span class="n">oxts_file</span> <span class="o">=</span> <span class="n">image_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">IMAGE_FOLDER</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">],</span> <span class="n">OXTS_POSE_DATA</span><span class="p">)</span>
-        <span class="n">oxts_file</span> <span class="o">=</span> <span class="n">oxts_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">oxts_file</span>
+        <span class="k">for</span> <span class="n">cam</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">]:</span>
+            <span class="c1"># Check for both cameras, if found replace and return file name</span>
+            <span class="k">if</span> <span class="n">IMAGE_FOLDER</span><span class="p">[</span><span class="n">cam</span><span class="p">]</span> <span class="ow">in</span> <span class="n">image_file</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">image_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">IMAGE_FOLDER</span><span class="p">[</span><span class="n">cam</span><span class="p">],</span> <span class="n">OXTS_POSE_DATA</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.txt&#39;</span><span class="p">)</span>
+        <span class="c1"># Something went wrong (invalid image file)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid KITTI path for pose supervision.&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_oxts_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets the oxts data from an image file.&quot;&quot;&quot;</span>

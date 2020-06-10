@@ -80,11 +80,11 @@ cfg.model.params.max_depth = 80.0       # Maximum depth value to evaluate
 ########################################################################################################################
 cfg.model.loss = CN()
 #
-cfg.model.loss.num_scales = 4               # Number of inverse depth scales to use
-cfg.model.loss.progressive_scaling = 0.0    # Training percentage to decay number of scales
-cfg.model.loss.flip_lr_prob = 0.5           # Probablity of horizontal flippping
-cfg.model.loss.rotation_mode = 'euler'      # Rotation mode
-cfg.model.loss.upsample_depth_maps = True   # Resize depth maps to highest resolution
+cfg.model.loss.num_scales = 4                   # Number of inverse depth scales to use
+cfg.model.loss.progressive_scaling = 0.0        # Training percentage to decay number of scales
+cfg.model.loss.flip_lr_prob = 0.5               # Probablity of horizontal flippping
+cfg.model.loss.rotation_mode = 'euler'          # Rotation mode
+cfg.model.loss.upsample_depth_maps = True       # Resize depth maps to highest resolution
 #
 cfg.model.loss.ssim_loss_weight = 0.85          # SSIM loss weight
 cfg.model.loss.occ_reg_weight = 0.1             # Occlusion regularizer loss weight
@@ -96,6 +96,8 @@ cfg.model.loss.disp_norm = True                 # Inverse depth normalization
 cfg.model.loss.clip_loss = 0.0                  # Clip loss threshold variance
 cfg.model.loss.padding_mode = 'zeros'           # Photometric loss padding mode
 cfg.model.loss.automask_loss = True             # Automasking to remove static pixels
+#
+cfg.model.loss.velocity_loss_weight = 0.1       # Velocity supervision loss weight
 #
 cfg.model.loss.supervised_method = 'sparse-l1'  # Method for depth supervision
 cfg.model.loss.supervised_num_scales = 4        # Number of scales for supervised learning
@@ -138,7 +140,7 @@ cfg.datasets.train.dataset = []                     # Training dataset
 cfg.datasets.train.path = []                        # Training data path
 cfg.datasets.train.split = []                       # Training split
 cfg.datasets.train.depth_type = ['']                # Training depth type
-cfg.datasets.train.cameras = []                     # Training cameras
+cfg.datasets.train.cameras = [[]]                   # Training cameras (double list, one for each dataset)
 cfg.datasets.train.repeat = [1]                     # Number of times training dataset is repeated per epoch
 cfg.datasets.train.num_logs = 5                     # Number of training images to log
 ########################################################################################################################
@@ -153,7 +155,7 @@ cfg.datasets.validation.dataset = []                # Validation dataset
 cfg.datasets.validation.path = []                   # Validation data path
 cfg.datasets.validation.split = []                  # Validation split
 cfg.datasets.validation.depth_type = ['']           # Validation depth type
-cfg.datasets.validation.cameras = []                # Validation cameras
+cfg.datasets.validation.cameras = [[]]              # Validation cameras (double list, one for each dataset)
 cfg.datasets.validation.num_logs = 5                # Number of validation images to log
 ########################################################################################################################
 ### DATASETS.TEST
@@ -167,7 +169,7 @@ cfg.datasets.test.dataset = []                      # Test dataset
 cfg.datasets.test.path = []                         # Test data path
 cfg.datasets.test.split = []                        # Test split
 cfg.datasets.test.depth_type = ['']                 # Test depth type
-cfg.datasets.test.cameras = []                      # Test cameras
+cfg.datasets.test.cameras = [[]]                    # Test cameras (double list, one for each dataset)
 cfg.datasets.test.num_logs = 5                      # Number of test images to log
 ########################################################################################################################
 ### THESE SHOULD NOT BE CHANGED

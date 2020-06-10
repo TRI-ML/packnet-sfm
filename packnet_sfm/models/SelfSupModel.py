@@ -12,16 +12,12 @@ class SelfSupModel(SfmModel):
 
     Parameters
     ----------
-    depth_net : nn.Module
-        Depth network to be used
-    pose_net : nn.Module
-        Pose network to be used
     kwargs : dict
         Extra parameters
     """
-    def __init__(self, depth_net=None, pose_net=None, **kwargs):
+    def __init__(self, **kwargs):
         # Initializes SfmModel
-        super().__init__(depth_net, pose_net, **kwargs)
+        super().__init__(**kwargs)
         # Initializes the photometric loss
         self._photometric_loss = MultiViewPhotometricLoss(**kwargs)
 
@@ -32,22 +28,6 @@ class SelfSupModel(SfmModel):
             **super().logs,
             **self._photometric_loss.logs
         }
-
-    @property
-    def requires_depth_net(self):
-        return True
-
-    @property
-    def requires_pose_net(self):
-        return True
-
-    @property
-    def requires_gt_depth(self):
-        return False
-
-    @property
-    def requires_gt_pose(self):
-        return False
 
     def self_supervised_loss(self, image, ref_images, inv_depths, poses,
                              intrinsics, return_logs=False, progress=0.0):
