@@ -19,6 +19,7 @@ from packnet_sfm.utils.logging import pcolor
 from packnet_sfm.utils.reduce import all_reduce_metrics, reduce_dict, \
     create_dict, average_loss_and_metrics
 from packnet_sfm.utils.save import save_depth
+from packnet_sfm.models.model_utils import stack_batch
 
 
 class ModelWrapper(torch.nn.Module):
@@ -58,7 +59,10 @@ class ModelWrapper(torch.nn.Module):
 
         # Prepare datasets
         if load_datasets:
-            self.prepare_datasets()
+            # Requirements for validation (we only evaluate depth for now)
+            validation_requirements = {'gt_depth': True, 'gt_pose': False}
+            test_requirements = validation_requirements
+            self.prepare_datasets(validation_requirements, test_requirements)
 
         # Preparations done
         self.config.prepared = True
@@ -76,20 +80,24 @@ class ModelWrapper(torch.nn.Module):
             if 'epoch' in resume:
                 self.current_epoch = resume['epoch']
 
-    def prepare_datasets(self):
+    def prepare_datasets(self, validation_requirements, test_requirements):
         """Prepare datasets for training, validation and test."""
-
         # Prepare datasets
         print0(pcolor('### Preparing Datasets', 'green'))
 
         augmentation = self.config.datasets.augmentation
+        # Setup train dataset (requirements are given by the model itself)
         self.train_dataset = setup_dataset(
             self.config.datasets.train, 'train',
-            self.model.requires_gt_depth, **augmentation)
+            self.model.train_requirements, **augmentation)
+        # Setup validation dataset
         self.validation_dataset = setup_dataset(
-            self.config.datasets.validation, 'validation', **augmentation)
+            self.config.datasets.validation, 'validation',
+            validation_requirements, **augmentation)
+        # Setup test dataset
         self.test_dataset = setup_dataset(
-            self.config.datasets.test, 'test', **augmentation)
+            self.config.datasets.test, 'test',
+            test_requirements, **augmentation)
 
     @property
     def depth_net(self):
@@ -107,11 +115,16 @@ class ModelWrapper(torch.nn.Module):
         params = OrderedDict()
         for param in self.optimizer.param_groups:
             params['{}_learning_rate'.format(param['name'].lower())] = param['lr']
-        params['progress'] = self.current_epoch / self.config.arch.max_epochs
+        params['progress'] = self.progress
         return {
             **params,
             **self.model.logs,
         }
+
+    @property
+    def progress(self):
+        """Returns training progress (current epoch / max. number of epochs)"""
+        return self.current_epoch / self.config.arch.max_epochs
 
     def configure_optimizers(self):
         """Configure depth and pose optimizers and the corresponding scheduler."""
@@ -170,8 +183,8 @@ class ModelWrapper(torch.nn.Module):
 
     def training_step(self, batch, *args):
         """Processes a training batch."""
-        # loss = self.model(batch)[-1]
-        output = self.model(batch)
+        batch = stack_batch(batch)
+        output = self.model(batch, progress=self.progress)
         return {
             'loss': output['loss'],
             'metrics': output['metrics']
@@ -336,8 +349,11 @@ class ModelWrapper(torch.nn.Module):
         print(met_line.format(*(('METRIC',) + self.metrics_keys)))
         for n, metrics in enumerate(metrics_data):
             print(hor_line)
-            print(wrap(pcolor('*** {:<87}'.format(
-                os.path.join(dataset.path[n], dataset.split[n])), 'magenta', attrs=['bold'])))
+            path_line = '{}'.format(
+                os.path.join(dataset.path[n], dataset.split[n]))
+            if len(dataset.cameras[n]) == 1: # only allows single cameras
+                path_line += ' ({})'.format(dataset.cameras[n][0])
+            print(wrap(pcolor('*** {:<87}'.format(path_line), 'magenta', attrs=['bold'])))
             print(hor_line)
             for key, metric in metrics.items():
                 if self.metrics_name in key:
@@ -442,10 +458,10 @@ def setup_model(config, prepared, **kwargs):
     model = load_class(config.name, paths=['packnet_sfm.models',])(
         **{**config.loss, **kwargs})
     # Add depth network if required
-    if model.requires_depth_net:
+    if model.network_requirements['depth_net']:
         model.add_depth_net(setup_depth_net(config.depth_net, prepared))
     # Add pose network if required
-    if model.requires_pose_net:
+    if model.network_requirements['pose_net']:
         model.add_pose_net(setup_pose_net(config.pose_net, prepared))
     # If a checkpoint is provided, load pretrained model
     if not prepared and config.checkpoint_path is not '':
@@ -454,7 +470,7 @@ def setup_model(config, prepared, **kwargs):
     return model
 
 
-def setup_dataset(config, mode, requires_gt_depth=True, **kwargs):
+def setup_dataset(config, mode, requirements, **kwargs):
     """
     Create a dataset class
 
@@ -464,8 +480,8 @@ def setup_dataset(config, mode, requires_gt_depth=True, **kwargs):
         Configuration (cf. configs/default_config.py)
     mode : str {'train', 'validation', 'test'}
         Mode from which we want the dataset
-    requires_gt_depth : bool
-        True if the model requires ground-truth depth maps at training time
+    requirements : dict (string -> bool)
+        Different requirements for dataset loading (gt_depth, gt_pose, etc)
     kwargs : dict
         Extra parameters for dataset creation
 
@@ -494,7 +510,8 @@ def setup_dataset(config, mode, requires_gt_depth=True, **kwargs):
 
         # Individual shared dataset arguments
         dataset_args_i = {
-            'depth_type': config.depth_type[i] if requires_gt_depth else None,
+            'depth_type': config.depth_type[i] if requirements['gt_depth'] else None,
+            'with_pose': requirements['gt_pose'],
         }
 
         # KITTI dataset
@@ -502,14 +519,13 @@ def setup_dataset(config, mode, requires_gt_depth=True, **kwargs):
             dataset = KITTIDataset(
                 config.path[i], path_split,
                 **dataset_args, **dataset_args_i,
-                mode='mono',
             )
         # DGP dataset
         elif config.dataset[i] == 'DGP':
             dataset = DGPDataset(
                 config.path[i], config.split[i],
                 **dataset_args, **dataset_args_i,
-                cameras=config.cameras,
+                cameras=config.cameras[i],
             )
         # Image dataset
         elif config.dataset[i] == 'Image':

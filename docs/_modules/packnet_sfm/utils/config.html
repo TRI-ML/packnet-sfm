@@ -171,7 +171,7 @@
 
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">s3_url</span><span class="p">,</span> <span class="n">prepare_dataset_prefix</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.horovod</span> <span class="kn">import</span> <span class="n">on_rank_0</span>
-<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_cfg</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_cfg</span><span class="p">,</span> <span class="n">is_list</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.misc</span> <span class="kn">import</span> <span class="n">make_list</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.load</span> <span class="kn">import</span> <span class="n">load_class</span><span class="p">,</span> <span class="n">backwards_state_dict</span>
 
@@ -193,11 +193,16 @@
     <span class="c1"># If there is no dataset, do nothing</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">config</span>
-    <span class="c1"># Get split length and expand other arguments to the same length</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">split</span><span class="p">)</span>
+    <span class="c1"># If cameras is not a double list, make it so</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">cameras</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">is_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">cameras</span> <span class="o">=</span> <span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">]</span>
+    <span class="c1"># Get maximum length and expand other arguments to the same length</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">split</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">depth_type</span><span class="p">))</span>
     <span class="n">config</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="n">config</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">split</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">split</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="n">config</span><span class="o">.</span><span class="n">depth_type</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">depth_type</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">cameras</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;repeat&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
         <span class="n">config</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="n">make_list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">repeat</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="c1"># Return updated configuration</span>

@@ -1,18 +1,21 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
+import torch
 from tqdm import tqdm
 from packnet_sfm.utils.logging import prepare_dataset_prefix
 
 
-def sample_to_cuda(data):
+def sample_to_cuda(data, dtype=None):
     if isinstance(data, str):
         return data
     elif isinstance(data, dict):
-        return {key: sample_to_cuda(data[key]) for key in data.keys()}
+        return {key: sample_to_cuda(data[key], dtype) for key in data.keys()}
     elif isinstance(data, list):
-        return [sample_to_cuda(key) for key in data]
+        return [sample_to_cuda(val, dtype) for val in data]
     else:
-        return data.to('cuda')
+        # only convert floats (e.g., to half), otherwise preserve (e.g, ints)
+        dtype = dtype if torch.is_floating_point(data) else None
+        return data.to('cuda', dtype=dtype)
 
 
 class BaseTrainer:

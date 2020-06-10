@@ -177,16 +177,12 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    depth_net : nn.Module</span>
-<span class="sd">        Depth network to be used</span>
-<span class="sd">    pose_net : nn.Module</span>
-<span class="sd">        Pose network to be used</span>
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        Extra parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pose_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Initializes SfmModel</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">depth_net</span><span class="p">,</span> <span class="n">pose_net</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Initializes the photometric loss</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_photometric_loss</span> <span class="o">=</span> <span class="n">MultiViewPhotometricLoss</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -197,22 +193,6 @@
             <span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">logs</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_photometric_loss</span><span class="o">.</span><span class="n">logs</span>
         <span class="p">}</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_depth_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_pose_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_gt_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_gt_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="SelfSupModel.self_supervised_loss"><a class="viewcode-back" href="../../../models/models.SelfSupModel.html#packnet_sfm.models.SelfSupModel.SelfSupModel.self_supervised_loss">[docs]</a>    <span class="k">def</span> <span class="nf">self_supervised_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">ref_images</span><span class="p">,</span> <span class="n">inv_depths</span><span class="p">,</span> <span class="n">poses</span><span class="p">,</span>
                              <span class="n">intrinsics</span><span class="p">,</span> <span class="n">return_logs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>

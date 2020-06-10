@@ -239,7 +239,7 @@ Designed to use models with high-level Trainer classes (cf. trainers/).</p>
 
 <dl class="py method">
 <dt id="packnet_sfm.models.model_wrapper.ModelWrapper.prepare_datasets">
-<code class="sig-name descname">prepare_datasets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.prepare_datasets"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">prepare_datasets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">validation_requirements</span></em>, <em class="sig-param"><span class="n">test_requirements</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#ModelWrapper.prepare_datasets"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Prepare datasets for training, validation and test.</p>
 </dd></dl>
 
@@ -253,6 +253,12 @@ Designed to use models with high-level Trainer classes (cf. trainers/).</p>
 <dt id="packnet_sfm.models.model_wrapper.ModelWrapper.print_metrics">
 <code class="sig-name descname">print_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.models.model_wrapper.ModelWrapper.progress">
+<em class="property">property </em><code class="sig-name descname">progress</code></dt>
+<dd><p>Returns training progress (current epoch / max. number of epochs)</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="packnet_sfm.models.model_wrapper.ModelWrapper.test_dataloader">
@@ -344,14 +350,14 @@ Designed to use models with high-level Trainer classes (cf. trainers/).</p>
 
 <dl class="py function">
 <dt id="packnet_sfm.models.model_wrapper.setup_dataset">
-<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mode</span></em>, <em class="sig-param"><span class="n">requires_gt_depth</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_dataset"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-prename descclassname">packnet_sfm.models.model_wrapper.</code><code class="sig-name descname">setup_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mode</span></em>, <em class="sig-param"><span class="n">requirements</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/models/model_wrapper.html#setup_dataset"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Create a dataset class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config</strong> (<em>CfgNode</em>) – Configuration (cf. configs/default_config.py)</p></li>
 <li><p><strong>mode</strong> (<em>str {'train'</em><em>, </em><em>'validation'</em><em>, </em><em>'test'}</em>) – Mode from which we want the dataset</p></li>
-<li><p><strong>requires_gt_depth</strong> (<em>bool</em>) – True if the model requires ground-truth depth maps at training time</p></li>
+<li><p><strong>requirements</strong> (<em>dict</em><em> (</em><em>string -&gt; bool</em><em>)</em>) – Different requirements for dataset loading (gt_depth, gt_pose, etc)</p></li>
 <li><p><strong>kwargs</strong> (<em>dict</em>) – Extra parameters for dataset creation</p></li>
 </ul>
 </dd>

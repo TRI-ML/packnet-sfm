@@ -187,7 +187,7 @@
 <span class="sd">    flip_lr_prob : float</span>
 <span class="sd">        Probability of flipping when using the depth network</span>
 <span class="sd">    upsample_depth_maps : bool</span>
-<span class="sd">        True if detph map scales are upsampled to highest resolution</span>
+<span class="sd">        True if depth map scales are upsampled to highest resolution</span>
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        Extra parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -202,6 +202,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">upsample_depth_maps</span> <span class="o">=</span> <span class="n">upsample_depth_maps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_losses</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_network_requirements</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;depth_net&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Depth network required</span>
+                <span class="s1">&#39;pose_net&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># Pose network required</span>
+            <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_requirements</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;gt_depth&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># No ground-truth depth required</span>
+                <span class="s1">&#39;gt_pose&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>   <span class="c1"># No ground-truth pose required</span>
+            <span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -218,25 +227,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_losses</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_depth_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="nf">network_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Networks required to run the model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        requirements : dict</span>
+<span class="sd">            depth_net : bool</span>
+<span class="sd">                Whether a depth network is required by the model</span>
+<span class="sd">            pose_net : bool</span>
+<span class="sd">                Whether a depth network is required by the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_network_requirements</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_pose_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="nf">train_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Information required by the model at training stage</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_gt_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">requires_gt_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        requirements : dict</span>
+<span class="sd">            gt_depth : bool</span>
+<span class="sd">                Whether ground truth depth is required by the model at training time</span>
+<span class="sd">            gt_pose : bool</span>
+<span class="sd">                Whether ground truth pose is required by the model at training time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_requirements</span>
 
 <div class="viewcode-block" id="SfmModel.add_depth_net"><a class="viewcode-back" href="../../../models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.add_depth_net">[docs]</a>    <span class="k">def</span> <span class="nf">add_depth_net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth_net</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a depth network to the model&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth_net</span> <span class="o">=</span> <span class="n">depth_net</span></div>
 
 <div class="viewcode-block" id="SfmModel.add_pose_net"><a class="viewcode-back" href="../../../models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.add_pose_net">[docs]</a>    <span class="k">def</span> <span class="nf">add_pose_net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_net</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a pose network to the model&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pose_net</span> <span class="o">=</span> <span class="n">pose_net</span></div>
 
 <div class="viewcode-block" id="SfmModel.compute_inv_depths"><a class="viewcode-back" href="../../../models/models.SfmModel.html#packnet_sfm.models.SfmModel.SfmModel.compute_inv_depths">[docs]</a>    <span class="k">def</span> <span class="nf">compute_inv_depths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>

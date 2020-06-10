@@ -46,11 +46,14 @@ def prepare_dataset_prefix(config, n):
     prefix : str
         Dataset prefix for metrics logging
     """
-    return '{}-{}-{}'.format(
+    prefix = '{}-{}'.format(
         os.path.splitext(config.path[n].split('/')[-1])[0],
-        os.path.splitext(os.path.basename(config.split[n]))[0],
-        config.depth_type[n],
-    )
+        os.path.splitext(os.path.basename(config.split[n]))[0])
+    if config.depth_type[n] is not '':
+        prefix += '-{}'.format(config.depth_type[n])
+    if len(config.cameras[n]) == 1: # only allows single cameras
+        prefix += '-{}'.format(config.cameras[n][0])
+    return prefix
 
 
 def s3_url(config):

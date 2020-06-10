@@ -189,7 +189,8 @@
 <span class="sd">    sample : dict</span>
 <span class="sd">        Augmented sample</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sample</span> <span class="o">=</span> <span class="n">resize_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">resize_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">)</span>
     <span class="n">sample</span> <span class="o">=</span> <span class="n">duplicate_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jittering</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sample</span> <span class="o">=</span> <span class="n">colorjitter_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">jittering</span><span class="p">)</span>
@@ -212,7 +213,8 @@
 <span class="sd">    sample : dict</span>
 <span class="sd">        Augmented sample</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resize_image</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resize_image</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">)</span>
     <span class="n">sample</span> <span class="o">=</span> <span class="n">to_tensor_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sample</span></div>
 
@@ -232,7 +234,8 @@
 <span class="sd">    sample : dict</span>
 <span class="sd">        Augmented sample</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resize_image</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resize_image</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">)</span>
     <span class="n">sample</span> <span class="o">=</span> <span class="n">to_tensor_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sample</span></div>
 

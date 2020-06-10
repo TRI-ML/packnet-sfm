@@ -184,6 +184,7 @@
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.reduce</span> <span class="kn">import</span> <span class="n">all_reduce_metrics</span><span class="p">,</span> <span class="n">reduce_dict</span><span class="p">,</span> \
     <span class="n">create_dict</span><span class="p">,</span> <span class="n">average_loss_and_metrics</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.save</span> <span class="kn">import</span> <span class="n">save_depth</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.models.model_utils</span> <span class="kn">import</span> <span class="n">stack_batch</span>
 
 
 <div class="viewcode-block" id="ModelWrapper"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper">[docs]</a><span class="k">class</span> <span class="nc">ModelWrapper</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -223,7 +224,10 @@
 
         <span class="c1"># Prepare datasets</span>
         <span class="k">if</span> <span class="n">load_datasets</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">prepare_datasets</span><span class="p">()</span>
+            <span class="c1"># Requirements for validation (we only evaluate depth for now)</span>
+            <span class="n">validation_requirements</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gt_depth&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;gt_pose&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+            <span class="n">test_requirements</span> <span class="o">=</span> <span class="n">validation_requirements</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prepare_datasets</span><span class="p">(</span><span class="n">validation_requirements</span><span class="p">,</span> <span class="n">test_requirements</span><span class="p">)</span>
 
         <span class="c1"># Preparations done</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">prepared</span> <span class="o">=</span> <span class="kc">True</span>
@@ -241,20 +245,24 @@
             <span class="k">if</span> <span class="s1">&#39;epoch&#39;</span> <span class="ow">in</span> <span class="n">resume</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">=</span> <span class="n">resume</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="ModelWrapper.prepare_datasets"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.prepare_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelWrapper.prepare_datasets"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.prepare_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validation_requirements</span><span class="p">,</span> <span class="n">test_requirements</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare datasets for training, validation and test.&quot;&quot;&quot;</span>
-
         <span class="c1"># Prepare datasets</span>
         <span class="n">print0</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;### Preparing Datasets&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">))</span>
 
         <span class="n">augmentation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">augmentation</span>
+        <span class="c1"># Setup train dataset (requirements are given by the model itself)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">setup_dataset</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">requires_gt_depth</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_requirements</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span>
+        <span class="c1"># Setup validation dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validation_dataset</span> <span class="o">=</span> <span class="n">setup_dataset</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">validation</span><span class="p">,</span> <span class="s1">&#39;validation&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">validation</span><span class="p">,</span> <span class="s1">&#39;validation&#39;</span><span class="p">,</span>
+            <span class="n">validation_requirements</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span>
+        <span class="c1"># Setup test dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">setup_dataset</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
+            <span class="n">test_requirements</span><span class="p">,</span> <span class="o">**</span><span class="n">augmentation</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">depth_net</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -272,11 +280,16 @@
         <span class="n">params</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_learning_rate&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())]</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span>
-        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">arch</span><span class="o">.</span><span class="n">max_epochs</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="o">**</span><span class="n">params</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logs</span><span class="p">,</span>
         <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns training progress (current epoch / max. number of epochs)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">arch</span><span class="o">.</span><span class="n">max_epochs</span>
 
 <div class="viewcode-block" id="ModelWrapper.configure_optimizers"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.configure_optimizers">[docs]</a>    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Configure depth and pose optimizers and the corresponding scheduler.&quot;&quot;&quot;</span>
@@ -335,8 +348,8 @@
 
 <div class="viewcode-block" id="ModelWrapper.training_step"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.ModelWrapper.training_step">[docs]</a>    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Processes a training batch.&quot;&quot;&quot;</span>
-        <span class="c1"># loss = self.model(batch)[-1]</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">stack_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span>
             <span class="s1">&#39;metrics&#39;</span><span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;metrics&#39;</span><span class="p">]</span>
@@ -501,8 +514,11 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">met_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="s1">&#39;METRIC&#39;</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_keys</span><span class="p">)))</span>
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics_data</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">hor_line</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">wrap</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;*** </span><span class="si">{:&lt;87}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">[</span><span class="n">n</span><span class="p">])),</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
+            <span class="n">path_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">dataset</span><span class="o">.</span><span class="n">split</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">cameras</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># only allows single cameras</span>
+                <span class="n">path_line</span> <span class="o">+=</span> <span class="s1">&#39; (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">cameras</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">wrap</span><span class="p">(</span><span class="n">pcolor</span><span class="p">(</span><span class="s1">&#39;*** </span><span class="si">{:&lt;87}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_line</span><span class="p">),</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">hor_line</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_name</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
@@ -607,10 +623,10 @@
     <span class="n">model</span> <span class="o">=</span> <span class="n">load_class</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;packnet_sfm.models&#39;</span><span class="p">,])(</span>
         <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">})</span>
     <span class="c1"># Add depth network if required</span>
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">requires_depth_net</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">network_requirements</span><span class="p">[</span><span class="s1">&#39;depth_net&#39;</span><span class="p">]:</span>
         <span class="n">model</span><span class="o">.</span><span class="n">add_depth_net</span><span class="p">(</span><span class="n">setup_depth_net</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">depth_net</span><span class="p">,</span> <span class="n">prepared</span><span class="p">))</span>
     <span class="c1"># Add pose network if required</span>
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">requires_pose_net</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">network_requirements</span><span class="p">[</span><span class="s1">&#39;pose_net&#39;</span><span class="p">]:</span>
         <span class="n">model</span><span class="o">.</span><span class="n">add_pose_net</span><span class="p">(</span><span class="n">setup_pose_net</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pose_net</span><span class="p">,</span> <span class="n">prepared</span><span class="p">))</span>
     <span class="c1"># If a checkpoint is provided, load pretrained model</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">prepared</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">checkpoint_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
@@ -619,7 +635,7 @@
     <span class="k">return</span> <span class="n">model</span></div>
 
 
-<div class="viewcode-block" id="setup_dataset"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.setup_dataset">[docs]</a><span class="k">def</span> <span class="nf">setup_dataset</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">requires_gt_depth</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="setup_dataset"><a class="viewcode-back" href="../../../models/models.Wrapper.html#packnet_sfm.models.model_wrapper.setup_dataset">[docs]</a><span class="k">def</span> <span class="nf">setup_dataset</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">requirements</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a dataset class</span>
 
@@ -629,8 +645,8 @@
 <span class="sd">        Configuration (cf. configs/default_config.py)</span>
 <span class="sd">    mode : str {&#39;train&#39;, &#39;validation&#39;, &#39;test&#39;}</span>
 <span class="sd">        Mode from which we want the dataset</span>
-<span class="sd">    requires_gt_depth : bool</span>
-<span class="sd">        True if the model requires ground-truth depth maps at training time</span>
+<span class="sd">    requirements : dict (string -&gt; bool)</span>
+<span class="sd">        Different requirements for dataset loading (gt_depth, gt_pose, etc)</span>
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        Extra parameters for dataset creation</span>
 
@@ -659,7 +675,8 @@
 
         <span class="c1"># Individual shared dataset arguments</span>
         <span class="n">dataset_args_i</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;depth_type&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">depth_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">requires_gt_depth</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;depth_type&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">depth_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">requirements</span><span class="p">[</span><span class="s1">&#39;gt_depth&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;with_pose&#39;</span><span class="p">:</span> <span class="n">requirements</span><span class="p">[</span><span class="s1">&#39;gt_pose&#39;</span><span class="p">],</span>
         <span class="p">}</span>
 
         <span class="c1"># KITTI dataset</span>
@@ -667,14 +684,13 @@
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">KITTIDataset</span><span class="p">(</span>
                 <span class="n">config</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path_split</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">dataset_args</span><span class="p">,</span> <span class="o">**</span><span class="n">dataset_args_i</span><span class="p">,</span>
-                <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;mono&#39;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="c1"># DGP dataset</span>
         <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DGP&#39;</span><span class="p">:</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">DGPDataset</span><span class="p">(</span>
                 <span class="n">config</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">split</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="o">**</span><span class="n">dataset_args</span><span class="p">,</span> <span class="o">**</span><span class="n">dataset_args_i</span><span class="p">,</span>
-                <span class="n">cameras</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">,</span>
+                <span class="n">cameras</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">cameras</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="c1"># Image dataset</span>
         <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Image&#39;</span><span class="p">:</span>

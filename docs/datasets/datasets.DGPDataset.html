@@ -198,6 +198,28 @@
 </dd>
 </dl>
 <dl class="py method">
+<dt id="packnet_sfm.datasets.dgp_dataset.DGPDataset.generate_depth_map">
+<code class="sig-name descname">generate_depth_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample_idx</span></em>, <em class="sig-param"><span class="n">datum_idx</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/dgp_dataset.html#DGPDataset.generate_depth_map"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generates the depth map for a camera by projecting LiDAR information.
+It also caches the depth map following DGP folder structure, so it’s not recalculated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_idx</strong> (<em>int</em>) – sample index</p></li>
+<li><p><strong>datum_idx</strong> (<em>int</em>) – Datum index</p></li>
+<li><p><strong>filename</strong> – Filename used for loading / saving</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>depth</strong> – Depth map for that datum in that sample</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array [H, W]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="packnet_sfm.datasets.dgp_dataset.DGPDataset.get_backward">
 <code class="sig-name descname">get_backward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">sensor_idx</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/dgp_dataset.html#DGPDataset.get_backward"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return backward timesteps of a key from a sensor</p>
@@ -213,6 +235,26 @@
 <dt id="packnet_sfm.datasets.dgp_dataset.DGPDataset.get_current">
 <code class="sig-name descname">get_current</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">sensor_idx</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/dgp_dataset.html#DGPDataset.get_current"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return current timestep of a key from a sensor</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="packnet_sfm.datasets.dgp_dataset.DGPDataset.get_filename">
+<code class="sig-name descname">get_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample_idx</span></em>, <em class="sig-param"><span class="n">datum_idx</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packnet_sfm/datasets/dgp_dataset.html#DGPDataset.get_filename"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the filename for an index, following DGP structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_idx</strong> (<em>int</em>) – Sample index</p></li>
+<li><p><strong>datum_idx</strong> (<em>int</em>) – Datum index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>filename</strong> – Filename for the datum in that sample</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

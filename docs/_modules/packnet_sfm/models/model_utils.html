@@ -165,6 +165,7 @@
   <h1>Source code for packnet_sfm.models.model_utils</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2020 Toyota Research Institute.  All rights reserved.</span>
 
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.types</span> <span class="kn">import</span> <span class="n">is_tensor</span><span class="p">,</span> <span class="n">is_list</span><span class="p">,</span> <span class="n">is_numpy</span>
 
 <div class="viewcode-block" id="merge_outputs"><a class="viewcode-back" href="../../../models/models.Utilities.html#packnet_sfm.models.model_utils.merge_outputs">[docs]</a><span class="k">def</span> <span class="nf">merge_outputs</span><span class="p">(</span><span class="o">*</span><span class="n">outputs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -199,6 +200,35 @@
                     <span class="s1">&#39;Adding duplicated key </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="n">merge</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
     <span class="k">return</span> <span class="n">merge</span></div>
+
+
+<div class="viewcode-block" id="stack_batch"><a class="viewcode-back" href="../../../models/models.Utilities.html#packnet_sfm.models.model_utils.stack_batch">[docs]</a><span class="k">def</span> <span class="nf">stack_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stack multi-camera batches (B,N,C,H,W becomes BN,C,H,W)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch : dict</span>
+<span class="sd">        Batch</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    batch : dict</span>
+<span class="sd">        Stacked batch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If there is multi-camera information</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Only batch size 1 is supported for multi-cameras&#39;</span>
+        <span class="c1"># Loop over all keys</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># If list, stack every item</span>
+            <span class="k">if</span> <span class="n">is_list</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">is_tensor</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">is_numpy</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+            <span class="c1"># Else, stack single item</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">batch</span></div>
 </pre></div>
 
            </div>

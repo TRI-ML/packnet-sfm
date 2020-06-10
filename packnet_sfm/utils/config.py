@@ -6,7 +6,7 @@ from yacs.config import CfgNode
 
 from packnet_sfm.utils.logging import s3_url, prepare_dataset_prefix
 from packnet_sfm.utils.horovod import on_rank_0
-from packnet_sfm.utils.types import is_cfg
+from packnet_sfm.utils.types import is_cfg, is_list
 from packnet_sfm.utils.misc import make_list
 from packnet_sfm.utils.load import load_class, backwards_state_dict
 
@@ -28,11 +28,16 @@ def prep_dataset(config):
     # If there is no dataset, do nothing
     if len(config.path) == 0:
         return config
-    # Get split length and expand other arguments to the same length
-    n = len(config.split)
+    # If cameras is not a double list, make it so
+    if not config.cameras or not is_list(config.cameras[0]):
+        config.cameras = [config.cameras]
+    # Get maximum length and expand other arguments to the same length
+    n = max(len(config.split), len(config.cameras), len(config.depth_type))
     config.dataset = make_list(config.dataset, n)
     config.path = make_list(config.path, n)
+    config.split = make_list(config.split, n)
     config.depth_type = make_list(config.depth_type, n)
+    config.cameras = make_list(config.cameras, n)
     if 'repeat' in config:
         config.repeat = make_list(config.repeat, n)
     # Return updated configuration

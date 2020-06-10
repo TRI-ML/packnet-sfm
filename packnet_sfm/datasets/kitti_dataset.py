@@ -58,8 +58,6 @@ class KITTIDataset(Dataset):
         Split file, with paths to the images to be used
     train : bool
         True if the dataset will be used for training
-    mode : str
-        Dataset mode (stereo or mono)
     data_transform : Function
         Transformations applied to the sample
     depth_type : str
@@ -73,7 +71,7 @@ class KITTIDataset(Dataset):
     strides : tuple
         List of context strides
     """
-    def __init__(self, root_dir, file_list, train=True, mode='mono',
+    def __init__(self, root_dir, file_list, train=True,
                  data_transform=None, depth_type=None, with_pose=False,
                  back_context=0, forward_context=0, strides=(1,)):
         # Assertions
@@ -294,9 +292,12 @@ class KITTIDataset(Dataset):
     def _get_oxts_file(image_file):
         """Gets the oxts file from an image file."""
         # find oxts pose file
-        oxts_file = image_file.replace(IMAGE_FOLDER['left'], OXTS_POSE_DATA)
-        oxts_file = oxts_file.replace('png', 'txt')
-        return oxts_file
+        for cam in ['left', 'right']:
+            # Check for both cameras, if found replace and return file name
+            if IMAGE_FOLDER[cam] in image_file:
+                return image_file.replace(IMAGE_FOLDER[cam], OXTS_POSE_DATA).replace('.png', '.txt')
+        # Something went wrong (invalid image file)
+        raise ValueError('Invalid KITTI path for pose supervision.')
 
     def _get_oxts_data(self, image_file):
         """Gets the oxts data from an image file."""

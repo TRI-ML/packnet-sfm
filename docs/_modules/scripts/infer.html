@@ -178,7 +178,7 @@
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.image</span> <span class="kn">import</span> <span class="n">load_image</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.config</span> <span class="kn">import</span> <span class="n">parse_test_file</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.load</span> <span class="kn">import</span> <span class="n">set_debug</span>
-<span class="kn">from</span> <span class="nn">packnet_sfm.utils.depth</span> <span class="kn">import</span> <span class="n">viz_inv_depth</span>
+<span class="kn">from</span> <span class="nn">packnet_sfm.utils.depth</span> <span class="kn">import</span> <span class="n">inv2depth</span><span class="p">,</span> <span class="n">viz_inv_depth</span>
 <span class="kn">from</span> <span class="nn">packnet_sfm.utils.logging</span> <span class="kn">import</span> <span class="n">pcolor</span>
 
 
@@ -188,14 +188,15 @@
 
 
 <div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Parse arguments for training script&quot;&quot;&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;PackNet-SfM evaluation script&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;PackNet-SfM inference of depth maps from images&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--checkpoint&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Checkpoint (.ckpt)&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input file or folder&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file or foler&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file or folder&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--image_shape&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input and output image shape &#39;</span>
                              <span class="s1">&#39;(default: checkpoint</span><span class="se">\&#39;</span><span class="s1">s config.datasets.augmentation.image_shape)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--half&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use half precision (fp16)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--save_npz&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;save in .npz format&#39;</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ckpt&#39;</span><span class="p">),</span> \
         <span class="s1">&#39;You need to provide a .ckpt file as checkpoint&#39;</span>
@@ -207,7 +208,8 @@
     <span class="k">return</span> <span class="n">args</span></div>
 
 
-<div class="viewcode-block" id="process"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.process">[docs]</a><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">):</span>
+<div class="viewcode-block" id="infer_and_save_depth"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.infer_and_save_depth">[docs]</a><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">infer_and_save_depth</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">,</span> <span class="n">half</span><span class="p">,</span> <span class="n">save_npz</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process a single input file to produce and save visualization</span>
 
@@ -221,11 +223,20 @@
 <span class="sd">        Model wrapper used for inference</span>
 <span class="sd">    image_shape : Image shape</span>
 <span class="sd">        Input image shape</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
+<span class="sd">    half: bool</span>
+<span class="sd">        use half precision (fp16)</span>
+<span class="sd">    save_npz: bool</span>
+<span class="sd">        save .npz output depth maps if True, else save as png</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_image</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
+        <span class="c1"># If not an image, assume it&#39;s a folder and append the input name</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
+
+    <span class="c1"># change to half precision for evaluation if requested</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span> <span class="k">if</span> <span class="n">half</span> <span class="k">else</span> <span class="kc">None</span>
+
     <span class="c1"># Load image</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
     <span class="c1"># Resize and to tensor</span>
@@ -234,50 +245,43 @@
 
     <span class="c1"># Send image to GPU if available</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()))</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
-    <span class="c1"># Depth inference</span>
-    <span class="n">depth</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">depth</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Depth inference (returns predicted inverse depth)</span>
+    <span class="n">pred_inv_depth</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">depth</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1"># Prepare RGB image</span>
-    <span class="n">rgb_i</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="c1"># Prepare inverse depth</span>
-    <span class="n">pred_inv_depth_i</span> <span class="o">=</span> <span class="n">viz_inv_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">255</span>
-    <span class="c1"># Concatenate both vertically</span>
-    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">rgb_i</span><span class="p">,</span> <span class="n">pred_inv_depth_i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_image</span><span class="p">(</span><span class="n">output_file</span><span class="p">):</span>
-        <span class="c1"># If not an image, assume it&#39;s a folder and append the input name</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
-    <span class="c1"># Save visualization</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">pcolor</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]),</span>
-        <span class="n">pcolor</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
-    <span class="n">imwrite</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+    <span class="k">if</span> <span class="n">save_npz</span><span class="p">:</span>
+        <span class="c1"># Get depth from predicted depth map and save to .npz</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="n">inv2depth</span><span class="p">(</span><span class="n">pred_inv_depth</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">output_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.npz&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">pcolor</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]),</span>
+            <span class="n">pcolor</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Prepare RGB image</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">*</span> <span class="mi">255</span>
+        <span class="c1"># Prepare inverse depth</span>
+        <span class="n">viz_pred_inv_depth</span> <span class="o">=</span> <span class="n">viz_inv_depth</span><span class="p">(</span><span class="n">pred_inv_depth</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mi">255</span>
+        <span class="c1"># Concatenate both vertically</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">rgb</span><span class="p">,</span> <span class="n">viz_pred_inv_depth</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Save visualization</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">pcolor</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">]),</span>
+            <span class="n">pcolor</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bold&#39;</span><span class="p">])))</span>
+        <span class="n">imwrite</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="infer"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.infer">[docs]</a><span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Monocular depth estimation test script.</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../scripts/scripts.infer.html#scripts.infer.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ckpt_file : str</span>
-<span class="sd">        Checkpoint path for a pretrained model</span>
-<span class="sd">    input_file : str</span>
-<span class="sd">        File or folder with input images</span>
-<span class="sd">    output_file : str</span>
-<span class="sd">        File or folder with output images</span>
-<span class="sd">    image_shape : tuple</span>
-<span class="sd">        Input image shape (H,W)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Initialize horovod</span>
     <span class="n">hvd_init</span><span class="p">()</span>
 
     <span class="c1"># Parse arguments</span>
-    <span class="n">config</span><span class="p">,</span> <span class="n">state_dict</span> <span class="o">=</span> <span class="n">parse_test_file</span><span class="p">(</span><span class="n">ckpt_file</span><span class="p">)</span>
+    <span class="n">config</span><span class="p">,</span> <span class="n">state_dict</span> <span class="o">=</span> <span class="n">parse_test_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">)</span>
 
     <span class="c1"># If no image shape is provided, use the checkpoint one</span>
+    <span class="n">image_shape</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">image_shape</span>
     <span class="k">if</span> <span class="n">image_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">image_shape</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">augmentation</span><span class="o">.</span><span class="n">image_shape</span>
 
@@ -289,29 +293,36 @@
     <span class="c1"># Restore monodepth_model state</span>
     <span class="n">model_wrapper</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
 
+    <span class="c1"># change to half precision for evaluation if requested</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">half</span> <span class="k">else</span> <span class="kc">None</span>
+
     <span class="c1"># Send model to GPU if available</span>
     <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-        <span class="n">model_wrapper</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()))</span>
+        <span class="n">model_wrapper</span> <span class="o">=</span> <span class="n">model_wrapper</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rank</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="c1"># Set to eval mode</span>
+    <span class="n">model_wrapper</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">):</span>
         <span class="c1"># If input file is a folder, search for image files</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;jpg&#39;</span><span class="p">]:</span>
-            <span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;*.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext</span><span class="p">)))))</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="s1">&#39;*.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext</span><span class="p">)))))</span>
         <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="n">print0</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">{}</span><span class="s1"> files&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Otherwise, use it as is</span>
-        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_file</span><span class="p">]</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">]</span>
 
     <span class="c1"># Process each file</span>
-    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="n">rank</span><span class="p">()::</span><span class="n">world_size</span><span class="p">()]:</span>
-        <span class="n">process</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">)</span></div>
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="n">rank</span><span class="p">()::</span><span class="n">world_size</span><span class="p">()]:</span>
+        <span class="n">infer_and_save_depth</span><span class="p">(</span>
+            <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">model_wrapper</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">half</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">save_npz</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
-    <span class="n">infer</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">image_shape</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 
            </div>

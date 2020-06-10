@@ -19,6 +19,7 @@ class HorovodTrainer(BaseTrainer):
         torch.backends.cudnn.benchmark = True
 
         self.avg_loss = AvgMeter(50)
+        self.dtype = kwargs.get("dtype", None)  # just for test for now
 
     @property
     def proc_rank(self):
@@ -120,12 +121,13 @@ class HorovodTrainer(BaseTrainer):
 
     def test(self, module):
         # Send module to GPU
-        module = module.to('cuda')
+        module = module.to('cuda', dtype=self.dtype)
         # Get test dataloaders
         test_dataloaders = module.test_dataloader()
         # Run evaluation
         self.evaluate(test_dataloaders, module)
 
+    @torch.no_grad()
     def evaluate(self, dataloaders, module):
         # Set module to eval
         module.eval()
@@ -140,7 +142,7 @@ class HorovodTrainer(BaseTrainer):
             # For all batches
             for i, batch in progress_bar:
                 # Send batch to GPU and take a test step
-                batch = sample_to_cuda(batch)
+                batch = sample_to_cuda(batch, self.dtype)
                 output = module.test_step(batch, i, n)
                 # Append output to list of outputs
                 outputs.append(output)
