@@ -1,5 +1,6 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
+import cv2
 import torch
 import torch.nn.functional as funct
 from functools import lru_cache
@@ -7,7 +8,6 @@ from PIL import Image
 
 from packnet_sfm.utils.misc import same_shape
 
-########################################################################################################################
 
 def load_image(path):
     """
@@ -25,7 +25,20 @@ def load_image(path):
     """
     return Image.open(path)
 
-########################################################################################################################
+
+def write_image(filename, image):
+    """
+    Write an image to file.
+
+    Parameters
+    ----------
+    filename : str
+        File where image will be saved
+    image : np.array [H,W,3]
+        RGB image
+    """
+    cv2.imwrite(filename, image[:, :, ::-1])
+
 
 def flip_lr(image):
     """

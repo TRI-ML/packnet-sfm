@@ -19,8 +19,3 @@ PackNet outperforms other self, semi, and fully supervised methods.
 Furthermore, it gets better with input resolution and number of parameters, generalizes better, and can run in real-time (with TensorRT). See [References](#references) for more info on our models.
 
 """
-
-from packnet_sfm.models import ModelWrapper, ModelCheckpoint
-from packnet_sfm.trainers import HorovodTrainer
-
-__all__ = ["ModelWrapper", "HorovodTrainer", "ModelCheckpoint"]

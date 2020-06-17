@@ -20,5 +20,8 @@ datasets:
         depth_type: ['velodyne']
 save:
     folder: '/data/save'
-    viz: True
-    npz: True
+    depth:
+        rgb: True
+        viz: True
+        npz: True
+        png: True

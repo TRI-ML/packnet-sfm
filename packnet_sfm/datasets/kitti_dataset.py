@@ -13,10 +13,12 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 
 ########################################################################################################################
 
+# Cameras from the stero pair (left is the origin)
 IMAGE_FOLDER = {
     'left': 'image_02',
     'right': 'image_03',
 }
+# Name of different calibration files
 CALIB_FILE = {
     'cam2cam': 'calib_cam_to_cam.txt',
     'velo2cam': 'calib_velo_to_cam.txt',
@@ -144,9 +146,12 @@ class KITTIDataset(Dataset):
         return os.path.abspath(os.path.join(image_file, "../../../.."))
 
     @staticmethod
-    def _get_intrinsics(calib_data):
+    def _get_intrinsics(image_file, calib_data):
         """Get intrinsics from the calib_data dictionary."""
-        return np.reshape(calib_data['P_rect_02'], (3, 4))[:, :3]
+        for cam in ['left', 'right']:
+            # Check for both cameras, if found replace and return intrinsics
+            if IMAGE_FOLDER[cam] in image_file:
+                return np.reshape(calib_data[IMAGE_FOLDER[cam].replace('image', 'P_rect')], (3, 4))[:, :3]
 
     @staticmethod
     def _read_raw_calib_file(folder):
@@ -358,7 +363,7 @@ class KITTIDataset(Dataset):
             c_data = self._read_raw_calib_file(parent_folder)
             self.calibration_cache[parent_folder] = c_data
         sample.update({
-            'intrinsics': self._get_intrinsics(c_data),
+            'intrinsics': self._get_intrinsics(self.paths[idx], c_data),
         })
 
         # Add pose information if requested

@@ -1,25 +1,51 @@
 
 import torch
-import horovod.torch as hvd
 import numpy as np
 from collections import OrderedDict
+from packnet_sfm.utils.horovod import reduce_value
 from packnet_sfm.utils.logging import prepare_dataset_prefix
 
-########################################################################################################################
 
-def reduce_value(value):
-    """Reduce the mean value of a tensor from all GPUs"""
-    return hvd.allreduce(value, average=True, name='value')
+def reduce_dict(data, to_item=False):
+    """
+    Reduce the mean values of a dictionary from all GPUs
 
-def reduce_dict(dict, to_item=False):
-    """Reduce the mean values of a dictionary from all GPUs"""
-    for key, val in dict.items():
-        dict[key] = reduce_value(dict[key])
+    Parameters
+    ----------
+    data : dict
+        Dictionary to be reduced
+    to_item : bool
+        True if the reduced values will be return as .item()
+
+    Returns
+    -------
+    dict : dict
+        Reduced dictionary
+    """
+    for key, val in data.items():
+        data[key] = reduce_value(data[key], average=True, name=key)
         if to_item:
-            dict[key] = dict[key].item()
-    return dict
+            data[key] = data[key].item()
+    return data
 
 def all_reduce_metrics(output_data_batch, datasets, name='depth'):
+    """
+    Reduce metrics for all batches and all datasets using Horovod
+
+    Parameters
+    ----------
+    output_data_batch : list
+        List of outputs for each batch
+    datasets : list
+        List of all considered datasets
+    name : str
+        Name of the task for the metric
+
+    Returns
+    -------
+    all_metrics_dict : list
+        List of reduced metrics
+    """
     # If there is only one dataset, wrap in a list
     if isinstance(output_data_batch[0], dict):
         output_data_batch = [output_data_batch]
@@ -37,7 +63,7 @@ def all_reduce_metrics(output_data_batch, datasets, name='depth'):
         for output in output_batch:
             for i, idx in enumerate(output['idx']):
                 seen[idx] += 1
-        seen = hvd.allreduce(seen, average=False, name='idx')
+        seen = reduce_value(seen, average=False, name='idx')
         assert not np.any(seen.numpy() == 0), \
             'Not all samples were seen during evaluation'
         # Reduce all relevant metrics
@@ -46,7 +72,7 @@ def all_reduce_metrics(output_data_batch, datasets, name='depth'):
             for output in output_batch:
                 for i, idx in enumerate(output['idx']):
                     metrics[idx] = output[name]
-            metrics = hvd.allreduce(metrics, average=False, name='depth_pp_gt')
+            metrics = reduce_value(metrics, average=False, name=name)
             metrics_dict[name] = (metrics / seen.view(-1, 1)).mean(0)
         # Append metrics dictionary to the list
         all_metrics_dict.append(metrics_dict)
@@ -56,8 +82,21 @@ def all_reduce_metrics(output_data_batch, datasets, name='depth'):
 ########################################################################################################################
 
 def collate_metrics(output_data_batch, name='depth'):
-    """Collate epoch output to produce average metrics."""
+    """
+    Collate epoch output to produce average metrics
 
+    Parameters
+    ----------
+    output_data_batch : list
+        List of outputs for each batch
+    name : str
+        Name of the task for the metric
+
+    Returns
+    -------
+    metrics_data : list
+        List of collated metrics
+    """
     # If there is only one dataset, wrap in a list
     if isinstance(output_data_batch[0], dict):
         output_data_batch = [output_data_batch]
@@ -77,8 +116,27 @@ def collate_metrics(output_data_batch, name='depth'):
 
 def create_dict(metrics_data, metrics_keys, metrics_modes,
                 dataset, name='depth'):
-    """Creates a dictionary from collated metrics."""
+    """
+    Creates a dictionary from collated metrics
 
+    Parameters
+    ----------
+    metrics_data : list
+        List containing collated metrics
+    metrics_keys : list
+        List of keys for the metrics
+    metrics_modes
+        List of modes for the metrics
+    dataset : CfgNode
+        Dataset configuration file
+    name : str
+        Name of the task for the metric
+
+    Returns
+    -------
+    metrics_dict : dict
+        Metrics dictionary
+    """
     # Create metrics dictionary
     metrics_dict = {}
     # For all datasets
