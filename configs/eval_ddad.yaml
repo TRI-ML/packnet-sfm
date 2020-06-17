@@ -21,5 +21,8 @@ datasets:
         cameras: [['camera_01']]
 save:
     folder: '/data/save'
-    viz: True
-    npz: True
+    depth:
+        rgb: True
+        viz: True
+        npz: True
+        png: True

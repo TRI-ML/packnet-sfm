@@ -15,5 +15,8 @@ datasets:
         split: ['{:010d}']
 save:
     folder: '/data/save'
-    viz: True
-    npy: True
+    depth:
+        rgb: True
+        viz: True
+        npz: True
+        png: True

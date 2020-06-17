@@ -1,11 +1,66 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
-from matplotlib.cm import get_cmap
-import torch
 import numpy as np
-from packnet_sfm.utils.image import \
-    gradient_x, gradient_y, flip_lr, interpolate_image
+import torch
+import torchvision.transforms as transforms
+from matplotlib.cm import get_cmap
+
+from packnet_sfm.utils.image import load_image, gradient_x, gradient_y, flip_lr, interpolate_image
 from packnet_sfm.utils.types import is_seq, is_tensor
+
+
+def load_depth(file):
+    """
+    Load a depth map from file
+    Parameters
+    ----------
+    file : str
+        Depth map filename (.npz or .png)
+
+    Returns
+    -------
+    depth : np.array [H,W]
+        Depth map (invalid pixels are 0)
+    """
+    if file.endswith('npz'):
+        return np.load(file)['depth']
+    elif file.endswith('png'):
+        depth_png = np.array(load_image(file), dtype=int)
+        assert (np.max(depth_png) > 255), 'Wrong .png depth file'
+        return depth_png.astype(np.float) / 256.
+    else:
+        raise NotImplementedError('Depth extension not supported.')
+
+
+def write_depth(filename, depth, intrinsics=None):
+    """
+    Write a depth map to file, and optionally its corresponding intrinsics.
+
+    Parameters
+    ----------
+    filename : str
+        File where depth map will be saved (.npz or .png)
+    depth : np.array [H,W]
+        Depth map
+    intrinsics : np.array [3,3]
+        Optional camera intrinsics matrix
+    """
+    # If depth is a tensor
+    if is_tensor(depth):
+        depth = depth.detach().squeeze().cpu()
+    # If intrinsics is a tensor
+    if is_tensor(intrinsics):
+        intrinsics = intrinsics.detach().cpu()
+    # If we are saving as a .npz
+    if filename.endswith('.npz'):
+        np.savez_compressed(filename, depth=depth, intrinsics=intrinsics)
+    # If we are saving as a .png
+    elif filename.endswith('.png'):
+        depth = transforms.ToPILImage()((depth * 256).int())
+        depth.save(filename)
+    # Something is wrong
+    else:
+        raise NotImplementedError('Depth filename not valid.')
 
 
 def viz_inv_depth(inv_depth, normalizer=None, percentile=95,

@@ -1,19 +1,20 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
+import argparse
+import numpy as np
 import os
 import torch
-import argparse
+
 from glob import glob
 from cv2 import imwrite
-import numpy as np
 
-from packnet_sfm import ModelWrapper
+from packnet_sfm.models.model_wrapper import ModelWrapper
 from packnet_sfm.datasets.augmentations import resize_image, to_tensor
 from packnet_sfm.utils.horovod import hvd_init, rank, world_size, print0
 from packnet_sfm.utils.image import load_image
 from packnet_sfm.utils.config import parse_test_file
 from packnet_sfm.utils.load import set_debug
-from packnet_sfm.utils.depth import inv2depth, viz_inv_depth
+from packnet_sfm.utils.depth import write_depth, inv2depth, viz_inv_depth
 from packnet_sfm.utils.logging import pcolor
 
 
@@ -27,11 +28,12 @@ def parse_args():
     parser.add_argument('--checkpoint', type=str, help='Checkpoint (.ckpt)')
     parser.add_argument('--input', type=str, help='Input file or folder')
     parser.add_argument('--output', type=str, help='Output file or folder')
-    parser.add_argument('--image_shape', type=tuple, default=None,
+    parser.add_argument('--image_shape', type=int, nargs='+', default=None,
                         help='Input and output image shape '
                              '(default: checkpoint\'s config.datasets.augmentation.image_shape)')
     parser.add_argument('--half', action="store_true", help='Use half precision (fp16)')
-    parser.add_argument('--save_npz', action='store_true', help='save in .npz format')
+    parser.add_argument('--save', type=str, choices=['npz', 'png'], default=None,
+                        help='Save format (npz or png). Default is None (no depth map is saved).')
     args = parser.parse_args()
     assert args.checkpoint.endswith('.ckpt'), \
         'You need to provide a .ckpt file as checkpoint'
@@ -44,7 +46,7 @@ def parse_args():
 
 
 @torch.no_grad()
-def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, half, save_npz):
+def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, half, save):
     """
     Process a single input file to produce and save visualization
 
@@ -60,9 +62,8 @@ def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, ha
         Input image shape
     half: bool
         use half precision (fp16)
-    save_npz: bool
-        save .npz output depth maps if True, else save as png
-
+    save: str
+        Save format (npz or png)
     """
     if not is_image(output_file):
         # If not an image, assume it's a folder and append the input name
@@ -85,14 +86,13 @@ def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, ha
     # Depth inference (returns predicted inverse depth)
     pred_inv_depth = model_wrapper.depth(image)[0]
 
-    if save_npz:
-        # Get depth from predicted depth map and save to .npz
-        depth = inv2depth(pred_inv_depth).squeeze().detach().cpu().numpy()
-        output_file = os.path.splitext(output_file)[0] + ".npz"
+    if save == 'npz' or save == 'png':
+        # Get depth from predicted depth map and save to different formats
+        filename = '{}.{}'.format(os.path.splitext(output_file)[0], save)
         print('Saving {} to {}'.format(
             pcolor(input_file, 'cyan', attrs=['bold']),
-            pcolor(output_file, 'magenta', attrs=['bold'])))
-        np.savez_compressed(output_file, depth=depth)
+            pcolor(filename, 'magenta', attrs=['bold'])))
+        write_depth(filename, depth=inv2depth(pred_inv_depth))
     else:
         # Prepare RGB image
         rgb = image[0].permute(1, 2, 0).detach().cpu().numpy() * 255
@@ -152,7 +152,7 @@ def main(args):
     # Process each file
     for fn in files[rank()::world_size()]:
         infer_and_save_depth(
-            fn, args.output, model_wrapper, image_shape, args.half, args.save_npz)
+            fn, args.output, model_wrapper, image_shape, args.half, args.save)
 
 
 if __name__ == '__main__':

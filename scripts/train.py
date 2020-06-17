@@ -2,7 +2,9 @@
 
 import argparse
 
-from packnet_sfm import ModelWrapper, ModelCheckpoint, HorovodTrainer
+from packnet_sfm.models.model_wrapper import ModelWrapper
+from packnet_sfm.models.model_checkpoint import ModelCheckpoint
+from packnet_sfm.trainers.horovod_trainer import HorovodTrainer
 from packnet_sfm.utils.config import parse_train_file
 from packnet_sfm.utils.load import set_debug, filter_args_create
 from packnet_sfm.utils.horovod import hvd_init, rank

@@ -3,7 +3,8 @@
 import argparse
 import torch
 
-from packnet_sfm import ModelWrapper, HorovodTrainer
+from packnet_sfm.models.model_wrapper import ModelWrapper
+from packnet_sfm.trainers.horovod_trainer import HorovodTrainer
 from packnet_sfm.utils.config import parse_test_file
 from packnet_sfm.utils.load import set_debug
 from packnet_sfm.utils.horovod import hvd_init
@@ -33,6 +34,8 @@ def test(ckpt_file, cfg_file, half):
         Checkpoint path for a pretrained model
     cfg_file : str
         Configuration file
+    half: bool
+        use half precision (fp16)
     """
     # Initialize horovod
     hvd_init()

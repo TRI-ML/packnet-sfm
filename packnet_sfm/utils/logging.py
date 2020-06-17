@@ -30,7 +30,7 @@ def pcolor(string, color, on_color=None, attrs=None):
     return colored(string, color, on_color, attrs)
 
 
-def prepare_dataset_prefix(config, n):
+def prepare_dataset_prefix(config, dataset_idx):
     """
     Concatenates dataset path and split for metrics logging
 
@@ -38,7 +38,7 @@ def prepare_dataset_prefix(config, n):
     ----------
     config : CfgNode
         Dataset configuration
-    n : int
+    dataset_idx : int
         Dataset index for multiple datasets
 
     Returns
@@ -46,13 +46,18 @@ def prepare_dataset_prefix(config, n):
     prefix : str
         Dataset prefix for metrics logging
     """
-    prefix = '{}-{}'.format(
-        os.path.splitext(config.path[n].split('/')[-1])[0],
-        os.path.splitext(os.path.basename(config.split[n]))[0])
-    if config.depth_type[n] is not '':
-        prefix += '-{}'.format(config.depth_type[n])
-    if len(config.cameras[n]) == 1: # only allows single cameras
-        prefix += '-{}'.format(config.cameras[n][0])
+    # Path is always available
+    prefix = '{}'.format(os.path.splitext(config.path[dataset_idx].split('/')[-1])[0])
+    # If split is available and does not contain { character
+    if config.split[dataset_idx] != '' and '{' not in config.split[dataset_idx]:
+        prefix += '-{}'.format(os.path.splitext(os.path.basename(config.split[dataset_idx]))[0])
+    # If depth type is available
+    if config.depth_type[dataset_idx] != '':
+        prefix += '-{}'.format(config.depth_type[dataset_idx])
+    # If we are using specific cameras
+    if len(config.cameras[dataset_idx]) == 1:  # only allows single cameras
+        prefix += '-{}'.format(config.cameras[dataset_idx][0])
+    # Return full prefix
     return prefix
 
 

@@ -8,7 +8,6 @@ import numpy as np
 import torch
 from torch.utils.data import ConcatDataset, DataLoader
 
-from packnet_sfm.datasets import KITTIDataset, DGPDataset, ImageDataset
 from packnet_sfm.datasets.transforms import get_transforms
 from packnet_sfm.utils.depth import inv2depth, post_process_inv_depth, compute_depth_metrics
 from packnet_sfm.utils.horovod import print0, world_size, rank, on_rank_0
@@ -516,12 +515,14 @@ def setup_dataset(config, mode, requirements, **kwargs):
 
         # KITTI dataset
         if config.dataset[i] == 'KITTI':
+            from packnet_sfm.datasets.kitti_dataset import KITTIDataset
             dataset = KITTIDataset(
                 config.path[i], path_split,
                 **dataset_args, **dataset_args_i,
             )
         # DGP dataset
         elif config.dataset[i] == 'DGP':
+            from packnet_sfm.datasets.dgp_dataset import DGPDataset
             dataset = DGPDataset(
                 config.path[i], config.split[i],
                 **dataset_args, **dataset_args_i,
@@ -529,6 +530,7 @@ def setup_dataset(config, mode, requirements, **kwargs):
             )
         # Image dataset
         elif config.dataset[i] == 'Image':
+            from packnet_sfm.datasets.image_dataset import ImageDataset
             dataset = ImageDataset(
                 config.path[i], config.split[i],
                 **dataset_args, **dataset_args_i,

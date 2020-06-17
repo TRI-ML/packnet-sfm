@@ -1,12 +1,15 @@
 
-import os
-from glob import glob
-import numpy as np
-import torch
-from argparse import Namespace
-
-from packnet_sfm.utils.depth import compute_depth_metrics
 import argparse
+import numpy as np
+import os
+import torch
+
+from glob import glob
+from argparse import Namespace
+from packnet_sfm.utils.depth import load_depth
+from tqdm import tqdm
+
+from packnet_sfm.utils.depth import load_depth, compute_depth_metrics
 
 
 def parse_args():
@@ -28,53 +31,33 @@ def parse_args():
     return args
 
 
-def evaluate_depth_maps(pred_folder, gt_folder, use_gt_scale, **kwargs):
-    """
-    Calculates depth metrics from a folder of predicted and ground-truth depth files
-
-    Parameters
-    ----------
-    pred_folder : str
-        Folder containing predicted depth maps (.npz with key 'depth')
-    gt_folder : str
-        Folder containing ground-truth depth maps (.npz with key 'depth')
-    use_gt_scale : bool
-        Using ground-truth median scaling or not
-    kwargs : dict
-        Extra parameters for depth evaluation
-    """
-    # Get and sort ground-truth files
-    gt_files = glob(os.path.join(gt_folder, '*.npz'))
+def main(args):
+    # Get and sort ground-truth and predicted files
+    exts = ('npz', 'png')
+    gt_files, pred_files = [], []
+    for ext in exts:
+        gt_files.extend(glob(os.path.join(args.gt_folder, '*.{}'.format(ext))))
+        pred_files.extend(glob(os.path.join(args.pred_folder, '*.{}'.format(ext))))
+    # Sort ground-truth and prediction
     gt_files.sort()
-    # Get and sort predicted files
-    pred_files = glob(os.path.join(pred_folder, '*.npz'))
     pred_files.sort()
-    # Prepare configuration
-    config = Namespace(**kwargs)
     # Loop over all files
     metrics = []
-    for gt, pred in zip(gt_files, pred_files):
-        # Get and prepare ground-truth
-        gt = np.load(gt)['depth']
-        gt = torch.tensor(gt).unsqueeze(0).unsqueeze(0)
-        # Get and prepare predictions
-        pred = np.load(pred)['depth']
-        pred = torch.tensor(pred).unsqueeze(0).unsqueeze(0)
+    progress_bar = tqdm(zip(gt_files, pred_files), total=len(gt_files))
+    for gt, pred in progress_bar:
+        # Get and prepare ground-truth and predictions
+        gt = torch.tensor(load_depth(gt)).unsqueeze(0).unsqueeze(0)
+        pred = torch.tensor(load_depth(pred)).unsqueeze(0).unsqueeze(0)
         # Calculate metrics
-        metrics.append(compute_depth_metrics(config, gt, pred,
-                                             use_gt_scale=use_gt_scale))
+        metrics.append(compute_depth_metrics(
+            args, gt, pred, use_gt_scale=args.use_gt_scale))
     # Get and print average value
     metrics = (sum(metrics) / len(metrics)).detach().cpu().numpy()
     names = ['abs_rel', 'sqr_rel', 'rmse', 'rmse_log', 'a1', 'a2', 'a3']
     for name, metric in zip(names, metrics):
         print('{} = {}'.format(name, metric))
 
+
 if __name__ == '__main__':
     args = parse_args()
-    evaluate_depth_maps(args.pred_folder, args.gt_folder,
-                        use_gt_scale=args.use_gt_scale,
-                        min_depth=args.min_depth,
-                        max_depth=args.max_depth,
-                        crop=args.crop)
-
-
+    main(args)
