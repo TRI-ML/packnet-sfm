@@ -87,12 +87,13 @@ class HorovodTrainer(BaseTrainer):
             output['loss'].backward()
             optimizer.step()
             # Append output to list of outputs
+            output['loss'] = output['loss'].detach()
             outputs.append(output)
             # Update progress bar if in rank 0
             if self.is_rank_0:
                 progress_bar.set_description(
-                    'Epoch {} | Avg.Loss {:.4f}'.format(module.current_epoch,
-                        self.avg_loss(output['loss'].item())))
+                    'Epoch {} | Avg.Loss {:.4f}'.format(
+                        module.current_epoch, self.avg_loss(output['loss'].item())))
         # Return outputs for epoch end
         return module.training_epoch_end(outputs)
 
