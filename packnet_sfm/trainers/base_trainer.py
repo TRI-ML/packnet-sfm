@@ -30,12 +30,11 @@ class BaseTrainer:
 
     @property
     def proc_rank(self):
-        raise NotImplementedError('Not implemented for BaseTrainer')
+        return 0
 
     @property
     def world_size(self):
-        raise NotImplementedError('Not implemented for BaseTrainer')
-
+        return 1
     @property
     def is_rank_0(self):
         return self.proc_rank == 0

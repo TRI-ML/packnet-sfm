@@ -28,17 +28,17 @@ datasets:
     train:
         batch_size: 6
         dataset: ['KITTI']
-        path: ['/data/datasets/KITTI_tiny']
+        path: ['/cluster/home/takmaza/psfm/KITTI_tiny']
         split: ['kitti_tiny.txt']
         depth_type: ['velodyne']
         repeat: [1000]
     validation:
         dataset: ['KITTI']
-        path: ['/data/datasets/KITTI_tiny']
+        path: ['/cluster/home/takmaza/psfm/KITTI_tiny']
         split: ['kitti_tiny.txt']
         depth_type: ['velodyne']
     test:
         dataset: ['KITTI']
-        path: ['/data/datasets/KITTI_tiny']
+        path: ['/cluster/home/takmaza/psfm/KITTI_tiny']
         split: ['kitti_tiny.txt']
         depth_type: ['velodyne']

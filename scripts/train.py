@@ -1,13 +1,17 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
 import argparse
-
+import os
+import sys
+sys.path.append("/cluster/home/takmaza/psfm")
+#print(os.path.abspath(os.getcwd()))
+#print(os.path.dirname(os.path.abspath(__file__)))
 from packnet_sfm.models.model_wrapper import ModelWrapper
 from packnet_sfm.models.model_checkpoint import ModelCheckpoint
 from packnet_sfm.trainers.horovod_trainer import HorovodTrainer
 from packnet_sfm.utils.config import parse_train_file
 from packnet_sfm.utils.load import set_debug, filter_args_create
-from packnet_sfm.utils.horovod import hvd_init, rank
+#from packnet_sfm.utils.horovod import hvd_init, rank
 from packnet_sfm.loggers import WandbLogger
 
 
@@ -33,7 +37,7 @@ def train(file):
         **.ckpt** for a pre-trained checkpoint file.
     """
     # Initialize horovod
-    hvd_init()
+    #hvd_init()
 
     # Produce configuration and checkpoint from filename
     config, ckpt = parse_train_file(file)
@@ -42,11 +46,11 @@ def train(file):
     set_debug(config.debug)
 
     # Wandb Logger
-    logger = None if config.wandb.dry_run or rank() > 0 \
+    logger = None if config.wandb.dry_run  \
         else filter_args_create(WandbLogger, config.wandb)
 
     # model checkpoint
-    checkpoint = None if config.checkpoint.filepath is '' or rank() > 0 else \
+    checkpoint = None if config.checkpoint.filepath is '' else \
         filter_args_create(ModelCheckpoint, config.checkpoint)
 
     # Initialize model wrapper
