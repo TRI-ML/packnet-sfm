@@ -6,7 +6,7 @@ from packnet_sfm.trainers.base_trainer import BaseTrainer, sample_to_cuda
 from packnet_sfm.utils.config import prep_logger_and_checkpoint
 from packnet_sfm.utils.logging import print_config
 from packnet_sfm.utils.logging import AvgMeter
-
+import pdb
 
 class HorovodTrainer(BaseTrainer):
     def __init__(self, **kwargs):
@@ -28,7 +28,7 @@ class HorovodTrainer(BaseTrainer):
         print_config(module.config)
 
         # Send module to GPU
-        module = module.to('cuda')
+        module = module.to('cuda') #cuda
         # Configure optimizer and scheduler
         module.configure_optimizers()
 
@@ -45,9 +45,9 @@ class HorovodTrainer(BaseTrainer):
             # Train
             self.train(train_dataloader, module, optimizer)
             # Validation
-            validation_output = self.validate(val_dataloaders, module)
+            ###validation_output = self.validate(val_dataloaders, module)
             # Check and save model
-            self.check_and_save(module, validation_output)
+            ####self.check_and_save(module, validation_output)
             # Update current epoch
             module.current_epoch += 1
             # Take a scheduler step
@@ -76,6 +76,8 @@ class HorovodTrainer(BaseTrainer):
             optimizer.step()
             # Append output to list of outputs
             output['loss'] = output['loss'].detach()
+            print(output.keys())
+            #pdb.set_trace()
             outputs.append(output)
             # Update progress bar if in rank 0
             if self.is_rank_0:
@@ -83,6 +85,10 @@ class HorovodTrainer(BaseTrainer):
                     'Epoch {} | Avg.Loss {:.4f}'.format(
                         module.current_epoch, self.avg_loss(output['loss'].item())))
         # Return outputs for epoch end
+        #pdb.set_trace()
+        print(len(outputs))
+        print(outputs[0].keys())
+        print(outputs[0].values.shape)
         return module.training_epoch_end(outputs)
 
     def validate(self, dataloaders, module):

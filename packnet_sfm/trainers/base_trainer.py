@@ -15,7 +15,7 @@ def sample_to_cuda(data, dtype=None):
     else:
         # only convert floats (e.g., to half), otherwise preserve (e.g, ints)
         dtype = dtype if torch.is_floating_point(data) else None
-        return data.to('cuda', dtype=dtype)
+        return data.to('cuda', dtype=dtype) #cuda
 
 
 class BaseTrainer:
