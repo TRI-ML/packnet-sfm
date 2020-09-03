@@ -184,6 +184,7 @@ class ModelWrapper(torch.nn.Module):
         """Processes a training batch."""
         batch = stack_batch(batch)
         output = self.model(batch, progress=self.progress)
+        print(output.keys())
         return {
             'loss': output['loss'],
             'metrics': output['metrics']

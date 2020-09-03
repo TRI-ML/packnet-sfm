@@ -76,7 +76,7 @@ class HorovodTrainer(BaseTrainer):
             optimizer.step()
             # Append output to list of outputs
             output['loss'] = output['loss'].detach()
-            print(output.keys())
+            #print(output.keys())
             #pdb.set_trace()
             outputs.append(output)
             # Update progress bar if in rank 0
@@ -86,9 +86,9 @@ class HorovodTrainer(BaseTrainer):
                         module.current_epoch, self.avg_loss(output['loss'].item())))
         # Return outputs for epoch end
         #pdb.set_trace()
-        print(len(outputs))
-        print(outputs[0].keys())
-        print(outputs[0].values.shape)
+        print(len(outputs)) #834
+        #print(outputs[0].keys()) #dict_keys(['loss', 'metrics'])
+        #print(outputs[0].values().shape)
         return module.training_epoch_end(outputs)
 
     def validate(self, dataloaders, module):
