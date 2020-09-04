@@ -1,0 +1,36 @@
+Sender: LSF System <lsfadmin@lo-s4-039>
+Subject: Job 9588279: <python3 scripts/train.py configs/sintel_yaml/overfit_alley_1.yaml> in cluster <leonhard> Exited
+
+Job <python3 scripts/train.py configs/sintel_yaml/overfit_alley_1.yaml> was submitted from host <lo-login-02> by user <takmaza> in cluster <leonhard> at Fri Sep  4 16:27:16 2020
+Job was executed on host(s) <6*lo-s4-039>, in queue <gpu.4h>, as user <takmaza> in cluster <leonhard> at Fri Sep  4 16:27:29 2020
+</cluster/home/takmaza> was used as the home directory.
+</cluster/home/takmaza/psfm/configs/sintel_yaml> was used as the working directory.
+Started at Fri Sep  4 16:27:29 2020
+Terminated at Fri Sep  4 16:27:31 2020
+Results reported at Fri Sep  4 16:27:31 2020
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python3 scripts/train.py configs/sintel_yaml/overfit_alley_1.yaml
+------------------------------------------------------------
+
+Exited with exit code 2.
+
+Resource usage summary:
+
+    CPU time :                                   0.35 sec.
+    Max Memory :                                 7 MB
+    Average Memory :                             -
+    Total Requested Memory :                     24576.00 MB
+    Delta Memory :                               24569.00 MB
+    Max Swap :                                   -
+    Max Processes :                              -
+    Max Threads :                                -
+    Run time :                                   31 sec.
+    Turnaround time :                            15 sec.
+
+The output (if any) follows:
+
+python3: can't open file 'scripts/train.py': [Errno 2] No such file or directory

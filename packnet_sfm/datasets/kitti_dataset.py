@@ -15,9 +15,9 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 ########################################################################################################################
 
 def dummy_calibration(seq_name='alley_1'):
-    #return np.array([[688.00006104,   0.,         511.5       ],
-    #                 [  0.,         688.00006104, 217.5       ],
-    #                 [  0.,           0.,           1.        ]])
+    return np.array([[688.00006104,   0.,         511.5       ],
+                     [  0.,         688.00006104, 217.5       ],
+                     [  0.,           0.,           1.        ]])
     #return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
     #                 [0.000e+00, 1.120e+03, 2.175e+02],
     #                 [0.000e+00, 0.000e+00, 1.000e+00]])
@@ -477,6 +477,7 @@ class KITTIDataset(Dataset):
         right = (width + new_width)/2
         bottom = (height + new_height)/2
         # Crop the center of the image
+        return im
         im = im.crop((left, top, right, bottom))
         return im
 
