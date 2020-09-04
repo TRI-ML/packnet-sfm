@@ -31,7 +31,7 @@ datasets:
         path: ['/cluster/home/takmaza/psfm/Sintel']
         split: ['alley_1.txt']
         depth_type: ['groundtruth']
-        repeat: [1]
+        repeat: [40]
     validation:
         dataset: ['KITTI']
         path: ['/cluster/home/takmaza/psfm/Sintel']
