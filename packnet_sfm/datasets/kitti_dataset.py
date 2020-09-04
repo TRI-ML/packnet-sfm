@@ -15,9 +15,9 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 ########################################################################################################################
 
 def dummy_calibration():
-    return np.array([[1000. , 0.    , 500],
-                     [0.    , 1000. , 400],
-                     [0.    , 0.    , 10]])
+    return np.array([[688.00006104,   0.,         511.5       ],
+                     [  0.,         688.00006104, 217.5       ],
+                     [  0.,           0.,           1.        ]])
 
 
 # Cameras from the stero pair (left is the origin)
@@ -96,6 +96,13 @@ class KITTIDataset(Dataset):
         self.split = file_list.split('/')[-1].split('.')[0]
 
         self.train = train
+        if self.train:
+            print('#'*30)
+            print(backward_context)
+            print(forward_context)
+            #backward_context=1
+            #forward_context=1
+            #self.with_context = True
         self.root_dir = root_dir
         self.data_transform = data_transform
 
@@ -113,42 +120,63 @@ class KITTIDataset(Dataset):
             data = f.readlines()
 
         self.paths = []
-        self.paths_woroots = []
+        self.paths_depth = []
         # Get file list from data
         for i, fname in enumerate(data):
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
                 self.paths.append(path)
-                self.paths_woroots.append(fname.split()[0])
+                self.paths_depth.append(fname.split()[0])
             else:
                 # Check if the depth file exists
                 depth = self._get_depth_file(os.path.join(root_dir, 'depth', fname.split()[0]))
-                print('depth: ', depth)
+                depth = depth[:-4] + '.dpt'
+                #print('depth: ', depth)
                 if depth is not None and os.path.exists(depth):
+                    #print('exists')
                     self.paths.append(path)
-                    self.paths_woroots.append(fname.split()[0])
+                    self.paths_depth.append(depth)
+        print('paths length: ', len(self.paths))
 
         # If using context, filter file list
+        #####buraya bak
+        print('with context?: ' ,self.with_context)
         if self.with_context:
+            print('with context: ')
+            #print(self.paths)
             paths_with_context = []
             for stride in strides:
+                print('stride: ', stride)
                 for idx, file in enumerate(self.paths):
+                    print(idx)
+                    print(file)
                     backward_context_idxs, forward_context_idxs = \
                         self._get_sample_context(
                             file, backward_context, forward_context, stride)
+                    print(backward_context_idxs)
+                    print(forward_context_idxs)
                     if backward_context_idxs is not None and forward_context_idxs is not None:
                         paths_with_context.append(self.paths[idx])
                         self.forward_context_paths.append(forward_context_idxs)
                         self.backward_context_paths.append(backward_context_idxs[::-1])
             self.paths = paths_with_context
+            print(paths_with_context)
 
 ########################################################################################################################
 
     @staticmethod
     def _get_next_file(idx, file):
         """Get next file given next idx and current file."""
+        #print('IN NEXT FILE')
+        #print('idx: ', idx)
+        #print('basename: ', os.path.basename(file))
         base, ext = os.path.splitext(os.path.basename(file))
-        return os.path.join(os.path.dirname(file), str(idx).zfill(len(base)) + ext)
+        #print('base: ', base)
+        #print('ext: ', ext)
+        #print(('dirname: ', os.path.dirname(file)))
+        #print(('lenbase: ',len(base)))
+        #print(os.path.join(os.path.dirname(file), 'frame_' + str(idx).zfill(4) + ext))
+        return os.path.join(os.path.dirname(file), 'frame_' + str(idx).zfill(4) + ext)
 
     @staticmethod
     def _get_parent_folder(image_file):
@@ -209,19 +237,34 @@ class KITTIDataset(Dataset):
             List containing the indexes for the forward context
         """
         base, ext = os.path.splitext(os.path.basename(sample_name))
+        #print('base: ', base)
+        #print('ext: ', ext)
         parent_folder = os.path.dirname(sample_name)
+        #print('parent_folder: ', parent_folder)
         f_idx = int(base[-4:])
+        #print('f_idx: ',f_idx)
 
         # Check number of files in folder
+        #print('self._cache:' , self._cache)
         if parent_folder in self._cache:
             max_num_files = self._cache[parent_folder]
+            #print('max_num_files: ', max_num_files)
         else:
             max_num_files = len(glob.glob(os.path.join(parent_folder, '*' + ext)))
+            #print('glob files')
+            #print(glob.glob(os.path.join(parent_folder, '*' + ext)))
             self._cache[parent_folder] = max_num_files
+            #print('max_num_files: ', max_num_files)
 
         # Check bounds
+        #print('backward_context: ', backward_context)
+        #print('forward: ', forward_context)
+        #print('stride: ', stride)
+        #print(str(f_idx - backward_context * stride))
+        #print(str(f_idx + forward_context * stride))
         if (f_idx - backward_context * stride) < 0 or (
                 f_idx + forward_context * stride) >= max_num_files:
+            #print('quit')
             return None, None
 
         # Backward context
@@ -230,6 +273,7 @@ class KITTIDataset(Dataset):
         while len(backward_context_idxs) < backward_context and c_idx > 0:
             c_idx -= stride
             filename = self._get_next_file(c_idx, sample_name)
+            print('filename: ', filename)
             if os.path.exists(filename):
                 backward_context_idxs.append(c_idx)
         if c_idx < 0:
@@ -372,7 +416,7 @@ class KITTIDataset(Dataset):
         # Add depth information if requested
         if self.with_depth:
             sample.update({
-                'depth': self._read_depth(self._get_depth_file(self.paths[idx])),
+                'depth': self._read_depth(self._get_depth_file(self.paths_depth[idx])),
             })
 
         # Add context information if requested

@@ -167,6 +167,7 @@ class ModelWrapper(torch.nn.Module):
 
     def train_dataloader(self):
         """Prepare training dataloader."""
+        print('len train_dataset: ', len(self.train_dataset))
         return setup_dataloader(self.train_dataset,
                                 self.config.datasets.train, 'train')[0]
 
