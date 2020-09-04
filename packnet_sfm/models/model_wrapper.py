@@ -37,9 +37,12 @@ class ModelWrapper(torch.nn.Module):
 
         # Store configuration, checkpoint and logger
         self.config = config
+        print(('#'*30))
+        print(config.keys())
         self.logger = logger
         self.resume = resume
 
+        print(self.config)
         # Set random seed
         set_random_seed(config.arch.seed)
 
@@ -167,6 +170,7 @@ class ModelWrapper(torch.nn.Module):
 
     def train_dataloader(self):
         """Prepare training dataloader."""
+        print('len train_dataset: ', len(self.train_dataset))
         return setup_dataloader(self.train_dataset,
                                 self.config.datasets.train, 'train')[0]
 
