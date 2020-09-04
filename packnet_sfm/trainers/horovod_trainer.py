@@ -128,7 +128,7 @@ class HorovodTrainer(BaseTrainer):
                 #print(dataloader[0].keys())
                 # Send batch to GPU and take a validation step
                 batch = sample_to_cuda(batch)
-                output = module.validation_step(batch, self.log_dir, i, n)
+                output = module.validation_step(batch, i, self.model_name_temp, i, n)
                 # Append output to list of outputs
                 outputs.append(output)
             # Append dataset outputs to list of all outputs
