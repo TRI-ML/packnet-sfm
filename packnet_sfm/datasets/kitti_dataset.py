@@ -14,13 +14,90 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 
 ########################################################################################################################
 
-def dummy_calibration():
+def dummy_calibration(seq_name='alley_1'):
     #return np.array([[688.00006104,   0.,         511.5       ],
     #                 [  0.,         688.00006104, 217.5       ],
     #                 [  0.,           0.,           1.        ]])
-    return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
-                     [0.000e+00, 1.120e+03, 2.175e+02],
-                     [0.000e+00, 0.000e+00, 1.000e+00]])
+    #return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+    #                 [0.000e+00, 1.120e+03, 2.175e+02],
+    #                 [0.000e+00, 0.000e+00, 1.000e+00]])
+    #print('dummy - seq_name: ', seq_name)
+    if seq_name=='alley_1':
+        return np.array([[688.00006104,   0.,         511.5       ],
+                         [  0.,         688.00006104, 191.5       ],
+                         [  0.,           0.,           1.        ]])
+    elif seq_name=='alley_2':
+        return np.array([[576.,    0.,  511.5],
+                         [  0.,  576.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='ambush_2':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='ambush_4':
+        return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.120e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='ambush_5':
+        return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.120e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='ambush_6':
+        return np.array([[576.,    0.,  511.5],
+                         [  0.,  576.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='bamboo_1':
+        return np.array([[800.,    0.,  511.5],
+                         [  0.,  800.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='bamboo_2':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='cave_2':
+        return np.array([[1.52859412e+03, 0.00000000e+00, 5.11500000e+02],
+                         [0.00000000e+00, 1.52859412e+03, 1.91500000e+02],
+                         [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
+    elif seq_name=='cave_4':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='market_2':
+        return np.array([[3.200e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 3.200e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='market_5':
+        return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.120e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='market_6':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='mountain_1':
+        return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.120e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='shaman_2':
+        return np.array([[1.600e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.600e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='shaman_3':
+        return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
+                         [0.000e+00, 1.120e+03, 1.915e+02],
+                         [0.000e+00, 0.000e+00, 1.000e+00]])
+    elif seq_name=='sleeping_1':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    elif seq_name=='sleeping_2':
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
+    else:
+        return np.array([[640.,    0.,  511.5],
+                         [  0.,  640.,  191.5],
+                         [  0.,    0.,    1. ]])
 
 
 
@@ -86,7 +163,7 @@ class KITTIDataset(Dataset):
     """
     def __init__(self, root_dir, file_list, train=True,
                  data_transform=None, depth_type=None, with_pose=False,
-                 back_context=0, forward_context=0, strides=(1,)):
+                 back_context=0, forward_context=0, strides=(1,), seq_name='alley_1'):
         # Assertions
         backward_context = back_context
         assert backward_context >= 0 and forward_context >= 0, 'Invalid contexts'
@@ -95,6 +172,7 @@ class KITTIDataset(Dataset):
         self.backward_context_paths = []
         self.forward_context = forward_context
         self.forward_context_paths = []
+        self.seq_name = seq_name
 
         self.with_context = (backward_context != 0 or forward_context != 0)
         self.split = file_list.split('/')[-1].split('.')[0]
@@ -127,6 +205,7 @@ class KITTIDataset(Dataset):
         self.paths_depth = []
         # Get file list from data
         for i, fname in enumerate(data):
+            self.seq_name = fname.split()[0][:-15]
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
                 self.paths.append(path)
@@ -150,21 +229,21 @@ class KITTIDataset(Dataset):
             #print(self.paths)
             paths_with_context = []
             for stride in strides:
-                print('stride: ', stride)
+                #print('stride: ', stride)
                 for idx, file in enumerate(self.paths):
-                    print(idx)
-                    print(file)
+                    #print(idx)
+                    #print(file)
                     backward_context_idxs, forward_context_idxs = \
                         self._get_sample_context(
                             file, backward_context, forward_context, stride)
-                    print(backward_context_idxs)
-                    print(forward_context_idxs)
+                    #print(backward_context_idxs)
+                    #print(forward_context_idxs)
                     if backward_context_idxs is not None and forward_context_idxs is not None:
                         paths_with_context.append(self.paths[idx])
                         self.forward_context_paths.append(forward_context_idxs)
                         self.backward_context_paths.append(backward_context_idxs[::-1])
             self.paths = paths_with_context
-            print(paths_with_context)
+            #print(paths_with_context)
 
 ########################################################################################################################
 
@@ -188,9 +267,9 @@ class KITTIDataset(Dataset):
         return os.path.abspath(os.path.join(image_file, "../../../.."))
 
     @staticmethod
-    def _get_intrinsics():
+    def _get_intrinsics(seq_name):
         """Get intrinsics from the calib_data dictionary."""
-        return dummy_calibration()
+        return dummy_calibration(seq_name)
 
     @staticmethod
     def _read_raw_calib_file(folder):
@@ -391,6 +470,15 @@ class KITTIDataset(Dataset):
         return odo_pose
 
 ########################################################################################################################
+    def center_crop_im(self, im, new_width=1024, new_height=384):
+        width, height = im.size   # Get dimensions
+        left = (width - new_width)/2
+        top = (height - new_height)/2
+        right = (width + new_width)/2
+        bottom = (height + new_height)/2
+        # Crop the center of the image
+        im = im.crop((left, top, right, bottom))
+        return im
 
     def __len__(self):
         """Dataset length."""
@@ -399,16 +487,19 @@ class KITTIDataset(Dataset):
     def __getitem__(self, idx):
         """Get dataset sample given an index."""
         # Add image information
+        #print('LOADING IMAGE')
+        #print(np.array(load_image(self.paths[idx])).shape)
+        #print(np.array(self.center_crop_im(load_image(self.paths[idx]))).shape)
         sample = {
             'idx': idx,
             'filename': '%s_%010d' % (self.split, idx),
-            'rgb': load_image(self.paths[idx]),
+            'rgb': self.center_crop_im(load_image(self.paths[idx])),
         }
 
         # Add intrinsics
         parent_folder = self._get_parent_folder(self.paths[idx])
         sample.update({
-            'intrinsics': self._get_intrinsics(),
+            'intrinsics': self._get_intrinsics(self.seq_name),
         })
 
         # Add pose information if requested
@@ -430,7 +521,7 @@ class KITTIDataset(Dataset):
                                self.forward_context_paths[idx]
             image_context_paths, _ = \
                 self._get_context_files(self.paths[idx], all_context_idxs)
-            image_context = [load_image(f) for f in image_context_paths]
+            image_context = [self.center_crop_im(load_image(f)) for f in image_context_paths]
             sample.update({
                 'rgb_context': image_context
             })
@@ -452,3 +543,7 @@ class KITTIDataset(Dataset):
         return sample
 
 ########################################################################################################################
+
+
+
+
