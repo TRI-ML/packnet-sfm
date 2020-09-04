@@ -7,6 +7,15 @@ from packnet_sfm.utils.config import prep_logger_and_checkpoint
 from packnet_sfm.utils.logging import print_config
 from packnet_sfm.utils.logging import AvgMeter
 import pdb
+import datetime
+import time
+
+def get_model_name():
+    curr_time = datetime.datetime.now()
+    writer_log_dir = os.path.join('/cluster/scratch/takmaza/CVL/psfm-logdir', str(curr_time.year) + '-' + str('%02d' %curr_time.month) + '-' + str('%02d' %curr_time.day) + '-' + str('%02d' %curr_time.hour) +str('%02d' %curr_time.minute)+ str('%02d' %curr_time.second) + '-' + str('%02d' %curr_time.microsecond).zfill(6)) #'_' + str(args.lr) 
+    if not os.path.exists(writer_log_dir):
+        os.makedirs(writer_log_dir)
+    return writer_log_dir
 
 class HorovodTrainer(BaseTrainer):
     def __init__(self, **kwargs):
@@ -17,7 +26,8 @@ class HorovodTrainer(BaseTrainer):
 
         self.avg_loss = AvgMeter(50)
         self.dtype = kwargs.get("dtype", None)  # just for test for now
-
+        self.model_name_temp = get_model_name()
+        print("Models and tensorboard events files are saved to:\n  ", self.model_name_temp)
 
     def fit(self, module):
 
@@ -72,7 +82,7 @@ class HorovodTrainer(BaseTrainer):
             optimizer.zero_grad()
             # Send samples to GPU and take a training step
             batch = sample_to_cuda(batch)
-            output = module.training_step(batch, i)
+            output = module.training_step(batch, self.model_name_temp, i)
             # Backprop through loss and take an optimizer step
             output['loss'].backward()
             optimizer.step()
@@ -98,6 +108,10 @@ class HorovodTrainer(BaseTrainer):
         module.eval()
         # Start validation loop
         all_outputs = []
+        print('#'* 50)
+        print(len(dataloaders))
+        print(type(dataloaders[0]))
+        print(dataloaders[0].keys())
         # For all validation datasets
         for n, dataloader in enumerate(dataloaders):
             # Prepare progress bar for that dataset

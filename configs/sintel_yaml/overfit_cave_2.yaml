@@ -21,7 +21,7 @@ model:
     params:
         crop: 'garg'
         min_depth: 0.0
-        max_depth: 80.0
+        max_depth: 190.0
 datasets:
     augmentation:
         image_shape: (384, 1024)

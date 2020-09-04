@@ -181,12 +181,12 @@ class ModelWrapper(torch.nn.Module):
         return setup_dataloader(self.test_dataset,
                                 self.config.datasets.test, 'test')
 
-    def training_step(self, batch, *args):
+    def training_step(self, batch, log_dir, *args):
         """Processes a training batch."""
         batch = stack_batch(batch)
         output = self.model(batch, progress=self.progress)
         #print(output.keys())
-        np.save('deneme_depth.npy', output['inv_depths'][0][0,:,:,:].permute(1,2,0).detach().cpu().numpy())
+        np.save(os.path.join(log_dir,'deneme_depth.npy'), output['inv_depths'][0][0,:,:,:].permute(1,2,0).detach().cpu().numpy())
         return {
             'loss': output['loss'],
             'metrics': output['metrics']
@@ -201,9 +201,11 @@ class ModelWrapper(torch.nn.Module):
         #    self.logger.log_depth('val', batch, output, args,
         #                          self.validation_dataset, world_size(),
         #                          self.config.datasets.validation)
+
+
+        # 'inv_depths': output['inv_depth'],
         return {
             'idx': batch['idx'],
-            'inv_depths': output['inv_depth'],
             **output['metrics'],
         }
 

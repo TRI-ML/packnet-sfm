@@ -15,9 +15,9 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 ########################################################################################################################
 
 def dummy_calibration(seq_name='alley_1'):
-    return np.array([[688.00006104,   0.,         511.5       ],
-                     [  0.,         688.00006104, 217.5       ],
-                     [  0.,           0.,           1.        ]])
+    #return np.array([[688.00006104,   0.,         511.5       ],
+    #                 [  0.,         688.00006104, 217.5       ],
+    #                 [  0.,           0.,           1.        ]])
     #return np.array([[1.120e+03, 0.000e+00, 5.115e+02],
     #                 [0.000e+00, 1.120e+03, 2.175e+02],
     #                 [0.000e+00, 0.000e+00, 1.000e+00]])
@@ -177,7 +177,7 @@ class KITTIDataset(Dataset):
         self.with_context = (backward_context != 0 or forward_context != 0)
         self.split = file_list.split('/')[-1].split('.')[0]
 
-        self.train = train
+        self.train = self.with_context
         if self.train:
             print('#'*30)
             print(backward_context)
@@ -208,6 +208,7 @@ class KITTIDataset(Dataset):
             self.seq_name = fname.split()[0][:-15]
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
+                print('valda without depth')
                 self.paths.append(path)
                 self.paths_depth.append(fname.split()[0])
             else:
@@ -477,7 +478,7 @@ class KITTIDataset(Dataset):
         right = (width + new_width)/2
         bottom = (height + new_height)/2
         # Crop the center of the image
-        return im
+        #return im
         im = im.crop((left, top, right, bottom))
         return im
 
