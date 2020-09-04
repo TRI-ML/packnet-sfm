@@ -191,6 +191,7 @@ class KITTIDataset(Dataset):
         self.depth_type = depth_type
         print('depth type: ', depth_type)
         self.with_depth = depth_type is not '' and depth_type is not None
+        self.with_depth = False
         self.with_pose = with_pose
 
         self._cache = {}
@@ -209,7 +210,7 @@ class KITTIDataset(Dataset):
             self.seq_name = fname.split()[0][:-15]
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
-                print('valda without depth')
+                #print('valda without depth')
                 self.paths.append(path)
                 self.paths_depth.append(fname.split()[0])
             else:
