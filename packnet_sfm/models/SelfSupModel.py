@@ -87,7 +87,7 @@ class SelfSupModel(SfmModel):
         else:
             # Otherwise, calculate self-supervised loss
             self_sup_output = self.self_supervised_loss(
-                batch['rgb_original'], batch['rgb_original'],
+                batch['rgb_original'], batch['rgb_context_original'],
                 output['inv_depths'], output['poses'], batch['intrinsics'],
                 return_logs=return_logs, progress=progress)
             # Return loss and metrics

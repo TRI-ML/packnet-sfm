@@ -14,12 +14,10 @@ from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 
 ########################################################################################################################
 
-#alley_1
 def dummy_calibration():
-    return np.array([[688.00006104,   0.,         511.5       ],
-                     [  0.,         688.00006104, 217.5       ],
-                     [  0.,           0.,           1.        ]])
-
+    return np.array([[1000. , 0.    , 500],
+                     [0.    , 1000. , 400],
+                     [0.    , 0.    , 10]])
 
 
 # Cameras from the stero pair (left is the origin)
@@ -94,7 +92,7 @@ class KITTIDataset(Dataset):
         self.forward_context = forward_context
         self.forward_context_paths = []
 
-        self.with_context = False #(backward_context != 0 or forward_context != 0)
+        self.with_context = (backward_context != 0 or forward_context != 0)
         self.split = file_list.split('/')[-1].split('.')[0]
 
         self.train = train
@@ -115,26 +113,22 @@ class KITTIDataset(Dataset):
             data = f.readlines()
 
         self.paths = []
-        self.paths_depth = []
+        self.paths_woroots = []
         # Get file list from data
         for i, fname in enumerate(data):
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
                 self.paths.append(path)
-                self.paths_depth.append(fname.split()[0])
+                self.paths_woroots.append(fname.split()[0])
             else:
                 # Check if the depth file exists
                 depth = self._get_depth_file(os.path.join(root_dir, 'depth', fname.split()[0]))
-                depth = depth[:-4] + '.dpt'
                 print('depth: ', depth)
                 if depth is not None and os.path.exists(depth):
-                    print('exists')
                     self.paths.append(path)
-                    self.paths_depth.append(depth)
-        print('paths length: ', len(self.paths))
+                    self.paths_woroots.append(fname.split()[0])
 
         # If using context, filter file list
-        '''
         if self.with_context:
             paths_with_context = []
             for stride in strides:
@@ -147,7 +141,7 @@ class KITTIDataset(Dataset):
                         self.forward_context_paths.append(forward_context_idxs)
                         self.backward_context_paths.append(backward_context_idxs[::-1])
             self.paths = paths_with_context
-        '''
+
 ########################################################################################################################
 
     @staticmethod
@@ -378,7 +372,7 @@ class KITTIDataset(Dataset):
         # Add depth information if requested
         if self.with_depth:
             sample.update({
-                'depth': self._read_depth(self._get_depth_file(self.paths_depth[idx])),
+                'depth': self._read_depth(self._get_depth_file(self.paths[idx])),
             })
 
         # Add context information if requested

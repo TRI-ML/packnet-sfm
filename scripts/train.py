@@ -40,9 +40,7 @@ def train(file):
     #hvd_init()
 
     # Produce configuration and checkpoint from filename
-
     config, ckpt = parse_train_file(file)
-
 
     # Set debug if requested
     set_debug(config.debug)
@@ -54,9 +52,6 @@ def train(file):
     # model checkpoint
     checkpoint = None if config.checkpoint.filepath is '' else \
         filter_args_create(ModelCheckpoint, config.checkpoint)
-
-    config.datasets.train.back_context = 0
-    config.datasets.train.forward_context = 0
 
     # Initialize model wrapper
     model_wrapper = ModelWrapper(config, resume=ckpt, logger=logger)
