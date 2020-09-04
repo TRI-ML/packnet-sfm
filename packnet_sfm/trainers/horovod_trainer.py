@@ -111,15 +111,21 @@ class HorovodTrainer(BaseTrainer):
         print('#'* 50)
         print(len(dataloaders))
         print(type(dataloaders[0]))
-        print(dataloaders[0].keys())
+        
         # For all validation datasets
         for n, dataloader in enumerate(dataloaders):
             # Prepare progress bar for that dataset
-            progress_bar = self.val_progress_bar(
-                dataloader, module.config.datasets.validation, n)
+            #progress_bar = self.val_progress_bar(
+            #    dataloader, module.config.datasets.validation, n)
             outputs = []
+            print(type(dataloader))
+            print(len(dataloader))
+            print(dataloader[0].keys())
             # For all batches
-            for i, batch in progress_bar:
+            for i, batch in enumerate(dataloader):
+
+                print(batch.keys())
+                print(dataloader[0].keys())
                 # Send batch to GPU and take a validation step
                 batch = sample_to_cuda(batch)
                 output = module.validation_step(batch, i, n)

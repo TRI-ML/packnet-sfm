@@ -502,7 +502,7 @@ def setup_dataset(config, mode, requirements, **kwargs):
         return None
 
     print0(pcolor('###### Setup %s datasets' % mode, 'red'))
-
+    print(requirements)
     # Global shared dataset arguments
     dataset_args = {
         'back_context': config.back_context,

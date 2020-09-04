@@ -189,6 +189,7 @@ class KITTIDataset(Dataset):
         self.data_transform = data_transform
 
         self.depth_type = depth_type
+        print('depth type: ', depth_type)
         self.with_depth = depth_type is not '' and depth_type is not None
         self.with_pose = with_pose
 
@@ -245,7 +246,7 @@ class KITTIDataset(Dataset):
                         self.backward_context_paths.append(backward_context_idxs[::-1])
             self.paths = paths_with_context
             #print(paths_with_context)
-
+        print(self.paths)
 ########################################################################################################################
 
     @staticmethod
@@ -357,7 +358,7 @@ class KITTIDataset(Dataset):
         while len(backward_context_idxs) < backward_context and c_idx > 0:
             c_idx -= stride
             filename = self._get_next_file(c_idx, sample_name)
-            print('filename: ', filename)
+            #print('filename: ', filename)
             if os.path.exists(filename):
                 backward_context_idxs.append(c_idx)
         if c_idx < 0:
