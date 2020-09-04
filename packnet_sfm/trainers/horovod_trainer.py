@@ -45,7 +45,9 @@ class HorovodTrainer(BaseTrainer):
             # Train
             self.train(train_dataloader, module, optimizer)
             # Validation
-            ###validation_output = self.validate(val_dataloaders, module)
+            validation_output = self.validate(val_dataloaders, module)
+            print(type(validation_output))
+            print('validated')
             # Check and save model
             ####self.check_and_save(module, validation_output)
             # Update current epoch
@@ -112,7 +114,7 @@ class HorovodTrainer(BaseTrainer):
             # Append dataset outputs to list of all outputs
             all_outputs.append(outputs)
         # Return all outputs for epoch end
-        return module.validation_epoch_end(all_outputs)
+        return all_outputs #module.validation_epoch_end(all_outputs)
 
     def test(self, module):
         # Send module to GPU

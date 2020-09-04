@@ -3,6 +3,7 @@
 import glob
 import numpy as np
 import os
+import packnet_sfm.datasets.sintel_io as sio
 
 from torch.utils.data import Dataset
 
@@ -12,6 +13,12 @@ from packnet_sfm.utils.image import load_image
 from packnet_sfm.geometry.pose_utils import invert_pose_numpy
 
 ########################################################################################################################
+
+def dummy_calibration():
+    return np.array([[1000. , 0.    , 500],
+                     [0.    , 1000. , 400],
+                     [0.    , 0.    , 10]])
+
 
 # Cameras from the stero pair (left is the origin)
 IMAGE_FOLDER = {
@@ -99,7 +106,6 @@ class KITTIDataset(Dataset):
         self._cache = {}
         self.pose_cache = {}
         self.oxts_cache = {}
-        self.calibration_cache = {}
         self.imu2velo_calib_cache = {}
         self.sequence_origin_cache = {}
 
@@ -107,16 +113,20 @@ class KITTIDataset(Dataset):
             data = f.readlines()
 
         self.paths = []
+        self.paths_woroots = []
         # Get file list from data
         for i, fname in enumerate(data):
             path = os.path.join(root_dir, fname.split()[0])
             if not self.with_depth:
                 self.paths.append(path)
+                self.paths_woroots.append(fname.split()[0])
             else:
                 # Check if the depth file exists
-                depth = self._get_depth_file(path)
+                depth = self._get_depth_file(os.path.join(root_dir, 'depth', fname.split()[0]))
+                print('depth: ', depth)
                 if depth is not None and os.path.exists(depth):
                     self.paths.append(path)
+                    self.paths_woroots.append(fname.split()[0])
 
         # If using context, filter file list
         if self.with_context:
@@ -146,12 +156,9 @@ class KITTIDataset(Dataset):
         return os.path.abspath(os.path.join(image_file, "../../../.."))
 
     @staticmethod
-    def _get_intrinsics(image_file, calib_data):
+    def _get_intrinsics():
         """Get intrinsics from the calib_data dictionary."""
-        for cam in ['left', 'right']:
-            # Check for both cameras, if found replace and return intrinsics
-            if IMAGE_FOLDER[cam] in image_file:
-                return np.reshape(calib_data[IMAGE_FOLDER[cam].replace('image', 'P_rect')], (3, 4))[:, :3]
+        return dummy_calibration()
 
     @staticmethod
     def _read_raw_calib_file(folder):
@@ -167,21 +174,16 @@ class KITTIDataset(Dataset):
         if self.depth_type in ['velodyne']:
             return read_npz_depth(depth_file, self.depth_type)
         elif self.depth_type in ['groundtruth']:
-            return read_png_depth(depth_file)
+            #return read_png_depth(depth_file)
+            np.expand_dims(sio.depth_read(depth_file),axis=2)
         else:
             raise NotImplementedError(
                 'Depth type {} not implemented'.format(self.depth_type))
 
     def _get_depth_file(self, image_file):
         """Get the corresponding depth file from an image file."""
-        for cam in ['left', 'right']:
-            if IMAGE_FOLDER[cam] in image_file:
-                depth_file = image_file.replace(
-                    IMAGE_FOLDER[cam] + '/data', 'proj_depth/{}/{}'.format(
-                        self.depth_type, IMAGE_FOLDER[cam]))
-                if self.depth_type not in PNG_DEPTH_DATASETS:
-                    depth_file = depth_file.replace('png', 'npz')
-                return depth_file
+        depth_file=image_file
+        return depth_file
 
     def _get_sample_context(self, sample_name,
                             backward_context, forward_context, stride=1):
@@ -208,7 +210,7 @@ class KITTIDataset(Dataset):
         """
         base, ext = os.path.splitext(os.path.basename(sample_name))
         parent_folder = os.path.dirname(sample_name)
-        f_idx = int(base)
+        f_idx = int(base[-4:])
 
         # Check number of files in folder
         if parent_folder in self._cache:
@@ -357,13 +359,8 @@ class KITTIDataset(Dataset):
 
         # Add intrinsics
         parent_folder = self._get_parent_folder(self.paths[idx])
-        if parent_folder in self.calibration_cache:
-            c_data = self.calibration_cache[parent_folder]
-        else:
-            c_data = self._read_raw_calib_file(parent_folder)
-            self.calibration_cache[parent_folder] = c_data
         sample.update({
-            'intrinsics': self._get_intrinsics(self.paths[idx], c_data),
+            'intrinsics': self._get_intrinsics(),
         })
 
         # Add pose information if requested

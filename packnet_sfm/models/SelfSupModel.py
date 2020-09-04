@@ -91,7 +91,7 @@ class SelfSupModel(SfmModel):
                 output['inv_depths'], output['poses'], batch['intrinsics'],
                 return_logs=return_logs, progress=progress)
             # Return loss and metrics
-            print('in selfsupmodel: ', output['inv_depths'].shape)
+            #print('in selfsupmodel: ', len(output['inv_depths']).shape)
             return {
                 'loss': self_sup_output['loss'],
                 **merge_outputs(output, self_sup_output),

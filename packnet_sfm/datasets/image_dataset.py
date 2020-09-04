@@ -17,6 +17,14 @@ def dummy_calibration(image):
                      [0.    , 1000. , h / 2. - 0.5],
                      [0.    , 0.    , 1.          ]])
 
+def read_png_depth(file):
+    """Reads a .png depth map."""
+    depth_png = np.array(load_image(file), dtype=int)
+    assert (np.max(depth_png) > 255), 'Wrong .png depth file'
+    depth = depth_png.astype(np.float) / 256.
+    depth[depth_png == 0] = -1.
+    return np.expand_dims(depth, axis=2)
+
 def get_idx(filename):
     return int(re.search(r'\d+', filename).group())
 
@@ -39,15 +47,11 @@ def read_files(directory, ext=('.png', '.jpg', '.jpeg'), skip_empty=True):
 ########################################################################################################################
 
 class ImageDataset(Dataset):
-    def __init__(self, root_dir, split, data_transform=None,
+    def __init__(self, root_dir, file_list,  train=True, data_transform=None,
                  forward_context=0, back_context=0, strides=(1,),
-                 depth_type=None, **kwargs):
+                 depth_type='groundtruth', **kwargs):
         super().__init__()
         # Asserts
-        assert depth_type is None or depth_type == '', \
-            'ImageDataset currently does not support depth types'
-        assert len(strides) == 1 and strides[0] == 1, \
-            'ImageDataset currently only supports stride of 1.'
 
         self.root_dir = root_dir
         self.split = split
@@ -57,17 +61,30 @@ class ImageDataset(Dataset):
         self.has_context = self.backward_context + self.forward_context > 0
         self.strides = 1
 
+        self.train = True
+        self.with_depth = depth_type is not '' and depth_type is not None
+
         self.files = []
-        file_tree = read_files(root_dir)
-        for k, v in file_tree.items():
-            file_set = set(file_tree[k])
-            files = [fname for fname in sorted(v) if self._has_context(fname, file_set)]
-            self.files.extend([[k, fname] for fname in files])
+
+        with open(file_list, "r") as f:
+            data = f.readlines()
+
+        self.paths = []
+        # Get file list from data
+        for i, fname in enumerate(data):
+            path = os.path.join(root_dir, fname.split()[0])
+            if not self.with_depth:
+                self.paths.append(path)
+            else:
+                # Check if the depth file exists
+                depth = self._get_depth_file(path)
+                if depth is not None and os.path.exists(depth):
+                    self.paths.append(path)
 
         self.data_transform = data_transform
 
     def __len__(self):
-        return len(self.files)
+        return len(self.paths)
 
     def _change_idx(self, idx, filename):
         _, ext = os.path.splitext(os.path.basename(filename))
@@ -92,7 +109,7 @@ class ImageDataset(Dataset):
         return load_image(os.path.join(self.root_dir, session, filename))
 
     def __getitem__(self, idx):
-        session, filename = self.files[idx]
+        session, filename = self.paths[idx]
         image = self._read_rgb_file(session, filename)
 
         sample = {

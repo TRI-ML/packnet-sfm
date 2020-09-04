@@ -184,7 +184,8 @@ class ModelWrapper(torch.nn.Module):
         """Processes a training batch."""
         batch = stack_batch(batch)
         output = self.model(batch, progress=self.progress)
-        print(output.keys())
+        #print(output.keys())
+        np.save('deneme_depth.npy', output['inv_depths'][0][0,:,:,:].permute(1,2,0).detach().cpu().numpy())
         return {
             'loss': output['loss'],
             'metrics': output['metrics']
@@ -193,12 +194,15 @@ class ModelWrapper(torch.nn.Module):
     def validation_step(self, batch, *args):
         """Processes a validation batch."""
         output = self.evaluate_depth(batch)
-        if self.logger:
-            self.logger.log_depth('val', batch, output, args,
-                                  self.validation_dataset, world_size(),
-                                  self.config.datasets.validation)
+        print(len(output['inv_depth']))
+        print(output['inv_depth'][0].shape)
+        #if self.logger:
+        #    self.logger.log_depth('val', batch, output, args,
+        #                          self.validation_dataset, world_size(),
+        #                          self.config.datasets.validation)
         return {
             'idx': batch['idx'],
+            'inv_depths': output['inv_depth'],
             **output['metrics'],
         }
 
