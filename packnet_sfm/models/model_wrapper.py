@@ -192,7 +192,7 @@ class ModelWrapper(torch.nn.Module):
             'metrics': output['metrics']
         }
 
-    def validation_step(self, batch, *args):
+    def validation_step(self, batch, log_dir, *args):
         """Processes a validation batch."""
         output = self.evaluate_depth(batch)
         print(len(output['inv_depth']))
@@ -202,7 +202,7 @@ class ModelWrapper(torch.nn.Module):
         #                          self.validation_dataset, world_size(),
         #                          self.config.datasets.validation)
 
-
+        np.save(os.path.join(log_dir, 'frame_' + str(batch).zfill((4))), output['inv_depth'][0].cpu().detach().numpy())
         # 'inv_depths': output['inv_depth'],
         return {
             'idx': batch['idx'],
