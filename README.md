@@ -38,6 +38,7 @@ For instance, to verify that the environment is setup correctly, you can run a s
 
 ```bash
 # download a tiny subset of KITTI
+mkdir /data/datasets
 curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar | tar xv -C /data/datasets/
 # in docker
 make docker-run COMMAND="python3 scripts/train.py configs/overfit_kitti.yaml"
