@@ -14,6 +14,8 @@ Official [PyTorch](https://pytorch.org/) implementation of _self-supervised_ mon
 *Vitor Guizilini, Rares Ambrus, Sudeep Pillai, Allan Raventos and Adrien Gaidon*.
 Although self-supervised (i.e. trained only on monocular videos), PackNet outperforms other self, semi, and fully supervised methods. Furthermore, it gets better with input resolution and number of parameters, generalizes better, and can run in real-time (with TensorRT). See [References](#references) for more info on our models.
 
+This is also the official implementation of [**Neural Ray Surfaces for Self-Supervised Learning of Depth and Ego-motion (3DV 2020 oral)**](https://arxiv.org/abs/2008.06630), *Igor Vasiljevic, Vitor Guizilini, Rares Ambrus, Sudeep Pillai, Wolfram Burgard, Greg Shakhnarovich and Adrien Gaidon*.  Neural Ray Surfaces (NRS) generalize self-supervised depth and pose estimation beyond the pinhole model to all central cameras, allowing the learning of meaningful depth and pose on non-pinhole cameras such as fisheye and catadioptric.
+
 ## Install
 
 You need a machine with recent Nvidia drivers and a GPU with at least 6GB of memory (more for the bigger models at higher resolution). We recommend using docker (see [nvidia-docker2](https://github.com/NVIDIA/nvidia-docker) instructions) to have a reproducible environment. To setup your environment, type in a terminal (only tested in Ubuntu 18.04):
@@ -106,6 +108,16 @@ curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/DDAD_
 # KITTI_tiny
 curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar | tar -xv -C /data/datasets/
 ```
+### OmniCam
+
+The raw data for the catadioptric OmniCam dataset can be downloaded from the [Omnicam website](http://www.cvlibs.net/projects/omnicam/).  For convenience, we provide the dataset for testing the Neural Ray Surfaces (NRS) model.  The dataset can be downloaded with the following command:
+
+```bash
+# omnicam
+curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/OmniCam.tar | tar -xv -C /data/datasets/
+```
+
+The ray surface template we used for training on OmniCam can be found [here](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/templates/omnicam_ray_template.npy). 
 
 ## Training
 
@@ -178,6 +190,10 @@ python3 scripts/infer.py --checkpoint <checkpoint.ckpt> --input <image or folder
 
 All experiments followed the [Eigen et al.](https://arxiv.org/abs/1406.2283) protocol for [training](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_zhou_files.txt) and [evaluation](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_test_files.txt), with [Zhou et al](https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/)'s preprocessing to remove static training frames. The PackNet model pre-trained on Cityscapes  used for fine-tuning on KITTI can be found [here](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_CS.ckpt).
 
+### OmniCam
+
+Our NRS model for OmniCam can be found [here](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/nrs/omnicam_pretrained.tar.gz).
+
 ### Precomputed Depth Maps
 
 For convenience, we also provide pre-computed depth maps for supervised training and evaluation:
@@ -218,6 +234,21 @@ Depending on the application, please use the following citations when referencin
   primaryClass = {cs.CV}
   year = {2020},
 }
+```
+
+<a id="3dv-nrs"> </a>
+**Neural Ray Surfaces for Self-Supervised Learning of Depth and Ego-motion (3DV 2020 oral)** \
+*Igor Vasiljevic, Vitor Guizilini, Rares Ambrus, Sudeep Pillai, Wolfram Burgard, Greg Shakhnarovich, Adrien Gaidon*, [**[paper]**](https://arxiv.org/abs/2008.06630), [**[video]**](https://www.youtube.com/watch?v=4TLJG6WJ7MA&feature=youtu.be)
+
+```
+@inproceedings{vasiljevic2020neural,
+  title={Neural Ray Surfaces for Self-Supervised Learning of Depth and Ego-motion},
+  author={Vasiljevic, Igor and Guizilini, Vitor and Ambrus, Rares and Pillai, Sudeep and Burgard, Wolfram and Shakhnarovich, Greg and Gaidon, Adrien},
+  booktitle = {International Conference on 3D Vision},
+  primaryClass = {cs.CV},
+  year={2020}
+}
+
 ```
 
 <a id="iclr-semguided"> </a>
