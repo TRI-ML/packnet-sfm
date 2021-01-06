@@ -21,7 +21,7 @@ This is also the official implementation of [**Neural Ray Surfaces for Self-Supe
 You need a machine with recent Nvidia drivers and a GPU with at least 6GB of memory (more for the bigger models at higher resolution). We recommend using docker (see [nvidia-docker2](https://github.com/NVIDIA/nvidia-docker) instructions) to have a reproducible environment. To setup your environment, type in a terminal (only tested in Ubuntu 18.04):
 
 ```bash
-git clone --recurse-submodules https://github.com/TRI-ML/packnet-sfm.git
+git clone https://github.com/TRI-ML/packnet-sfm.git
 cd packnet-sfm
 # if you want to use docker (recommended)
 make docker-build
@@ -164,17 +164,6 @@ You can also directly run inference on a single image or folder:
 ```bash
 python3 scripts/infer.py --checkpoint <checkpoint.ckpt> --input <image or folder> --output <image or folder> [--image_shape <input shape (h,w)>]
 ```
-
-## Visualization
-
-We provide support to Camviz as the visualization tool used to display dataset information and evaluation results. Camviz was also developed in-house by TRI and can be found [here](https://github.com/TRI-ML/camviz) (for simplicity, it is also added as a submodule of this repository).
-
-For a simple demo visualizing results on a single DDAD frame, you can run:
-
-```bash
-python3 display/demo_eval.py
-```
-
 
 ## Models
 
