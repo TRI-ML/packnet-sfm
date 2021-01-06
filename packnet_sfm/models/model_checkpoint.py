@@ -129,7 +129,8 @@ class ModelCheckpoint:
         while os.path.isfile(filepath):
             filepath = self.format_checkpoint_name(epoch, metrics)
         # Check if saving or not
-        if self.save_top_k != -1:
+        #if self.save_top_k != -1:
+        if 0:
             current = metrics.get(self.monitor)
             assert current, 'Checkpoint metric is not available'
             if self.check_monitor_top_k(current):
