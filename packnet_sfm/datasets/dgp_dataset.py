@@ -83,6 +83,7 @@ class DGPDataset:
     def __init__(self, path, split,
                  cameras=None,
                  depth_type=None,
+                 input_depth_type=None,
                  with_pose=False,
                  with_semantic=False,
                  back_context=0,
@@ -101,9 +102,12 @@ class DGPDataset:
         self.data_transform = data_transform
 
         self.depth_type = depth_type
-        self.with_depth = depth_type is not None
+        self.with_depth = depth_type is not None and depth_type is not ''
         self.with_pose = with_pose
         self.with_semantic = with_semantic
+
+        self.input_depth_type = input_depth_type
+        self.with_input_depth = input_depth_type is not None and input_depth_type is not ''
 
         self.dataset = SynchronizedSceneDataset(path,
             split=split,
@@ -233,6 +237,12 @@ class DGPDataset:
             if self.with_depth:
                 data.update({
                     'depth': self.generate_depth_map(idx, i, data['filename'])
+                })
+
+            # If depth is returned
+            if self.with_input_depth:
+                data.update({
+                    'input_depth': self.generate_depth_map(idx, i, data['filename'])
                 })
 
             # If pose is returned

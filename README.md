@@ -175,6 +175,7 @@ python3 scripts/infer.py --checkpoint <checkpoint.ckpt> --input <image or folder
 | _PackNet,  Self-Supervised, 384x640, DDAD (D)_ | _0.162_ | _3.917_ | _13.452_ | _0.269_ | _0.823_ |
 | [ResNet18, Self-Supervised, 384x640, ImageNet &rightarrow; DDAD (D)](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/ResNet18_MR_selfsup_D.ckpt)* | 0.227 | 11.293 | 17.368 | 0.303 | 0.758 |
 | [PackNet,  Self-Supervised, 384x640, DDAD (D)](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_D.ckpt)* | 0.173 | 7.164 | 14.363 | 0.249 | 0.835 |
+| [PackNetSAN,  Supervised, 384x640, DDAD (D)](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNetSAN01_HR_sup_D.ckpt)* | 0.086/0.038 | 1.609/0.546 | 10.700/5.951 | 0.185/0.115 | 0.909/0.976 |
 
 *: Note that this repository's results differ slightly from the ones reported in our [CVPR'20 paper](https://arxiv.org/abs/1905.02693) (first two rows), although conclusions are the same. Since CVPR'20, we have officially released an updated [DDAD dataset](https://github.com/TRI-ML/DDAD) to account for privacy constraints and improve scene distribution. Please use the latest numbers when comparing to the official DDAD release.
 
@@ -187,6 +188,7 @@ python3 scripts/infer.py --checkpoint <checkpoint.ckpt> --input <image or folder
 | [PackNet, Self-Supervised Scale-Aware, 192x640, CS &rightarrow; K](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_velsup_CStoK.ckpt) | 0.108 | 0.758 | 4.506 | 0.185 | 0.887 |
 | [PackNet, Self-Supervised Scale-Aware, 384x1280, CS &rightarrow; K](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_HR_velsup_CStoK.ckpt) | 0.106 | 0.838 | 4.545 | 0.186 | 0.895 |
 | [PackNet, Semi-Supervised (densified GT), 192x640, CS &rightarrow; K](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_semisup_CStoK.ckpt) | 0.072 | 0.335 | 3.220 | 0.115 | 0.934 |
+| [PackNetSAN, Supervised (densified GT), 352x1216, K](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNetSAN01_HR_sup_K.ckpt) | 0.052/0.016 | 0.175/0.028 | 2.230/0.902 | 0.083/0.032 | 0.970/0.997 |
 
 All experiments followed the [Eigen et al.](https://arxiv.org/abs/1406.2283) protocol for [training](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_zhou_files.txt) and [evaluation](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/splits/KITTI/eigen_test_files.txt), with [Zhou et al](https://people.eecs.berkeley.edu/~tinghuiz/projects/SfMLearner/)'s preprocessing to remove static training frames. The PackNet model pre-trained on Cityscapes  used for fine-tuning on KITTI can be found [here](https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/models/PackNet01_MR_selfsup_CS.ckpt).
 
@@ -233,6 +235,20 @@ Depending on the application, please use the following citations when referencin
   booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   primaryClass = {cs.CV}
   year = {2020},
+}
+```
+
+<a id="cvpr-packnet"> </a>
+**Sparse Auxiliary Networks for Unified Monocular Depth Prediction and Completion (CVPR 2021)** \
+*Vitor Guizilini, Rares Ambrus, Wolfram Burgard and Adrien Gaidon*, [**[paper]**](https://arxiv.org/abs/2103.16690)
+
+```
+@inproceedings{packnet-san,
+  author = {Vitor Guizilini and Rares Ambrus and Wolfram Burgard and Adrien Gaidon},
+  title = {Sparse Auxiliary Networks for Unified Monocular Depth Prediction and Completion},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  primaryClass = {cs.CV}
+  year = {2021},
 }
 ```
 

@@ -295,6 +295,8 @@ class ModelWrapper(torch.nn.Module):
         depth = inv2depth(inv_depths[0])
         # Post-process predicted depth
         batch['rgb'] = flip_lr(batch['rgb'])
+        if 'input_depth' in batch:
+            batch['input_depth'] = flip_lr(batch['input_depth'])
         inv_depths_flipped = self.model(batch)['inv_depths']
         inv_depth_pp = post_process_inv_depth(
             inv_depths[0], inv_depths_flipped[0], method='mean')
@@ -457,10 +459,10 @@ def setup_model(config, prepared, **kwargs):
     model = load_class(config.name, paths=['packnet_sfm.models',])(
         **{**config.loss, **kwargs})
     # Add depth network if required
-    if model.network_requirements['depth_net']:
+    if 'depth_net' in model.network_requirements:
         model.add_depth_net(setup_depth_net(config.depth_net, prepared))
     # Add pose network if required
-    if model.network_requirements['pose_net']:
+    if 'pose_net' in model.network_requirements:
         model.add_pose_net(setup_pose_net(config.pose_net, prepared))
     # If a checkpoint is provided, load pretrained model
     if not prepared and config.checkpoint_path is not '':
@@ -509,8 +511,9 @@ def setup_dataset(config, mode, requirements, **kwargs):
 
         # Individual shared dataset arguments
         dataset_args_i = {
-            'depth_type': config.depth_type[i] if requirements['gt_depth'] else None,
-            'with_pose': requirements['gt_pose'],
+            'depth_type': config.depth_type[i] if 'gt_depth' in requirements else None,
+            'input_depth_type': config.input_depth_type[i] if 'gt_depth' in requirements else None,
+            'with_pose': 'gt_pose' in requirements,
         }
 
         # KITTI dataset

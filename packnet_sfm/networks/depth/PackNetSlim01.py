@@ -105,12 +105,12 @@ class PackNetSlim01(nn.Module):
                 if m.bias is not None:
                     m.bias.data.zero_()
 
-    def forward(self, x):
+    def forward(self, rgb):
         """
         Runs the network and returns inverse depth maps
         (4 scales if training and 1 if not).
         """
-        x = self.pre_calc(x)
+        x = self.pre_calc(rgb)
 
         # Encoder
 
@@ -178,6 +178,10 @@ class PackNetSlim01(nn.Module):
         disp1 = self.disp1_layer(iconv1)
 
         if self.training:
-            return [disp1, disp2, disp3, disp4]
+            return {
+                'inv_depths': [disp1, disp2, disp3, disp4],
+            }
         else:
-            return disp1
+            return {
+                'inv_depths': disp1,
+            }

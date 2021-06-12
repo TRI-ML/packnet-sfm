@@ -20,10 +20,11 @@ def sample_to_cuda(data, dtype=None):
 
 class BaseTrainer:
     def __init__(self, min_epochs=0, max_epochs=50,
-                 checkpoint=None, **kwargs):
+                 validate_first=False, checkpoint=None, **kwargs):
 
         self.min_epochs = min_epochs
         self.max_epochs = max_epochs
+        self.validate_first = validate_first
 
         self.checkpoint = checkpoint
         self.module = None

@@ -74,8 +74,8 @@ class KITTIDataset(Dataset):
         List of context strides
     """
     def __init__(self, root_dir, file_list, train=True,
-                 data_transform=None, depth_type=None, with_pose=False,
-                 back_context=0, forward_context=0, strides=(1,)):
+                 data_transform=None, depth_type=None, input_depth_type=None,
+                 with_pose=False, back_context=0, forward_context=0, strides=(1,)):
         # Assertions
         backward_context = back_context
         assert backward_context >= 0 and forward_context >= 0, 'Invalid contexts'
@@ -96,6 +96,9 @@ class KITTIDataset(Dataset):
         self.with_depth = depth_type is not '' and depth_type is not None
         self.with_pose = with_pose
 
+        self.input_depth_type = input_depth_type
+        self.with_input_depth = input_depth_type is not '' and input_depth_type is not None
+
         self._cache = {}
         self.pose_cache = {}
         self.oxts_cache = {}
@@ -109,14 +112,18 @@ class KITTIDataset(Dataset):
         self.paths = []
         # Get file list from data
         for i, fname in enumerate(data):
-            path = os.path.join(root_dir, fname.split()[0])
-            if not self.with_depth:
+            path = os.path.join(self.root_dir, fname.split()[0])
+            add_flag = True
+            if add_flag and self.with_input_depth:
+                # Check if input depth file exists
+                depth = self._get_depth_file(path, self.input_depth_type)
+                add_flag = depth is not None and os.path.exists(depth)
+            if add_flag and self.with_depth:
+                # Check if depth file exists
+                depth = self._get_depth_file(path, self.depth_type)
+                add_flag = depth is not None and os.path.exists(depth)
+            if add_flag:
                 self.paths.append(path)
-            else:
-                # Check if the depth file exists
-                depth = self._get_depth_file(path)
-                if depth is not None and os.path.exists(depth):
-                    self.paths.append(path)
 
         # If using context, filter file list
         if self.with_context:
@@ -164,22 +171,23 @@ class KITTIDataset(Dataset):
 
     def _read_depth(self, depth_file):
         """Get the depth map from a file."""
-        if self.depth_type in ['velodyne']:
-            return read_npz_depth(depth_file, self.depth_type)
-        elif self.depth_type in ['groundtruth']:
+        if depth_file.endswith('.npz'):
+            return read_npz_depth(depth_file, 'velodyne')
+        elif depth_file.endswith('.png'):
             return read_png_depth(depth_file)
         else:
             raise NotImplementedError(
                 'Depth type {} not implemented'.format(self.depth_type))
 
-    def _get_depth_file(self, image_file):
+    @staticmethod
+    def _get_depth_file(image_file, depth_type):
         """Get the corresponding depth file from an image file."""
         for cam in ['left', 'right']:
             if IMAGE_FOLDER[cam] in image_file:
                 depth_file = image_file.replace(
                     IMAGE_FOLDER[cam] + '/data', 'proj_depth/{}/{}'.format(
-                        self.depth_type, IMAGE_FOLDER[cam]))
-                if self.depth_type not in PNG_DEPTH_DATASETS:
+                        depth_type, IMAGE_FOLDER[cam]))
+                if depth_type not in PNG_DEPTH_DATASETS:
                     depth_file = depth_file.replace('png', 'npz')
                 return depth_file
 
@@ -265,11 +273,7 @@ class KITTIDataset(Dataset):
             List of depth names for the context
         """
         image_context_paths = [self._get_next_file(i, sample_name) for i in idxs]
-        if self.with_depth:
-            depth_context_paths = [self._get_depth_file(f) for f in image_context_paths]
-            return image_context_paths, depth_context_paths
-        else:
-            return image_context_paths, None
+        return image_context_paths, None
 
 ########################################################################################################################
 #### POSE
@@ -375,7 +379,15 @@ class KITTIDataset(Dataset):
         # Add depth information if requested
         if self.with_depth:
             sample.update({
-                'depth': self._read_depth(self._get_depth_file(self.paths[idx])),
+                'depth': self._read_depth(self._get_depth_file(
+                    self.paths[idx], self.depth_type)),
+            })
+
+        # Add input depth information if requested
+        if self.with_input_depth:
+            sample.update({
+                'input_depth': self._read_depth(self._get_depth_file(
+                    self.paths[idx], self.input_depth_type)),
             })
 
         # Add context information if requested

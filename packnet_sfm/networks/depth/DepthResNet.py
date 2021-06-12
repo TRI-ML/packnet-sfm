@@ -35,18 +35,22 @@ class DepthResNet(nn.Module):
         self.decoder = DepthDecoder(num_ch_enc=self.encoder.num_ch_enc)
         self.scale_inv_depth = partial(disp_to_depth, min_depth=0.1, max_depth=100.0)
 
-    def forward(self, x):
+    def forward(self, rgb):
         """
         Runs the network and returns inverse depth maps
         (4 scales if training and 1 if not).
         """
-        x = self.encoder(x)
+        x = self.encoder(rgb)
         x = self.decoder(x)
         disps = [x[('disp', i)] for i in range(4)]
 
         if self.training:
-            return [self.scale_inv_depth(d)[0] for d in disps]
+            return {
+                'inv_depths': [self.scale_inv_depth(d)[0] for d in disps],
+            }
         else:
-            return self.scale_inv_depth(disps[0])[0]
+            return {
+                'inv_depths': self.scale_inv_depth(disps[0])[0],
+            }
 
 ########################################################################################################################

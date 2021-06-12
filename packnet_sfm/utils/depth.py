@@ -281,7 +281,7 @@ def compute_depth_metrics(config, gt, pred, use_gt_scale=True):
     batch_size, _, gt_height, gt_width = gt.shape
     abs_diff = abs_rel = sq_rel = rmse = rmse_log = a1 = a2 = a3 = 0.0
     # Interpolate predicted depth to ground-truth resolution
-    pred = interpolate_image(pred, gt.shape, mode='bilinear', align_corners=True)
+    pred = scale_depth(pred, gt, config.scale_output)
     # If using crop
     if crop:
         crop_mask = torch.zeros(gt.shape[-2:]).byte().type_as(gt)
@@ -322,3 +322,39 @@ def compute_depth_metrics(config, gt, pred, use_gt_scale=True):
     # Return average values for each metric
     return torch.tensor([metric / batch_size for metric in
         [abs_rel, sq_rel, rmse, rmse_log, a1, a2, a3]]).type_as(gt)
+
+
+def scale_depth(pred, gt, scale_fn):
+    """
+    Match depth maps to ground-truth resolution
+
+    Parameters
+    ----------
+    pred : torch.Tensor
+        Predicted depth maps [B,1,w,h]
+    gt : torch.tensor
+        Ground-truth depth maps [B,1,H,W]
+    scale_fn : str
+        How to scale output to GT resolution
+            Resize: Nearest neighbors interpolation
+            top-center: Pad the top of the image and left-right corners with zeros
+
+    Returns
+    -------
+    pred : torch.tensor
+        Uncropped predicted depth maps [B,1,H,W]
+    """
+    if scale_fn == 'resize':
+        # Resize depth map to GT resolution
+        return interpolate_image(pred, gt.shape, mode='bilinear', align_corners=True)
+    else:
+        # Create empty depth map with GT resolution
+        pred_uncropped = torch.zeros(gt.shape, dtype=pred.dtype, device=pred.device)
+        # Uncrop top vertically and center horizontally
+        if scale_fn == 'top-center':
+            top, left = gt.shape[2] - pred.shape[2], (gt.shape[3] - pred.shape[3]) // 2
+            pred_uncropped[:, :, top:(top + pred.shape[2]), left:(left + pred.shape[3])] = pred
+        else:
+            raise NotImplementedError('Depth scale function {} not implemented.'.format(scale_fn))
+        # Return uncropped depth map
+        return pred_uncropped

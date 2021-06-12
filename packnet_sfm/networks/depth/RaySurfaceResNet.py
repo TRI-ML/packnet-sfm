@@ -45,12 +45,12 @@ class RaySurfaceResNet(nn.Module):
 
         self.scale_inv_depth = partial(disp_to_depth, min_depth=0.1, max_depth=100.0)
 
-    def forward(self, x):
+    def forward(self, rgb):
         """
         Runs the network and returns inverse depth maps and ray surface
         (4 scales if training and 1 if not).
         """
-        x = self.encoder(x)
+        x = self.encoder(rgb)
         r = self.ray_surf(x)
         x = self.decoder(x)
         disps = [x[('disp', i)] for i in range(4)]

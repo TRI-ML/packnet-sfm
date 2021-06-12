@@ -1,0 +1,46 @@
+arch:
+    validate_first: True
+model:
+    name: 'SemiSupCompletionModel'
+    loss:
+        supervised_method: 'sparse-silog'
+        supervised_num_scales: 1
+        supervised_loss_weight: 1.0
+    optimizer:
+        name: 'Adam'
+        depth:
+            lr: 0.0001
+        pose:
+            lr: 0.0001
+    scheduler:
+        name: 'StepLR'
+        step_size: 30
+        gamma: 0.5
+    depth_net:
+        name: 'PackNetSAN01'
+        version: '1A'
+        dropout: 0.5
+    params:
+        crop: 'garg'
+        min_depth: 0.0
+        max_depth: 80.0
+        scale_output: 'top-center'
+datasets:
+    augmentation:
+        crop_train_borders: (-352, 0, 0.5, 1216)
+        crop_eval_borders: (-352, 0, 0.5, 1216)
+    train:
+        batch_size: 1
+        dataset: ['KITTI']
+        path: ['/mnt/fsx/KITTI_raw']
+        split: ['data_splits/eigen_zhou_files.txt']
+        input_depth_type: ['velodyne']
+        depth_type: ['groundtruth']
+        repeat: [2]
+    validation:
+        dataset: ['KITTI']
+        path: ['/mnt/fsx/KITTI_raw']
+        split: ['data_splits/eigen_test_files.txt',
+                'data_splits/eigen_test_files.txt']
+        input_depth_type: ['velodyne','']
+        depth_type: ['groundtruth','groundtruth']
