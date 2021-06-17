@@ -8,10 +8,9 @@ from packnet_sfm.models.model_utils import merge_outputs
 from packnet_sfm.utils.depth import depth2inv
 
 
-class SemiSupModel(SelfSupModel):
+class SemiSupCompletionModel(SelfSupModel):
     """
-    Model that inherits a depth and pose networks, plus the self-supervised loss from
-    SelfSupModel and includes a supervised loss for semi-supervision.
+    Semi-Supervised model for depth prediction and completion.
 
     Parameters
     ----------
@@ -20,7 +19,7 @@ class SemiSupModel(SelfSupModel):
     kwargs : dict
         Extra parameters
     """
-    def __init__(self, supervised_loss_weight=0.9, **kwargs):
+    def __init__(self, supervised_loss_weight=0.9, weight_rgbd=1.0, **kwargs):
         # Initializes SelfSupModel
         super().__init__(**kwargs)
         # If supervision weight is 0.0, use SelfSupModel directly
@@ -35,6 +34,10 @@ class SemiSupModel(SelfSupModel):
         # GT depth is only required if there is supervision
         if self.supervised_loss_weight > 0:
             self._train_requirements.append('gt_depth')
+
+        self._input_keys = ['rgb', 'input_depth', 'intrinsics']
+
+        self.weight_rgbd = weight_rgbd
 
     @property
     def logs(self):
@@ -69,7 +72,7 @@ class SemiSupModel(SelfSupModel):
             inv_depths, gt_inv_depths,
             return_logs=return_logs, progress=progress)
 
-    def forward(self, batch, return_logs=False, progress=0.0):
+    def forward(self, batch, return_logs=False, progress=0.0, **kwargs):
         """
         Processes a batch.
 
@@ -90,21 +93,29 @@ class SemiSupModel(SelfSupModel):
         """
         if not self.training:
             # If not training, no need for self-supervised loss
-            return SfmModel.forward(self, batch)
+            return SfmModel.forward(self, batch, return_logs=return_logs, **kwargs)
         else:
             if self.supervised_loss_weight == 1.:
                 # If no self-supervision, no need to calculate loss
-                self_sup_output = SfmModel.forward(self, batch)
+                self_sup_output = SfmModel.forward(self, batch, return_logs=return_logs, **kwargs)
                 loss = torch.tensor([0.]).type_as(batch['rgb'])
             else:
                 # Otherwise, calculate and weight self-supervised loss
-                self_sup_output = SelfSupModel.forward(self, batch)
+                self_sup_output = SelfSupModel.forward(
+                    self, batch, return_logs=return_logs, progress=progress, **kwargs)
                 loss = (1.0 - self.supervised_loss_weight) * self_sup_output['loss']
             # Calculate and weight supervised loss
             sup_output = self.supervised_loss(
                 self_sup_output['inv_depths'], depth2inv(batch['depth']),
                 return_logs=return_logs, progress=progress)
             loss += self.supervised_loss_weight * sup_output['loss']
+            if 'inv_depths_rgbd' in self_sup_output:
+                sup_output2 = self.supervised_loss(
+                    self_sup_output['inv_depths_rgbd'], depth2inv(batch['depth']),
+                    return_logs=return_logs, progress=progress)
+                loss += self.weight_rgbd * self.supervised_loss_weight * sup_output2['loss']
+                if 'depth_loss' in self_sup_output:
+                    loss += self_sup_output['depth_loss']
             # Merge and return outputs
             return {
                 'loss': loss,

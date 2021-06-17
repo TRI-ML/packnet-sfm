@@ -36,6 +36,7 @@ def prep_dataset(config):
     config.dataset = make_list(config.dataset, n)
     config.path = make_list(config.path, n)
     config.split = make_list(config.split, n)
+    config.input_depth_type = make_list(config.input_depth_type, n)
     config.depth_type = make_list(config.depth_type, n)
     config.cameras = make_list(config.cameras, n)
     if 'repeat' in config:

@@ -52,6 +52,11 @@ class HorovodTrainer(BaseTrainer):
         train_dataloader = module.train_dataloader()
         val_dataloaders = module.val_dataloader()
 
+        # Validate before training if requested
+        if self.validate_first:
+            validation_output = self.validate(val_dataloaders, module)
+            self.check_and_save(module, validation_output)
+
         # Epoch loop
         for epoch in range(module.current_epoch, self.max_epochs):
             # Train

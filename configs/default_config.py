@@ -15,6 +15,7 @@ cfg.arch = CN()
 cfg.arch.seed = 42                      # Random seed for Pytorch/Numpy initialization
 cfg.arch.min_epochs = 1                 # Minimum number of epochs
 cfg.arch.max_epochs = 50                # Maximum number of epochs
+cfg.arch.validate_first = False         # Validate before training starts
 ########################################################################################################################
 ### CHECKPOINT
 ########################################################################################################################
@@ -75,9 +76,10 @@ cfg.model.scheduler.T_max = 20          # Scheduler maximum number of iterations
 ### MODEL.PARAMS
 ########################################################################################################################
 cfg.model.params = CN()
-cfg.model.params.crop = ''              # Which crop should be used during evaluation
-cfg.model.params.min_depth = 0.0        # Minimum depth value to evaluate
-cfg.model.params.max_depth = 80.0       # Maximum depth value to evaluate
+cfg.model.params.crop = ''                # Which crop should be used during evaluation
+cfg.model.params.min_depth = 0.0          # Minimum depth value to evaluate
+cfg.model.params.max_depth = 80.0         # Maximum depth value to evaluate
+cfg.model.params.scale_output = 'resize'  # Depth resizing function
 ########################################################################################################################
 ### MODEL.LOSS
 ########################################################################################################################
@@ -129,8 +131,10 @@ cfg.datasets = CN()
 ### DATASETS.AUGMENTATION
 ########################################################################################################################
 cfg.datasets.augmentation = CN()
-cfg.datasets.augmentation.image_shape = (192, 640)              # Image shape
+cfg.datasets.augmentation.image_shape = ()                      # Image shape
 cfg.datasets.augmentation.jittering = (0.2, 0.2, 0.2, 0.05)     # Color jittering values
+cfg.datasets.augmentation.crop_train_borders = ()               # Crop training borders
+cfg.datasets.augmentation.crop_eval_borders = ()                # Crop evaluation borders
 ########################################################################################################################
 ### DATASETS.TRAIN
 ########################################################################################################################
@@ -143,6 +147,7 @@ cfg.datasets.train.dataset = []                     # Training dataset
 cfg.datasets.train.path = []                        # Training data path
 cfg.datasets.train.split = []                       # Training split
 cfg.datasets.train.depth_type = ['']                # Training depth type
+cfg.datasets.train.input_depth_type = ['']          # Training input depth type
 cfg.datasets.train.cameras = [[]]                   # Training cameras (double list, one for each dataset)
 cfg.datasets.train.repeat = [1]                     # Number of times training dataset is repeated per epoch
 cfg.datasets.train.num_logs = 5                     # Number of training images to log
@@ -158,6 +163,7 @@ cfg.datasets.validation.dataset = []                # Validation dataset
 cfg.datasets.validation.path = []                   # Validation data path
 cfg.datasets.validation.split = []                  # Validation split
 cfg.datasets.validation.depth_type = ['']           # Validation depth type
+cfg.datasets.validation.input_depth_type = ['']     # Validation input depth type
 cfg.datasets.validation.cameras = [[]]              # Validation cameras (double list, one for each dataset)
 cfg.datasets.validation.num_logs = 5                # Number of validation images to log
 ########################################################################################################################
@@ -172,6 +178,7 @@ cfg.datasets.test.dataset = []                      # Test dataset
 cfg.datasets.test.path = []                         # Test data path
 cfg.datasets.test.split = []                        # Test split
 cfg.datasets.test.depth_type = ['']                 # Test depth type
+cfg.datasets.test.input_depth_type = ['']           # Test input depth type
 cfg.datasets.test.cameras = [[]]                    # Test cameras (double list, one for each dataset)
 cfg.datasets.test.num_logs = 5                      # Number of test images to log
 ########################################################################################################################
