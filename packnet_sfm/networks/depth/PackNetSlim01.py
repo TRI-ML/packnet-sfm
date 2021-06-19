@@ -31,7 +31,7 @@ class PackNetSlim01(nn.Module):
         out_channels = 1
         # Hyper-parameters
         ni, no = 32, out_channels
-        n1, n2, n3, n4, n5 = 32, 64, 128, 256, 512
+        n1, n2, n3, n4, n5 = 32, 32, 64, 128, 256
         num_blocks = [2, 2, 3, 3]
         pack_kernel = [5, 3, 3, 3, 3]
         unpack_kernel = [3, 3, 3, 3, 3]
