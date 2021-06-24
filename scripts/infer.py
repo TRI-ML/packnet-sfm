@@ -84,7 +84,7 @@ def infer_and_save_depth(input_file, output_file, model_wrapper, image_shape, ha
         image = image.to('cuda:{}'.format(rank()), dtype=dtype)
 
     # Depth inference (returns predicted inverse depth)
-    pred_inv_depth = model_wrapper.depth(image)[0]
+    pred_inv_depth = model_wrapper.depth(image)['inv_depths'][0]
 
     if save == 'npz' or save == 'png':
         # Get depth from predicted depth map and save to different formats
