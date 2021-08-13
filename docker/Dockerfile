@@ -1,12 +1,48 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+# CUDA_VERSION is defined in the image, so add prefix
+ARG PSFM_CUDA_MAJOR_VERSION=11
+ARG PSFM_CUDA_MINOR_VERSION=1
+ARG PSFM_CUDA_VERSION=${PSFM_CUDA_MAJOR_VERSION}.${PSFM_CUDA_MINOR_VERSION}
+
+ARG SOURCE_IMAGE=nvidia/cuda:${PSFM_CUDA_VERSION}-devel-ubuntu18.04
+########################################
+FROM $SOURCE_IMAGE as base
+# Reïntroduce variables from before:
+ARG PSFM_CUDA_MAJOR_VERSION
+ARG PSFM_CUDA_MINOR_VERSION
+ARG PSFM_CUDA_VERSION
+ARG SOURCE_IMAGE
 
 ENV PROJECT=packnet-sfm
-ENV PYTORCH_VERSION=1.8.1
-ENV TORCHVISION_VERSION=0.9.1
-ENV CUDNN_VERSION=7.6.5.32-1+cuda10.2
-ENV NCCL_VERSION=2.7.8-1+cuda10.2
+
+# https://lambdalabs.com/blog/install-tensorflow-and-pytorch-on-rtx-30-series/
+# 3090 => CUDA 11.1 OK
+#    => cuDNN 8.2.1
+
+# From https://github.com/pytorch/vision:
+# Torch 1.9.0 <=> Torchvision 0.10.0
+
+# From https://pytorch.org/get-started/locally/
+# Torch 1.9.0 => CUDA 11.1 || CUDA 10.2
+
+#ENV CUDNN_VERSION=7.6.5.32-1+cuda10.2
+#ENV NCCL_VERSION=2.7.8-1+cuda10.2
+
+ENV CUDNN_VERSION=8.0.5.39-1+cuda${PSFM_CUDA_VERSION} 
+# Use the variable as a sanity check that we're using the right CUDA
+ARG CUDNN_PACKAGE=libcudnn8=${CUDNN_VERSION}
+ENV NCCL_VERSION=2.7.8-1+cuda${PSFM_CUDA_VERSION}
+ARG NCCL_PACKAGE=libnccl2=${NCCL_VERSION}
+
+ENV PYTORCH_VERSION=1.9.0
+ENV TORCHVISION_VERSION=0.10.0
+
+
+RUN echo "Using " ${SOURCE_IMAGE} " with CUDA version " ${PSFM_CUDA_VERSION} \
+    " and Pytorch/torchvision " ${PYTORCH_VERSION}/${TORCHVISION_VERSION} >&2
+
+
 ENV HOROVOD_VERSION=65de4c961d1e5ad2828f2f6c4329072834f27661
 ENV TRT_VERSION=6.0.1.5
 ENV LC_ALL=C.UTF-8
@@ -29,8 +65,8 @@ RUN apt-get update && apt-get install -y --allow-downgrades --allow-change-held-
     vim \
     wget \
     ca-certificates \
-    libcudnn7=${CUDNN_VERSION} \
-    libnccl2=${NCCL_VERSION} \
+    ${CUDNN_PACKAGE} \
+    ${NCCL_PACKAGE} \
     libnccl-dev=${NCCL_VERSION} \
     libjpeg-dev \
     libpng-dev \
@@ -85,8 +121,14 @@ RUN pip install future typing numpy pandas matplotlib jupyter h5py \
     mpi4py onnx onnxruntime pycuda yacs cython==0.29.10
 
 # Install PyTorch
-RUN pip install torch==${PYTORCH_VERSION} \
-    torchvision==${TORCHVISION_VERSION} && ldconfig
+#RUN pip install torch==${PYTORCH_VERSION} \
+#    torchvision==${TORCHVISION_VERSION} && ldconfig
+RUN pip3 install \
+    torch==${PYTORCH_VERSION}+cu${PSFM_CUDA_MAJOR_VERSION}${PSFM_CUDA_MINOR_VERSION} \
+    torchvision==${TORCHVISION_VERSION}+cu${PSFM_CUDA_MAJOR_VERSION}${PSFM_CUDA_MINOR_VERSION} \
+    -f https://download.pytorch.org/whl/torch_stable.html \
+    && ldconfig
+
 
 # Install apex
 RUN mkdir /workspace
