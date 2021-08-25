@@ -1,6 +1,6 @@
 # Handy commands:
 # - `make docker-build`: builds DOCKERIMAGE (default: `packnet-sfm:latest`)
-PROJECT ?= packnet-sfm
+PROJECT ?= stellarpower/packnet-sfm
 WORKSPACE ?= /workspace/$(PROJECT)
 DOCKER_IMAGE ?= ${PROJECT}:latest
 
