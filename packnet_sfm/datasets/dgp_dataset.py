@@ -6,7 +6,7 @@ import numpy as np
 
 from dgp.datasets.synchronized_dataset import SynchronizedSceneDataset
 from dgp.utils.camera import Camera, generate_depth_map
-from dgp.utils.geometry import Pose
+from dgp.utils.pose import Pose
 
 from packnet_sfm.utils.misc import make_list
 from packnet_sfm.utils.types import is_tensor, is_numpy, is_list
@@ -202,7 +202,7 @@ class DGPDataset:
             Filename for the datum in that sample
         """
         scene_idx, sample_idx_in_scene, datum_indices = self.dataset.dataset_item_index[sample_idx]
-        scene_dir = self.dataset.get_scene_directory(scene_idx)
+        scene_dir = self.dataset.dataset_metadata.directory
         filename = self.dataset.get_datum(
             scene_idx, sample_idx_in_scene, datum_indices[datum_idx]).datum.image.filename
         return os.path.splitext(os.path.join(os.path.basename(scene_dir),

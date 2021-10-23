@@ -128,7 +128,7 @@ RUN git clone https://github.com/TRI-ML/dgp.git
 ENV PYTHONPATH="/workspace/dgp:$PYTHONPATH"
 
 # Override DGP wandb with required version
-RUN pip install wandb==0.8.21 pyquaternion
+RUN pip install wandb==0.8.21 pyquaternion xarray diskcache tenacity pycocotools
 
 # Expose Port for jupyter (8888)
 EXPOSE 8888
