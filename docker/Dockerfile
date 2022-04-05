@@ -1,18 +1,18 @@
 # Copyright 2020 Toyota Research Institute.  All rights reserved.
 
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-devel
 
 ENV PROJECT=packnet-sfm
-ENV PYTORCH_VERSION=1.8.1
-ENV TORCHVISION_VERSION=0.9.1
-ENV CUDNN_VERSION=7.6.5.32-1+cuda10.2
-ENV NCCL_VERSION=2.7.8-1+cuda10.2
-ENV HOROVOD_VERSION=65de4c961d1e5ad2828f2f6c4329072834f27661
-ENV TRT_VERSION=6.0.1.5
+# ENV PYTORCH_VERSION=1.8.1
+# ENV TORCHVISION_VERSION=0.9.1
+ENV CUDNN_VERSION=8.2.0.53-1+cuda11.3
+ENV NCCL_VERSION=2.9.9-1+cuda11.3
+ENV HOROVOD_VERSION=66ad6d5a3586decdac356e8ec95c204990bbc3d6
+# ENV TRT_VERSION=6.0.1.5
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-ARG python=3.6
+ARG python=3.8
 ENV PYTHON_VERSION=${python}
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y --allow-downgrades --allow-change-held-
     vim \
     wget \
     ca-certificates \
-    libcudnn7=${CUDNN_VERSION} \
+    libcudnn8=${CUDNN_VERSION} \
     libnccl2=${NCCL_VERSION} \
     libnccl-dev=${NCCL_VERSION} \
     libjpeg-dev \
@@ -84,12 +84,12 @@ RUN pip install future typing numpy pandas matplotlib jupyter h5py \
     awscli boto3 tqdm termcolor path.py pillow-simd opencv-python-headless \
     mpi4py onnx onnxruntime pycuda yacs cython==0.29.10
 
-# Install PyTorch
-RUN pip install torch==${PYTORCH_VERSION} \
-    torchvision==${TORCHVISION_VERSION} && ldconfig
+# # Install PyTorch
+# RUN pip install torch==${PYTORCH_VERSION} \
+#     torchvision==${TORCHVISION_VERSION} && ldconfig
 
 # Install apex
-RUN mkdir /workspace
+RUN mkdir -p /workspace
 WORKDIR /workspace
 RUN git clone https://github.com/NVIDIA/apex.git
 WORKDIR /workspace/apex
