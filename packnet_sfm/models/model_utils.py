@@ -144,6 +144,7 @@ def flip_output(output):
         'inv_depths', 'inv_depths_context', 'inv_depths1', 'inv_depths2',
         'pred_depth', 'pred_depth_context', 'pred_depth1', 'pred_depth2',
         'pred_inv_depth', 'pred_inv_depth_context', 'pred_inv_depth1', 'pred_inv_depth2',
+        'inv_depths_rgbd'
     ]):
         output[key] = flip(output[key], flip_lr)
     return output
