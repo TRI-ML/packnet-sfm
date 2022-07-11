@@ -2,6 +2,8 @@
 
 [Install](#install) // [Datasets](#datasets) // [Training](#training) // [Evaluation](#evaluation) // [Models](#models) // [License](#license) // [References](#references)
 
+** **UPDATE** **: We have released a new depth estimation repository [here](https://github.com/TRI-ML/vidar), containing code related to our latest publications. It is an updated version of this repository, so if you are familiar with PackNet-SfM you should be able to migrate easily.  Future publications will be included in our new repository, and this one will remain as is. Thank you very much for your support over these past couple of years! 
+
 <a href="https://www.tri.global/" target="_blank">
  <img align="right" src="/media/figs/tri-logo.png" width="20%"/>
 </a>
