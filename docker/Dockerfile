@@ -75,7 +75,7 @@ RUN if [[ "${PYTHON_VERSION}" == "3.6" ]]; then \
 
 RUN ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python
 
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
+RUN curl -O https://bootstrap.pypa.io/pip/3.6/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
@@ -93,7 +93,7 @@ RUN mkdir /workspace
 WORKDIR /workspace
 RUN git clone https://github.com/NVIDIA/apex.git
 WORKDIR /workspace/apex
-RUN pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
+RUN git checkout f3a960f80244cf9e80558ab30f7f7e8cbf03c0a0 && pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
 ENV PYTHONPATH="/workspace/apex:$PYTHONPATH"
 WORKDIR /workspace
 
