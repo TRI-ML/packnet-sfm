@@ -33,7 +33,7 @@ class GenericCamera(nn.Module):
         """
         super().__init__()
         self.ray_surface = R
-        self.Tcw = Pose.identity(1) if Tcw is None else Tcw
+        self.Tcw = Pose.identity(R.shape[0]) if Tcw is None else Tcw
 
     def to(self, *args, **kwargs):
         """Moves object to a specific device"""
@@ -71,7 +71,7 @@ class GenericCamera(nn.Module):
         B, C, H, W = depth.shape
         assert C == 1
 
-        Xc = self.ray_surface * depth[0].unsqueeze(0)
+        Xc = self.ray_surface * depth
 
         # If in camera frame of reference
         if frame == 'c':
@@ -152,8 +152,8 @@ class GenericCamera(nn.Module):
         def _get_value_coords(x, coords):
 
             b, c, h, w = x.shape
-            n, k, _ = coords.shape
-            coords = coords.reshape(-1, 2)
+            n, k, _ = coords.shape  #[H*W, K, 2]
+            coords = coords.reshape(-1, 2) #[H*W*K, 2]
             out = x[:, :, coords[:, 0], coords[:, 1]]
             out = out.reshape(b, c, h, w, k)
             return out
@@ -178,31 +178,38 @@ class GenericCamera(nn.Module):
         direction_norm = direction.view(B, 3, H*W)
         direction_norm = direction_norm / \
             torch.norm(direction_norm, dim=1, keepdim=True)
-        direction_view = direction_norm.view(B, 3, H*W).squeeze()
 
-        patch_ray_view = ray_surf_patch.squeeze().view(3, H*W, K)
+        projections = []
+        for b in range(B):
+            direction_view = direction_norm[b,:,:].view(1, 3, H*W).squeeze()
+            patch_ray_view = ray_surf_patch[b,:,:,:,:].squeeze().view(3, H*W, K)
 
-        ray_logits = torch.bmm(direction_view.permute(1, 0).unsqueeze(
-            1), patch_ray_view.permute(1, 0, 2)).squeeze()
+            ray_logits = torch.bmm(direction_view.permute(1, 0).unsqueeze(
+                1), patch_ray_view.permute(1, 0, 2)).squeeze()
 
-        # Softmax with temperature
-        temperature = np.maximum(
-            min_temp, start_temp/np.exp(constant * progress))
-        image_coords_softmax = torch.softmax(ray_logits / temperature, -1)
+            # Softmax with temperature
+            temperature = np.maximum(
+                min_temp, start_temp/np.exp(constant * progress))
+            image_coords_softmax = torch.softmax(ray_logits / temperature, -1)
 
-        image_coords = torch.bmm(
-            image_coords_softmax.unsqueeze(1), patch_coordinates.float())
-        image_coords = image_coords.squeeze().view(H, W, 2)
+            image_coords = torch.bmm(
+                image_coords_softmax.unsqueeze(1), patch_coordinates.float())
+            image_coords = image_coords.squeeze().view(H, W, 2)
 
-        Xnorm = 2 * image_coords[:, :, 0] / (H - 1) - 1.
-        Ynorm = 2 * image_coords[:, :, 1] / (W - 1) - 1.
+            Xnorm = 2 * image_coords[:, :, 0] / (H - 1) - 1.
+            Ynorm = 2 * image_coords[:, :, 1] / (W - 1) - 1.
+
+            if downsample:
+                Xnorm = F.interpolate(Xnorm.unsqueeze(0).unsqueeze(
+                    0), mode='bilinear', scale_factor=2.0, align_corners=True).squeeze()
+                Ynorm = F.interpolate(Ynorm.unsqueeze(0).unsqueeze(
+                    0), mode='bilinear', scale_factor=2.0, align_corners=True).squeeze()
+                projections.append(torch.stack([Ynorm, Xnorm], dim=-1).view(H*2, W*2, 2))
+            else:
+                projections.append(torch.stack([Ynorm, Xnorm], dim=-1).view(H, W, 2))
 
         if downsample:
-            Xnorm = F.interpolate(Xnorm.unsqueeze(0).unsqueeze(
-                0), mode='bilinear', scale_factor=2.0, align_corners=True).squeeze()
-            Ynorm = F.interpolate(Ynorm.unsqueeze(0).unsqueeze(
-                0), mode='bilinear', scale_factor=2.0, align_corners=True).squeeze()
             H = H * 2
             W = W * 2
 
-        return torch.stack([Ynorm, Xnorm], dim=-1).view(B, H, W, 2)
+        return torch.stack(projections).view(B, H, W, 2)
