@@ -41,10 +41,13 @@ make docker-run-mpi COMMAND="some-command"
 For instance, to verify that the environment is setup correctly, you can run a simple overfitting test:
 
 ```bash
+# enter docker image
+make docker-start-interactive
 # download a tiny subset of KITTI
+mkdir -p /data/datasets
 curl -s https://tri-ml-public.s3.amazonaws.com/github/packnet-sfm/datasets/KITTI_tiny.tar | tar xv -C /data/datasets/
-# in docker
-make docker-run COMMAND="python3 scripts/train.py configs/overfit_kitti.yaml"
+# run test
+python3 scripts/train.py configs/overfit_kitti.yaml
 ```
 
 If you want to use features related to [AWS](https://aws.amazon.com/) (for dataset access)
