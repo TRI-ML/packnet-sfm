@@ -49,8 +49,9 @@ class BerHuLoss(nn.Module):
 
         huber_mask = (diff > huber_c).detach()
         diff2 = diff[huber_mask]
-        diff2 = diff2 ** 2
-        return torch.cat((diff, diff2)).mean()
+        diff2 = (diff2 ** 2 + huber_c ** 2) / (2 * huber_c) #diff2 ** 2
+        return (torch.sum(diff) + torch.sum(diff2)) / sum(diff.size() + diff2.size()) 
+        #return torch.cat((diff, diff2)).mean()
 
 class SilogLoss(nn.Module):
     def __init__(self, ratio=10, ratio2=0.85):
