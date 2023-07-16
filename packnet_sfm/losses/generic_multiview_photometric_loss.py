@@ -165,7 +165,7 @@ class GenericMultiViewPhotometricLoss(LossBase):
 
     def warp_ref_image(self, inv_depths, ref_image, raysurf_residual, pose, progress):
         """
-        Warps a reference image to produce a reconstruction of the original one.
+        Warps a reference image to produce a reconstruction of the original image.
 
         Parameters
         ----------
@@ -178,12 +178,12 @@ class GenericMultiViewPhotometricLoss(LossBase):
         ref_K : torch.Tensor [B,3,3]
             Reference camera intrinsics
         pose : Pose
-            Original -> Reference camera transformation
+            Reference -> Original camera transformation
 
         Returns
         -------
         ref_warped : torch.Tensor [B,3,H,W]
-            Warped reference image (reconstructing the original one)
+            Warped reference image (reconstructing the original image)
         """
         B, _, H, W = ref_image.shape
         device = ref_image.get_device()

@@ -24,7 +24,7 @@ class Camera(nn.Module):
         K : torch.Tensor [3,3]
             Camera intrinsics
         Tcw : Pose
-            Camera -> World pose transformation
+            World -> Camera pose transformation
         """
         super().__init__()
         self.K = K
@@ -65,7 +65,7 @@ class Camera(nn.Module):
     @property
     @lru_cache()
     def Twc(self):
-        """World -> Camera pose transformation (inverse of Tcw)"""
+        """Camera -> World pose transformation (inverse of Tcw)"""
         return self.Tcw.inverse()
 
     @property
